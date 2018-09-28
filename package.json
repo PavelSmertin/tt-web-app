@@ -1,7 +1,8 @@
 {
   "name": "tt-web-app",
   "scripts": {
-    "dev": "nuxt"
+    "dev": "nuxt",
+    "build": "nuxt build",
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.2",
