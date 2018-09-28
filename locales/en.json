@@ -1,0 +1,28 @@
+{
+  "links": {
+    "home": "Home",
+    "english": "English version",
+    "russian": "French version"
+  },
+  "filters": {
+    "all": "ALL",
+    "10k": "from $10K",
+    "100k": "from $100K",
+    "1m": "from $1M",
+    "10p": "from 10%",
+    "100p": "from 100%",
+    "1000p": "from 1000%",
+    "interval": {
+      "1d": "1D",
+      "1w": "1W",
+      "1m": "1M"
+    }
+  },
+
+  "home": {
+    "label_capitalization": "Capitalization",
+    "label_profit": "Profit",
+    "label_interval": "Period"
+  }
+
+}

@@ -1,0 +1,159 @@
+// Font Variables
+
+@font-face {
+    font-family: DINCondensedC;
+    src: url(~assets/font/DINCondensedC.otf);
+}
+
+$font-stack: DINCondensedC, serif;
+
+
+$primary-color: #000;
+$dark-primary-color: #fff;
+$alternative-color-bg: #000;
+$alternative-color-text: #fff;
+
+
+$bg-main-color: #fff;
+$bg-toolbar-color: #fff;
+$link-color: #FF9900;
+$link-color-bg: #D9D9D9;
+
+
+$primary-size: 16px;
+$second_size: 14px;
+$label-size: 12px;
+$item-size: 16px;
+
+
+
+$up-value-color: #8FCC14;
+$down-value-color: #FF6666;
+
+
+
+
+/************ COMMONS ************/
+body {
+	font: 100% $font-stack;
+	color: $primary-color;
+	font-size: $primary-size;
+	line-height:26px;
+}
+
+a {
+	color: $dark-primary-color;
+}
+a:hover {
+	text-decoration: none;
+	color: $link-color;
+}
+h1 {
+	font-size: 32px;
+	color: $dark-primary-color;
+}
+h2 {
+	font-size: 24px;
+	color: $dark-primary-color;
+}
+h3 {
+	font-size: 18px;
+	line-height: 20px;
+	color: $dark-primary-color;
+}
+
+@media (max-width: 769px) { 
+	h1 {
+		font-size: 24px;
+	}
+	h2 {
+		font-size: 18px;
+	}
+	h3 {
+		font-size: 16px;
+	}
+}
+
+
+/************ INDEX PAGE STRUCTURE **************/
+.layout {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	.toolbar {
+		height:48px;
+	}
+	.content {
+		flex-grow: 1;
+	}
+}
+
+/************ INDEX BLOCKS ************/
+.toolbar {
+	padding: 0 16px;
+	background-color: $bg-toolbar-color;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	.logo_link {
+		position: absolute;
+		left:16px;
+		display: flex;
+		#logo_path {
+			fill: $primary-color;
+		}
+
+	}
+	.filters {
+		display: flex;
+		align-items: baseline;
+	}
+}
+.content {
+	background-color: $bg-toolbar-color;
+	display: flex;
+	align-items: stretch;
+	justify-content: stretch;
+}
+
+
+
+/************ COMPONENTS **************/
+.filter {
+	display: flex;
+	align-items: baseline;
+	label {
+		font-size: $label-size;
+		line-height: $label-size;
+		margin-left: 16px;
+		margin-right: 8px;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		li {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			border: 1px solid $primary-color;
+			margin-left: 2px;
+			padding: 3px 6px;
+			font-size: $item-size;
+			line-height: $item-size+2;
+    		height: $item-size;
+    		cursor: pointer;
+    		transition: all 0.1s ease;
+    		&:hover:not(.active_filter) {
+    			background-color: $link-color-bg;
+    			border-color: $link-color-bg;
+    		}
+    		&.active_filter {
+    			background-color: $alternative-color-bg;
+    			color: $alternative-color-text;
+    		}
+
+		}
+	}
+}
