@@ -6,21 +6,22 @@
     <g
 		v-for="(node, index) in nodes"
 		v-if="node.children == undefined">
-		<rect v-on:click = "onNodeClick(node)" v-bind="position( node ) " ></rect>
+		<rect v-on:click = "onNodeClick(node)" v-bind="rectPosition( node ) " ></rect>
 
-		<text 
-
-			v-bind="textPosition( node )"> 
-			<tspan v-bind="pricePosition( node )" fill="#000">
+		<text > 
+			<tspan class="coin_name" v-bind="coinText( node, 220, 8 )">
+				{{ node.data.coin_name}}
+			</tspan>
+			<tspan class="symbol" v-bind="coinText( node, 590, 25 )">
 				{{ node.data.name}}
 			</tspan>
-			<tspan v-bind="pricePosition( node )" fill="#000">
+			<tspan class="part" v-bind="coinText( node, 830, 13 )">
 				{{ formatPrice( node.data.part * 100) }}%
 			</tspan>
 		</text>
 
-		<text v-bind="deltaPosition( node )"  fill="#fff"> 
-			<tspan>
+		<text > 
+			<tspan class="delta"  v-bind="coinText( node, 350, 20, true, -12 )">
 				{{ formatPrice( node.data.delta * 100 ) }}%
 			</tspan>
 		</text>
@@ -98,7 +99,7 @@
 			},
 		},
 		methods: {
-			position: function( node ) {
+			rectPosition: function( node ) {
 
 				let xPosition = (node.x0 * 100 / this.treewidth) + '%'
 				let width = ((node.x1 - node.x0) * 100 / this.treewidth) + '%'
@@ -108,12 +109,6 @@
 
 				let delta = node.data.delta > 0 ? node.data.delta : -node.data.delta
 				let fillOpacity = 1
-				// if( delta > 0 && delta < 0.1) { 
-				// 	fillOpacity = 0.65 + delta / 0.4
-				// }
-			 // 	if(delta >= 0.1 && delta < 1) {
-			 // 		fillOpacity = 0.9 + delta / 10
-			 // 	}
 
 			 	if( delta < 1 ) {
 			 		fillOpacity = 0.75 + delta / 4
@@ -140,72 +135,31 @@
 				}
 			},
 
-			textPosition: function( node ) {
+
+			coinText: function( node, marginTop, fontSize, rightAlign = false, marginLeft = 6 ) {
 
 				if( this.portrait === true ) {
 					return {
-						'x': node.x0  + '%', 
-						'y': node.y0  + '%', 
+						'x': node.x0  + '%',
+						'y': rightAlign ? node.y1  + '%' : node.y0  + '%',
+						'dx': marginLeft, 
+						'dy': marginTop * node.data.part * 1.5, 
+						'font-size': fontSize * node.data.part * 1.5 + 'em',
+						'text-anchor': rightAlign ? 'end' : 'start',
+
 					}
 				} else {
 					return {
-						'x': node.y0  + '%', 
+						'x': rightAlign ? node.y1  + '%' : node.y0  + '%',
 						'y': node.x0  + '%', 
+						'dx': marginLeft, 
+						'dy': marginTop * node.data.part * 1.5, 
+						'font-size': fontSize * node.data.part * 1.5 + 'em',
+						'text-anchor': rightAlign ? 'end' : 'start',
 					}
 				}
 			},
 
-			deltaPosition: function( node ) {
-
-				let xPosition = node.x0
-				let width = node.x1
-				let yPosition = node.y0
-				let height = node.y1
-
-				if( this.portrait === true ) {
-					return {
-						'x': node.x0  + '%', 
-						'y': node.y1  + '%',
-						'dx': '-6', 
-
-						'dy': 350 * node.data.part, 
-						'font-size': 20 * node.data.part + 'em',
-
-						'text-anchor': 'end',
-					}
-				} else {
-					return {
-						'x': node.y1  + '%', 
-						'y': node.x0  + '%',
-						'dx': '-6', 
-
-						'dy': 350 * node.data.part,
-						'font-size': 20 * node.data.part + 'em',
-
-						'text-anchor': 'end',
-					}
-				}
-			},
-
-			pricePosition: function( node ) {
-
-				if( this.portrait === true ) {
-					return {
-						'x': node.x0  + '%', 
-						'dx': '6', 
-						'dy': 350 * node.data.part, 
-						'font-size': 20 * node.data.part + 'em',
-
-					}
-				} else {
-					return {
-						'x': node.y0  + '%',
-						'dx': '6', 
-						'dy': 350 * node.data.part, 
-						'font-size': 20 * node.data.part + 'em',
-					}
-				}
-			},
 
 			async calculateTree() {
 
@@ -274,7 +228,7 @@
 	}
 
 	function simpleNodes( nodes ) {
-		return nodes.map( d => {return {'name': d.symbol, 'part': d.part, 'delta': d.change24h, 'value': d.amount_total_btc }; })
+		return nodes.map( d => {return {'coin_name': d.coin_name, 'name': d.symbol, 'part': d.part, 'delta': d.change24h, 'value': d.amount_total_btc }; })
 	}
 
 
@@ -283,5 +237,17 @@
     rect {
         stroke: #fff;
         stroke-width: 2px;
+    }
+
+    .coin_name, .symbol, .part {
+		fill: #000;
+		font-weight: 100;
+    }
+	.part {
+		opacity: 0.4;
+	}
+    .delta {
+		fill: #fff;
+		font-weight: 100;
     }
 </style>
