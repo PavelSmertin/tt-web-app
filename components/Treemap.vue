@@ -135,7 +135,6 @@
 				}
 			},
 
-
 			coinText: function( node, marginTop, fontSize, rightAlign = false, marginLeft = 6 ) {
 
 				if( this.portrait === true ) {
@@ -146,7 +145,6 @@
 						'dy': marginTop * node.data.part * 1.5, 
 						'font-size': fontSize * node.data.part * 1.5 + 'em',
 						'text-anchor': rightAlign ? 'end' : 'start',
-
 					}
 				} else {
 					return {
@@ -159,7 +157,6 @@
 					}
 				}
 			},
-
 
 			async calculateTree() {
 
@@ -181,9 +178,8 @@
 				} catch(error) {
 					console.error(error)
 				}
-
-
 			},
+
 			onNodeClick: function(node) {
 			  this.$emit('node_click', node, this)
 			},

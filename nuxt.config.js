@@ -23,6 +23,7 @@ export default {
 
 	modules: [
 		'@nuxtjs/axios',
+		'@nuxtjs/auth',
 		['@nuxtjs/proxy', { pathRewrite: { '^/api' : '/v1', '^/images' : '/' } }],
 
 	],
@@ -30,6 +31,33 @@ export default {
 	axios: {
 		baseUrl: urls.host,
 		browserBaseURL: urls.host,
+	},
+
+	auth: {
+
+		redirect: {
+			login: '/',
+		},
+
+		token: {
+			prefix: 'token.'
+		},
+
+		defaultStrategy: 'api',
+
+		strategies: {
+			api: {
+				_scheme: '~/schemes/api.js',
+				endpoints: {
+					login: {
+						url: '/api/auth/login',
+						method: 'post',
+						propertyName: 'access_token'
+					},
+					logout: false
+				}
+			}
+		}
 	},
 
 	proxy: {

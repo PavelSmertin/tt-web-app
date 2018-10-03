@@ -19,6 +19,8 @@ $bg-toolbar-color: #fff;
 $link-color: #FF9900;
 $link-color-bg: #D9D9D9;
 
+$border-bold-color: #D9D9D9;
+
 
 $primary-size: 16px;
 $second_size: 14px;
@@ -42,7 +44,8 @@ body {
 }
 
 a {
-	color: $dark-primary-color;
+	color: $primary-color;
+	text-decoration: none;
 }
 a:hover {
 	text-decoration: none;
@@ -50,16 +53,23 @@ a:hover {
 }
 h1 {
 	font-size: 32px;
-	color: $dark-primary-color;
+	color: $primary-color;
 }
 h2 {
 	font-size: 24px;
-	color: $dark-primary-color;
+	color: $primary-color;
 }
 h3 {
 	font-size: 18px;
 	line-height: 20px;
-	color: $dark-primary-color;
+	color: $primary-color;
+}
+
+fieldset {
+	min-width: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
 }
 
 @media (max-width: 769px) { 
@@ -71,6 +81,50 @@ h3 {
 	}
 	h3 {
 		font-size: 16px;
+	}
+}
+
+
+
+.row_field {
+	margin-top: 12px;
+	display: flex;
+	flex-direction: column;
+	label {
+		display: block;
+		margin-bottom: 4px;
+		line-height: 16px;
+	}
+
+	input[type="text"], input[type="password"], input[type="email"]  {
+		height: 48px;
+		border: 1px solid $border-bold-color;
+		padding: 0 13px;
+		display: block;
+	}
+
+	input::placeholder { 
+		color: $link-color; 
+	}
+}
+
+.button_link {
+	min-width: 120px;
+	padding: 0 20px;
+	height: 48px;
+	line-height: 48px;
+	cursor: pointer;
+	border: 1px solid $border-bold-color;
+	background-color: $primary-color;
+	color: $dark-primary-color;
+	font-size: $label-size;
+	text-transform: uppercase;
+	font-weight: bold;
+	flex-grow: 0;
+	&:hover {
+		background-color: $dark-primary-color;
+		color: $primary-color;
+		transition: all 0.1s ease-in-out;
 	}
 }
 
@@ -156,4 +210,209 @@ h3 {
 
 		}
 	}
+}
+
+
+
+
+
+
+/* account page */
+.ff_account {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	.form_pane {
+
+		background-color: $bg-main-color;
+		margin: 48px 0;
+		border: 1px solid $border-bold-color;
+		width: 640px;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.navigation {
+			$nav_height: 56px;
+			width: 100%;
+			height: $nav_height;
+			border-bottom: 1px solid $border-bold-color;
+
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			font-size: $primary-size;
+
+			display: flex;
+			justify-content: center;
+
+			li {
+				margin: 0;
+				display: inline-block;
+				padding: 0 12px 0 12px;
+				margin-bottom: 2px;
+
+				span {
+					line-height: $nav_height;
+					display: inline-block;
+					height: $nav_height;
+				}
+
+				.nuxt-link-active {
+					border-bottom: 2px solid $primary-color;
+				}
+
+				a {
+					display: block;
+					height: 100%;
+					line-height: $nav_height;
+				}
+
+				a:hover {
+					color: $link-color;
+				}
+			}
+		}
+
+
+		form, .flash_form {
+			width: 62.5%;
+
+			border: none;
+
+			padding-bottom: 50px;
+			padding-top: 50px;
+
+			h1 {
+				margin-top: 24px;
+				text-align: center;
+			}
+
+			.success_text {
+				margin-top: 16px;
+				text-align: center;
+			}
+
+			.love_img {
+				display: block;
+				margin: 32px auto 0;
+
+			}
+
+			.form_logo {
+				display: block;
+				height: 40px;
+				color: $bg-toolbar-color;
+				margin-top: 32px;
+
+				background-position: center center;
+				background-repeat: no-repeat;
+			}
+
+			.row_tools {
+				display: flex;
+				justify-content: flex-end;
+				align-items: center;
+				margin-top: 24px; 
+				position: relative;
+				min-height: 48px;
+
+				.button_link {
+					margin: 0 45px;
+				}
+
+				.row_link {
+					height: 48px;
+					color: $primary-color;
+					font-size: $label-size;
+					text-transform: uppercase;
+					font-weight: bold;
+					line-height: 48px;
+					text-align: center;
+					background: none;
+					border: none;
+					cursor: pointer;
+				}
+
+				.row_link:hover {
+					color: $link-color;
+				}
+
+				.loading-spiral {
+					position: absolute;
+					left: 50%;
+					margin-left: -20px;
+				}
+			}
+
+			.row_tools.row_center {
+				justify-content: center;
+				input, .button_link {
+					margin-right: 0px;
+					margin-left:  0px;
+				}
+			}
+
+			.row_errors {
+				margin: 0;
+				padding: 0;
+				margin-top: 24px;
+			}
+
+		}
+	}
+}
+@media (max-width: 769px) {
+	.ff_account {
+		flex: 1 0 auto;
+		align-items: center;
+		background: none; 
+		.form_pane {
+
+			margin-top: 0;
+			border: none;
+			width: 100%;
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			form, .flash_form {
+				width: 80%;
+
+				.row_tools {
+					flex-direction: column;
+					justify-content: flex-end;
+					align-items: center;
+					input {
+						margin-right: 0px;
+					}
+					a {
+						margin-top: 24px; 
+					}
+				}
+
+				.instruction {
+					text-align: center;
+					margin-top: 24px;
+				}
+			}
+
+		}
+	}
+}
+
+
+.exchanges_form {
+	display: flex;
+	width: 100%;
+	.right_pane, .left_pane {
+		flex-grow: 1;
+		padding: 0 12px
+	}
+
+
+
 }

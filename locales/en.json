@@ -23,6 +23,42 @@
     "label_capitalization": "Capitalization",
     "label_profit": "Profit",
     "label_interval": "Period"
+  },
+
+  "account": {
+    "signin": "Signin",
+    "signup": "Signup",
+    "email": "Email",
+    "password":  "Password",
+    "repeat_password": "Repeat password",
+    "login": "Your name",
+    "confirm_email": "Confirm email",
+    "confidence": "Everything will be allright",
+    "go_to_home": "You will be redirect to Home",
+    "wrong_confirmation_code": "Wrong confirmation code",
+    "thank_you": "Thank you!",
+    "back_to_home": "Back to home",
+    "resend_code": "Resend code",
+    "instruction": "Check your email",
+    "instruction_forgot": "Check your email",
+    "resend_success": "Letter with activation code was send",
+    "resend_wrong": "Letter was not send",
+    "restore": "Restore",
+    "congratulations": "Congratulations!",
+    "success_password": "Password changed successful",
+
+
+    "forgot":  "Forgot password?",
+
+    "portfolio": { 
+      "api_key": "API key",
+      "api_secret": "API secret",
+      "api_add": "Add",
+      "added_exchanges": "Added exchanges"
+
+    }
+
   }
+
 
 }
