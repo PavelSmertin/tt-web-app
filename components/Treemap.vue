@@ -24,7 +24,6 @@
 				keySplines="0,0,1,1;"
 				values="100px;
 						1000px;"
-				begin="click"
 			/>
 
 			<animate 
@@ -37,7 +36,6 @@
 				keySplines="0,0,1,1;"
 				values="100px;
 						1000px;"
-				begin="click"
 			/>
 		</rect>
 
@@ -215,10 +213,9 @@
 
 			onNodeClick: function(event, node ) {
 
-				console.log( event.path[0].firstChild )
 				//event.path[0].firstChild.beginElement()
 
-				//this.$router.push('/ru/'+ node.data.name)
+				this.$router.push('/ru/'+ node.data.name)
 				this.$emit('node_click', node, this)
 			},
 
