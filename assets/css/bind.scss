@@ -16,7 +16,7 @@ $alternative-color-text: #fff;
 
 $bg-main-color: #fff;
 $bg-toolbar-color: #fff;
-$link-color: #FF9900;
+$link-color: #8FCC14;
 $link-color-bg: #D9D9D9;
 
 $border-bold-color: #D9D9D9;
@@ -26,7 +26,6 @@ $primary-size: 16px;
 $second_size: 14px;
 $label-size: 12px;
 $item-size: 16px;
-
 
 
 $up-value-color: #8FCC14;
@@ -469,4 +468,61 @@ svg {
   path {
     fill: #000;
   }
+}
+
+
+
+.sidenav {
+	height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	background-color: #111;
+	overflow-x: hidden; 
+	padding-top: 60px;
+	transition: 0.5s;
+	z-index: 10;
+	.sidenav_overflow {
+		width: 250px;
+		overflow: hidden;
+	}
+
+	a {
+		padding: 8px 8px 8px 32px;
+		text-decoration: none;
+		text-transform: uppercase;
+		color: $dark-primary-color;
+		display: block;
+		transition: 0.3s;
+	}
+
+	a:hover {
+		color: $up-value-color;
+	}
+
+	.closebtn {
+		position: absolute;
+		top: 8px;
+		font-size: 36px;
+	}
+}
+
+
+
+#main {
+	transition: margin-left .5s;
+	padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+	.sidenav {padding-top: 15px;}
+	.sidenav a {font-size: 18px;}
+}
+
+.burger {
+	cursor: pointer;
+    position: absolute;
+    right: 16px;
 }

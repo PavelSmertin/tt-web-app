@@ -1,24 +1,6 @@
 <template>
 
 
-	<div class="layout">
-
-		<div class="toolbar">
-			<nuxt-link 
-				:to="{name: 'index'}" 
-				class="logo_link"
-				>
-				<svg width="32px" height="16px" >
-					<g transform="translate(-16.000000, -16.000000)">
-						<path id="logo_path" fill="#fff" d="M41,24 L41,32 L33,32 L33,24 L33,16 L48,16 L48,24 L41,24 Z M31,24 L31,32 L23,32 L23,24 L16,24 L16,16 L31,16 L31,24 Z"></path>
-					</g>
-				</svg>
-			</nuxt-link>
-
-		</div>
-
-		<div class="content" id="content">
-			
 			<div class="exchanges_form">
 				<div class="left_pane">
 
@@ -69,9 +51,6 @@
 					</fieldset>
 				</form>
 			</div>
-		</div>
-
-	</div>
 
 
 </template>

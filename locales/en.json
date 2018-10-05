@@ -65,7 +65,16 @@
     "volume": "Volume",
     "part": "Part",
     "actuality": "Actuality"
+  },
+
+  "nav": {
+    "account": "Account",
+    "traders": "Traders",
+    "about": "About",
+    "settings": "Settings",
+    "logout": "Logout"
   }
+
 
 
 }
