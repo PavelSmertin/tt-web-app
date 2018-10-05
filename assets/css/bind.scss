@@ -496,6 +496,9 @@ svg {
 		color: $dark-primary-color;
 		display: block;
 		transition: 0.3s;
+		&.nuxt-link-exact-active {
+			color: $up-value-color;
+		}
 	}
 
 	a:hover {
@@ -525,4 +528,13 @@ svg {
 	cursor: pointer;
     position: absolute;
     right: 16px;
+}
+.ff_account_menu {
+	@extend .button_link;
+	font-size: $primary-size;
+	font-weight: 100;
+	line-height: 34px;
+    height: 32px;
+    position: absolute;
+    right: 64px;
 }

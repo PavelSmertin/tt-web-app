@@ -4,11 +4,11 @@
 		<div ref="tt_sidenav" class="sidenav">
 			<div class="sidenav_overflow">
 				<a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
-				<a href="#">{{ $t('nav.account') }}</a>
-				<a href="#">{{ $t('nav.traders') }}</a>
+				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
+				<nuxt-link :to="{ path: '/' }">{{ $t('nav.traders') }}</nuxt-link>
 				<a href="#">{{ $t('nav.about') }}</a>
 				<a href="#">{{ $t('nav.settings') }}</a>
-				<a href="#">{{ $t('nav.logout') }}</a>
+				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
 			</div>
 		</div>
 
@@ -30,6 +30,13 @@
 				<filters :label="$t('home.label_profit')" :options="profitOptions" />
 				<filters :label="$t('home.label_interval')" :options="intervalOptions" />
 			</div>
+
+			<nuxt-link 
+				v-if="!$auth.loggedIn"
+				:to="{ path: '/account/signin' }" 
+				class="ff_account_menu">
+				Сравнить свой портфель
+			</nuxt-link>
 
 			<span class="burger" v-on:click="openNav()">
 				&#9776;
