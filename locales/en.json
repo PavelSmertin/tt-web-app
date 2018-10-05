@@ -20,7 +20,7 @@
   },
 
   "home": {
-    "label_capitalization": "Capitalization",
+    "label_capitalization": "Capital",
     "label_profit": "Profit",
     "label_interval": "Period"
   },
@@ -54,10 +54,17 @@
       "api_key": "API key",
       "api_secret": "API secret",
       "api_add": "Add",
-      "added_exchanges": "Added exchanges"
-
+      "added_exchanges": "Added exchanges",
+      "exchange": "Exchange",
+      "choose_one": "Choose one"
     }
+  },
 
+  "coin": {
+    "price": "Price",
+    "volume": "Volume",
+    "part": "Part",
+    "actuality": "Actuality"
   }
 
 

@@ -1,12 +1,45 @@
 
 <template>
+
+
+
   <svg v-bind:style="styleObject">
 
 
-    <g
+    <g 
 		v-for="(node, index) in nodes"
 		v-if="node.children == undefined">
-		<rect v-on:click = "onNodeClick(node)" v-bind="rectPosition( node ) " ></rect>
+
+
+		<rect v-on:click = "onNodeClick($event, node)" v-bind="rectPosition( node ) " >
+
+
+			<animate 
+				attributeName="width"
+				dur="440ms" 
+				repeatCount="1"
+				keyTimes="0;
+							1"
+				calcMode="spline" 
+				keySplines="0,0,1,1;"
+				values="100px;
+						1000px;"
+				begin="click"
+			/>
+
+			<animate 
+				attributeName="height"
+				dur="440ms" 
+				repeatCount="1"
+				keyTimes="0;
+							1"
+				calcMode="spline" 
+				keySplines="0,0,1,1;"
+				values="100px;
+						1000px;"
+				begin="click"
+			/>
+		</rect>
 
 		<text > 
 			<tspan class="coin_name" v-bind="coinText( node, 220, 8 )">
@@ -37,7 +70,7 @@
 	import * as d3 from 'd3'
 	import Jsona from 'jsona'
 
-	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,change24h,part,amount_total_usdt,amount_total_btc,amount_total`
+	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
 
 
 	const dataFormatter = new Jsona()
@@ -180,8 +213,13 @@
 				}
 			},
 
-			onNodeClick: function(node) {
-			  this.$emit('node_click', node, this)
+			onNodeClick: function(event, node ) {
+
+				console.log( event.path[0].firstChild )
+				//event.path[0].firstChild.beginElement()
+
+				//this.$router.push('/ru/'+ node.data.name)
+				this.$emit('node_click', node, this)
 			},
 
 			formatPrice( value ) {
@@ -224,7 +262,7 @@
 	}
 
 	function simpleNodes( nodes ) {
-		return nodes.map( d => {return {'coin_name': d.coin_name, 'name': d.symbol, 'part': d.part, 'delta': d.change24h, 'value': d.amount_total_btc }; })
+		return nodes.map( d => {return {'coin_name': d.coin_name, 'name': d.symbol, 'part': d.part, 'delta': d.part_change, 'value': d.amount_total_btc }; })
 	}
 
 

@@ -48,16 +48,22 @@
     "congratulations": "Поздравляем!",
     "success_password": "Ваш пароль успешно изменен!",
 
-
     "forgot":  "Забыли пароль?",
 
     "portfolio": { 
       "api_key": "API key",
       "api_secret": "API secret",
       "api_add": "Добавить",
-      "added_exchanges": "Ваши биржи"
-
+      "added_exchanges": "Ваши биржи",
+      "exchange": "Выберите биржу",
+      "choose_one": "Выберите один из вариантов"
     }
-  }
+  },
 
+  "coin": {
+    "price": "Цена",
+    "volume": "Объем",
+    "part": "Доля в портфелях",
+    "actuality": "Актуальность"
+  }
 }

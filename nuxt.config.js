@@ -16,7 +16,12 @@ export default {
 	],
 
 	router: {
-		middleware: 'i18n'
+		middleware: 'i18n',
+		extendRoutes (routes, resolve) {
+			let parent 		= routes.find((route) => {return route.path === '/:lang'})
+			let langRoute 	= routes.find( r => r.path.includes(':lang') )
+			langRoute.path 	= '/:lang(ru|en)'
+		},
 	},
 
 	plugins: ['~/plugins/i18n.js'],

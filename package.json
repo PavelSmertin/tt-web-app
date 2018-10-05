@@ -13,7 +13,8 @@
     "jsona": "^1.2.0",
     "normalize.css": "^8.0.0",
     "nuxt": "^2.0.0",
-    "vue-i18n": "^7.3.2"
+    "vue-i18n": "^7.3.2",
+    "vue-timeago": "^3.4.4"
   },
   "devDependencies": {
     "node-sass": "^4.9.3",

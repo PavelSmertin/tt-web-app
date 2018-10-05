@@ -106,6 +106,14 @@ fieldset {
 	input::placeholder { 
 		color: $link-color; 
 	}
+
+	select {
+		height: 48px;
+		border: 1px solid $border-bold-color;
+		padding: 0 13px;
+		display: block;
+		background: none;
+	}
 }
 
 .button_link {
@@ -196,18 +204,17 @@ fieldset {
 			padding: 3px 6px;
 			font-size: $item-size;
 			line-height: $item-size+2;
-    		height: $item-size;
-    		cursor: pointer;
-    		transition: all 0.1s ease;
-    		&:hover:not(.active_filter) {
-    			background-color: $link-color-bg;
-    			border-color: $link-color-bg;
-    		}
-    		&.active_filter {
-    			background-color: $alternative-color-bg;
-    			color: $alternative-color-text;
-    		}
-
+			height: $item-size;
+			cursor: pointer;
+			transition: all 0.1s ease;
+			&:hover:not(.active_filter) {
+				background-color: $link-color-bg;
+				border-color: $link-color-bg;
+			}
+			&.active_filter {
+				background-color: $alternative-color-bg;
+				color: $alternative-color-text;
+			}
 		}
 	}
 }
@@ -412,7 +419,54 @@ fieldset {
 		flex-grow: 1;
 		padding: 0 12px
 	}
+}
 
 
 
+.content{
+	position: relative;
+}
+
+.coin_details {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	z-index: 1;
+	.coin_detail {
+		label {
+			font-size: $second_size;
+		}
+		.top_detail {
+			font-size: 48px;
+			margin-top: 8px;
+			color: $dark-primary-color;
+			&.symbol {
+				color: $primary-color;
+			}
+		}
+		.bottom_detail {
+			font-size: 24px;
+			margin-top: 12px;
+			opacity: 0.4;
+		}
+	}
+}
+.chart {
+	position: absolute;
+	background-color: $up-value-color;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+
+body {
+
+}
+
+svg {
+  path {
+    fill: #000;
+  }
 }
