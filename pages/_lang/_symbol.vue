@@ -6,12 +6,12 @@
 			<div class="coin_detail">
 				<label>{{ coin.coin_name }}</label>
 				<div class="top_detail symbol">{{ coin.symbol }}</div>
-				<div class="bottom_detail">{{ formatPrice(coin.part) }}%</div>
+				<div class="bottom_detail">{{ formatPrice(coin.part * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.price') }}</label>
 				<div class="top_detail">${{ formatPrice(coin.coin_price) }}</div>
-				<div class="bottom_detail">{{ formatPrice(coin.price_percent_change) }}%</div>
+				<div class="bottom_detail">{{ formatPrice(coin.price_percent_change * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.volume') }}</label>
@@ -20,8 +20,8 @@
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.part') }}</label>
-				<div class="top_detail">{{ formatPrice(coin.part) }}%</div>
-				<div class="bottom_detail">{{ formatPrice(coin.part_change) }}%</div>
+				<div class="top_detail">{{ formatPrice(coin.part * 100) }}%</div>
+				<div class="bottom_detail">{{ formatPrice(coin.part_change * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.actuality') }}</label>

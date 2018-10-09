@@ -6,59 +6,142 @@
   <svg v-bind:style="styleObject">
 
 
-    <g 
+	<svg 
 		v-for="(node, index) in nodes"
-		v-if="node.children == undefined">
+		v-if="node.children == undefined"
+		v-bind="rectPosition( node ) "
+		v-on:click = "onNodeClick($event, node)"
+		:id="node.data.name+'_svg'"
+		>
 
+		<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
 
-		<rect v-on:click = "onNodeClick($event, node)" v-bind="rectPosition( node ) " >
+		<animate 
+			attributeName="width"
+			dur="200ms" 
+			to="100%"
+			fill="freeze"
+			restart="never"
+			begin="click"
+		/>
 
+		<animate 
+			attributeName="height"
+			dur="200ms" 
+			to="100%"
+			fill="freeze"
+			restart="never"
+			begin="click"
+		/>
 
+		<animate 
+			attributeName="x"
+			dur="200ms" 
+			to="0"
+			fill="freeze"
+			restart="never"
+			begin="click"
+		/>
+
+		<animate 
+			attributeName="y"
+			dur="200ms" 
+			to="0"
+			fill="freeze"
+			restart="never"
+			begin="click"
+		/>
+		<animate 
+			:xlink:href="'#'+node.data.name+'_rect'"
+			attributeName="fill-opacity"
+			dur="200ms" 
+			to="1"
+			fill="freeze"
+			restart="never"
+			begin="click"
+			:id="'opacity_animation_'+node.data.name"
+		/>
+
+		<text class="coin_name" v-bind="coinTextFirst( node )">
+			{{ node.data.coin_name}}
 			<animate 
-				attributeName="width"
-				dur="440ms" 
-				repeatCount="1"
-				keyTimes="0;
-							1"
-				calcMode="spline" 
-				keySplines="0,0,1,1;"
-				values="100px;
-						1000px;"
+				attributeName="font-size"
+				dur="200ms" 
+				to="14"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
+			/>
+			<animate 
+				attributeName="dy"
+				dur="200ms" 
+				to="30"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
 			/>
 
-			<animate 
-				attributeName="height"
-				dur="440ms" 
-				repeatCount="1"
-				keyTimes="0;
-							1"
-				calcMode="spline" 
-				keySplines="0,0,1,1;"
-				values="100px;
-						1000px;"
-			/>
-		</rect>
-
-		<text > 
-			<tspan class="coin_name" v-bind="coinText( node, 220, 8 )">
-				{{ node.data.coin_name}}
-			</tspan>
-			<tspan class="symbol" v-bind="coinText( node, 590, 25 )">
-				{{ node.data.name}}
-			</tspan>
-			<tspan class="part" v-bind="coinText( node, 830, 13 )">
-				{{ formatPrice( node.data.part * 100) }}%
-			</tspan>
 		</text>
 
-		<text > 
-			<tspan class="delta"  v-bind="coinText( node, 350, 20, true, -12 )">
+		<text class="symbol" v-bind="coinTextSecond( node )">
+			{{ node.data.name}}
+			<animate 
+				attributeName="font-size"
+				dur="200ms" 
+				to="48"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
+			/>
+			<animate 
+				attributeName="dy"
+				dur="200ms" 
+				to="74"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
+			/>
+
+		</text>
+		<text class="part" v-bind="coinTextThird( node )">
+			{{ formatPrice( node.data.part * 100) }}%
+			<animate 
+				attributeName="font-size"
+				dur="200ms" 
+				to="24"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
+
+			/>
+			<animate 
+				attributeName="dy"
+				dur="200ms" 
+				to="104"
+				fill="freeze"
+				restart="never"
+				:begin="'opacity_animation_'+node.data.name+'.begin'"
+			/>
+		</text>
+
+		<text x="100%"> 
+			<tspan class="delta" v-bind="coinTextDelta( node )" text-anchor="end">
 				{{ formatPrice( node.data.delta * 100 ) }}%
+				<animate 
+					attributeName="font-size"
+					dur="200ms" 
+					to="0"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
 			</tspan>
+
 		</text>
+	</svg>
 
-    </g>
-
+	<use id="useRect" ref="useRect" :xlink:href="'#_svg'" />
+	<use id="useText" ref="useText" :xlink:href="'#_text'" />
 
   </svg>
 
@@ -128,16 +211,37 @@
 
 			  this.nodes = nodes
 			},
+
 		},
 		methods: {
+
 			rectPosition: function( node ) {
 
-				let xPosition = (node.x0 * 100 / this.treewidth) + '%'
-				let width = ((node.x1 - node.x0) * 100 / this.treewidth) + '%'
-				let yPosition =  (node.y0 * 100 / this.treeheight) + '%'
-				let height = ((node.y1 - node.y0) * 100 / this.treeheight) + '%'
-				let fill = node.data.delta > 0 ? '#7DB312' : '#D95757'
+				let xPosition = node.x0 + '%'
+				let width = (node.x1 - node.x0) + '%'
+				let yPosition =  node.y0 + '%'
+				let height = (node.y1 - node.y0) + '%'
 
+				if( this.portrait === true ) {
+					return {
+						'x': xPosition, 
+						'width': width,
+						'y': yPosition, 
+						'height': height, 
+					}
+				} else {
+					return {
+						'x': yPosition, 
+						'width': height,
+						'y': xPosition, 
+						'height': width, 
+					}
+				}
+			},
+
+			rectStyle: function( node ) {
+
+				let fill = node.data.delta > 0 ? '#7DB312' : '#D95757'
 				let delta = node.data.delta > 0 ? node.data.delta : -node.data.delta
 				let fillOpacity = 1
 
@@ -147,47 +251,114 @@
 
 				if( this.portrait === true ) {
 					return {
-						'x': xPosition, 
-						'width': width,
-						'y': yPosition, 
-						'height': height, 
+						'x': 0, 
+						'width': '100%',
+						'y': 0, 
+						'height': '100%', 
 						'fill': fill,
 						'fill-opacity': fillOpacity,
 					}
 				} else {
 					return {
-						'x': yPosition, 
-						'width': height,
-						'y': xPosition, 
-						'height': width, 
+						'x': 0, 
+						'width': '100%',
+						'y': 0, 
+						'height': '100%', 
 						'fill': fill,
 						'fill-opacity': fillOpacity,
 					}
 				}
 			},
 
-			coinText: function( node, marginTop, fontSize, rightAlign = false, marginLeft = 6 ) {
+			coinTextFirst: function( node ) {
+
+				let part = this.part( node.data.part )
+				let marginTop = 16
+				let fontSize = 14
+				let marginLeft = 16
 
 				if( this.portrait === true ) {
 					return {
-						'x': node.x0  + '%',
-						'y': rightAlign ? node.y1  + '%' : node.y0  + '%',
 						'dx': marginLeft, 
-						'dy': marginTop * node.data.part * 1.5, 
-						'font-size': fontSize * node.data.part * 1.5 + 'em',
-						'text-anchor': rightAlign ? 'end' : 'start',
+						'dy': marginTop + fontSize * part, 
+						'font-size': fontSize * part,
 					}
 				} else {
 					return {
-						'x': rightAlign ? node.y1  + '%' : node.y0  + '%',
-						'y': node.x0  + '%', 
 						'dx': marginLeft, 
-						'dy': marginTop * node.data.part * 1.5, 
-						'font-size': fontSize * node.data.part * 1.5 + 'em',
-						'text-anchor': rightAlign ? 'end' : 'start',
+						'dy': marginTop + fontSize * part, 
+						'font-size': fontSize * part,
 					}
 				}
 			},
+
+			coinTextSecond: function( node ) {
+
+				let part = this.part( node.data.part )
+				let marginTop = -4
+				let fontSize = 48
+				let marginLeft = 16
+
+				if( this.portrait === true ) {
+					return {
+						'dx': marginLeft, 
+						'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * part, 
+						'font-size': fontSize * part,
+					}
+				} else {
+					return {
+						'dx': marginLeft, 
+						'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * part, 
+						'font-size': fontSize * part,
+					}
+				}
+			},
+
+			coinTextThird: function( node ) {
+
+				let part = this.part( node.data.part )
+				let marginTop = 12
+				let fontSize = 24
+				let marginLeft = 16
+
+				if( this.portrait === true ) {
+					return {
+						'dx': marginLeft, 
+						'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
+						'font-size': fontSize * part,
+					}
+				} else {
+					return {
+						'dx': marginLeft, 
+						'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
+						'font-size': fontSize * part,
+					}
+				}
+			},
+
+			coinTextDelta: function( node ) {
+
+				let part = this.part( node.data.part )
+				let marginTop = 12
+				let fontSize = 64
+				let marginLeft = -16
+
+
+				if( this.portrait === true ) {
+					return {
+						'dx': marginLeft, 
+						'dy': marginTop + (fontSize - 2) * part, 
+						'font-size': fontSize * part,
+					}
+				} else {
+					return {
+						'dx': marginLeft, 
+						'dy': marginTop + (fontSize - 2) * part, 
+						'font-size': fontSize * part,
+					}
+				}
+			},
+
 
 			async calculateTree() {
 
@@ -213,6 +384,11 @@
 
 			onNodeClick: function(event, node ) {
 
+				console.log( event.path[0].firstChild )
+
+				document.getElementById('useRect').setAttribute("xlink:href", "#" + node.data.name + "_svg")
+				document.getElementById('useText').setAttribute("xlink:href", "#" + node.data.name + "_text")
+
 				//event.path[0].firstChild.beginElement()
 
 				this.$router.push('/ru/'+ node.data.name)
@@ -222,6 +398,14 @@
 			formatPrice( value ) {
 				let val = (value/1).toFixed(2)
 				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+			},
+
+			part( value ) {
+				let part = value * 15
+				if ( part > 1 ) {
+					part = 1
+				}
+				return part
 			},
 		}
 	}
@@ -264,10 +448,12 @@
 
 
 </script>
+
 <style>
     rect {
         stroke: #fff;
         stroke-width: 2px;
+        cursor: pointer;
     }
 
     .coin_name, .symbol, .part {
