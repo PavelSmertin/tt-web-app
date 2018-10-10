@@ -53,10 +53,12 @@
     "portfolio": { 
       "api_key": "API key",
       "api_secret": "API secret",
-      "api_add": "Add",
+      "api_add": "Add exchange",
       "added_exchanges": "Added exchanges",
       "exchange": "Exchange",
-      "choose_one": "Choose one"
+      "choose_one": "Choose one",
+      "guide": "Link your exchange.",
+      "guide_link": "Instruction"
     }
   },
 
@@ -72,7 +74,8 @@
     "traders": "Traders",
     "about": "About",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "compare": "Compare portfolio"
   }
 
 

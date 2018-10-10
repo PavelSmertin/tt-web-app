@@ -1,149 +1,146 @@
 
 <template>
 
+	<svg class="tt_portfolio_field" v-bind:style="styleObject">
 
+		<svg 
+			v-for="(node, index) in nodes"
+			v-if="node.children == undefined"
+			v-bind="rectPosition( node ) "
+			v-on:click = "onNodeClick($event, node)"
+			:id="node.data.name+'_svg'"
+			>
 
-  <svg v-bind:style="styleObject">
+			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
 
-
-	<svg 
-		v-for="(node, index) in nodes"
-		v-if="node.children == undefined"
-		v-bind="rectPosition( node ) "
-		v-on:click = "onNodeClick($event, node)"
-		:id="node.data.name+'_svg'"
-		>
-
-		<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
-
-		<animate 
-			attributeName="width"
-			dur="200ms" 
-			to="100%"
-			fill="freeze"
-			restart="never"
-			begin="click"
-		/>
-
-		<animate 
-			attributeName="height"
-			dur="200ms" 
-			to="100%"
-			fill="freeze"
-			restart="never"
-			begin="click"
-		/>
-
-		<animate 
-			attributeName="x"
-			dur="200ms" 
-			to="0"
-			fill="freeze"
-			restart="never"
-			begin="click"
-		/>
-
-		<animate 
-			attributeName="y"
-			dur="200ms" 
-			to="0"
-			fill="freeze"
-			restart="never"
-			begin="click"
-		/>
-		<animate 
-			:xlink:href="'#'+node.data.name+'_rect'"
-			attributeName="fill-opacity"
-			dur="200ms" 
-			to="1"
-			fill="freeze"
-			restart="never"
-			begin="click"
-			:id="'opacity_animation_'+node.data.name"
-		/>
-
-		<text class="coin_name" v-bind="coinTextFirst( node )">
-			{{ node.data.coin_name}}
 			<animate 
-				attributeName="font-size"
+				attributeName="width"
 				dur="200ms" 
-				to="14"
+				to="100%"
 				fill="freeze"
 				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
-			/>
-			<animate 
-				attributeName="dy"
-				dur="200ms" 
-				to="30"
-				fill="freeze"
-				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
+				begin="click"
 			/>
 
-		</text>
-
-		<text class="symbol" v-bind="coinTextSecond( node )">
-			{{ node.data.name}}
 			<animate 
-				attributeName="font-size"
+				attributeName="height"
 				dur="200ms" 
-				to="48"
+				to="100%"
 				fill="freeze"
 				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
-			/>
-			<animate 
-				attributeName="dy"
-				dur="200ms" 
-				to="74"
-				fill="freeze"
-				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
+				begin="click"
 			/>
 
-		</text>
-		<text class="part" v-bind="coinTextThird( node )">
-			{{ formatPrice( node.data.part * 100) }}%
 			<animate 
-				attributeName="font-size"
+				attributeName="x"
 				dur="200ms" 
-				to="24"
+				to="0"
 				fill="freeze"
 				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
-
+				begin="click"
 			/>
+
 			<animate 
-				attributeName="dy"
+				attributeName="y"
 				dur="200ms" 
-				to="104"
+				to="0"
 				fill="freeze"
 				restart="never"
-				:begin="'opacity_animation_'+node.data.name+'.begin'"
+				begin="click"
 			/>
-		</text>
+			<animate 
+				:xlink:href="'#'+node.data.name+'_rect'"
+				attributeName="fill-opacity"
+				dur="200ms" 
+				to="1"
+				fill="freeze"
+				restart="never"
+				begin="click"
+				:id="'opacity_animation_'+node.data.name"
+			/>
 
-		<text x="100%"> 
-			<tspan class="delta" v-bind="coinTextDelta( node )" text-anchor="end">
-				{{ formatPrice( node.data.delta * 100 ) }}%
+			<text class="coin_name" v-bind="coinTextFirst( node )">
+				{{ node.data.coin_name}}
 				<animate 
 					attributeName="font-size"
 					dur="200ms" 
-					to="0"
+					to="14"
 					fill="freeze"
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
 				/>
-			</tspan>
+				<animate 
+					attributeName="dy"
+					dur="200ms" 
+					to="30"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
 
-		</text>
+			</text>
+
+			<text class="symbol" v-bind="coinTextSecond( node )">
+				{{ node.data.name}}
+				<animate 
+					attributeName="font-size"
+					dur="200ms" 
+					to="48"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
+				<animate 
+					attributeName="dy"
+					dur="200ms" 
+					to="74"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
+
+			</text>
+			<text class="part" v-bind="coinTextThird( node )">
+				{{ formatPrice( node.data.part * 100) }}%
+				<animate 
+					attributeName="font-size"
+					dur="200ms" 
+					to="24"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+
+				/>
+				<animate 
+					attributeName="dy"
+					dur="200ms" 
+					to="104"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
+			</text>
+
+			<text x="100%"> 
+				<tspan class="delta" v-bind="coinTextDelta( node )" text-anchor="end">
+					{{ formatPrice( node.data.delta * 100 ) }}%
+					<animate 
+						attributeName="font-size"
+						dur="200ms" 
+						to="0"
+						fill="freeze"
+						restart="never"
+						:begin="'opacity_animation_'+node.data.name+'.begin'"
+					/>
+				</tspan>
+
+			</text>
+		</svg>
+
+		<use id="useRect" ref="useRect" :xlink:href="'#_rect'" />
+		<use id="useText" ref="useText" :xlink:href="'#_text'" />
+
 	</svg>
-
-	<use id="useRect" ref="useRect" :xlink:href="'#_svg'" />
-	<use id="useText" ref="useText" :xlink:href="'#_text'" />
-
-  </svg>
 
 </template>
 
@@ -384,8 +381,6 @@
 
 			onNodeClick: function(event, node ) {
 
-				console.log( event.path[0].firstChild )
-
 				document.getElementById('useRect').setAttribute("xlink:href", "#" + node.data.name + "_svg")
 				document.getElementById('useText').setAttribute("xlink:href", "#" + node.data.name + "_text")
 
@@ -450,21 +445,21 @@
 </script>
 
 <style>
-    rect {
-        stroke: #fff;
-        stroke-width: 2px;
-        cursor: pointer;
-    }
+	rect {
+		stroke: #fff;
+		stroke-width: 2px;
+		cursor: pointer;
+	}
 
-    .coin_name, .symbol, .part {
+	.coin_name, .symbol, .part {
 		fill: #000;
 		font-weight: 100;
-    }
+	}
 	.part {
 		opacity: 0.4;
 	}
-    .delta {
+	.delta {
 		fill: #fff;
 		font-weight: 100;
-    }
+	}
 </style>

@@ -25,18 +25,6 @@
 				</svg>
 			</nuxt-link>
 
-			<div class="filters">
-				<filters :label="$t('home.label_capitalization')" :options="capitalizationOptions" />
-				<filters :label="$t('home.label_profit')" :options="profitOptions" />
-				<filters :label="$t('home.label_interval')" :options="intervalOptions" />
-			</div>
-
-			<nuxt-link 
-				v-if="!$auth.loggedIn"
-				:to="{ path: '/account/signin' }" 
-				class="ff_account_menu">
-				{{ $t('nav.compare') }}
-			</nuxt-link>
 
 			<span class="burger" v-on:click="openNav()">
 				<svg width="24px" height="18px" viewBox="0 0 24 18">
@@ -60,35 +48,9 @@
 </template>
 
 <script>
-	import Filters from '~/components/Filters.vue'
 
 	export default {
 		
-		data() {
-			return {
-				capitalizationOptions: [
-					{ name: this.$t('filters.all'), value: 'all' },
-					{ name: this.$t('filters.10k'), value: '10k' },
-					{ name: this.$t('filters.100k'), value: '100k' },
-					{ name: this.$t('filters.1m'), value: '1m' },
-				],
-				profitOptions: [
-					{ name: this.$t('filters.all'), value: 'all' },
-					{ name: this.$t('filters.10p'), value: '10p' },
-					{ name: this.$t('filters.100p'), value: '100p' },
-					{ name: this.$t('filters.1000p'), value: '1000p' },
-				],
-				intervalOptions: [
-					{ name: this.$t('filters.interval.1d'), value: '1d' },
-					{ name: this.$t('filters.interval.1w'), value: '1w' },
-					{ name: this.$t('filters.interval.1m'), value: '1m' },
-				],
-			}
-		},
-		components: {
-			Filters,
-		},
-
 		methods: {
 			openNav() {
     			this.$refs["tt_sidenav"].style.width = "250px"

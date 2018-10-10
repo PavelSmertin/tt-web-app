@@ -5,24 +5,25 @@
     src: url(~assets/font/DINCondensedC.otf);
 }
 
-$font-stack: DINCondensedC, serif;
+$font-stack-headers: DINCondensedC, serif;
+$font-stack: Arial, "Helvetica Neue", Helvetica, sans-serif;
 
 
 $primary-color: #000;
 $dark-primary-color: #fff;
 $alternative-color-bg: #000;
 $alternative-color-text: #fff;
-
+$label-color: #666;
 
 $bg-main-color: #fff;
 $bg-toolbar-color: #fff;
 $link-color: #8FCC14;
 $link-color-bg: #D9D9D9;
 
-$border-bold-color: #D9D9D9;
+$border-bold-color: #979797;
 
-
-$primary-size: 16px;
+$header-size: 16px;
+$primary-size: 14px;
 $second_size: 14px;
 $label-size: 12px;
 $item-size: 16px;
@@ -39,29 +40,57 @@ body {
 	font: 100% $font-stack;
 	color: $primary-color;
 	font-size: $primary-size;
-	line-height:26px;
+	line-height:22px;
 }
 
 a {
 	color: $primary-color;
 	text-decoration: none;
+	&:hover {
+		text-decoration: none;
+		color: $link-color;
+	}
 }
-a:hover {
-	text-decoration: none;
-	color: $link-color;
+
+p {
+	a {
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }
+
 h1 {
-	font-size: 32px;
-	color: $primary-color;
+	font: 100% $font-stack-headers;
+	font-size: 48px;
+	line-height: 36px;
+	text-transform: uppercase;
+	margin: 0;
 }
 h2 {
-	font-size: 24px;
-	color: $primary-color;
+	font: 100% $font-stack-headers;
+	font-size: 32px;
+	line-height: 24px;
+	text-transform: uppercase;
+	margin: 0;
+
 }
 h3 {
-	font-size: 18px;
-	line-height: 20px;
-	color: $primary-color;
+	font: 100% $font-stack-headers;
+	font-size: $header-size;
+	line-height: 18px;
+	text-transform: uppercase;
+	margin: 0;
+}
+h4 {
+	font-weight: 100;
+	margin: 0;
+
+}
+
+p {
+	margin: 0;
 }
 
 fieldset {
@@ -84,22 +113,64 @@ fieldset {
 }
 
 
+.margin6 {
+	margin-top: 6px !important;
+}
+.margin8 {
+	margin-top: 8px !important;
+}
+.margin12 {
+	margin-top: 12px !important;
+}
+.margin15 {
+	margin-top: 15px !important;
+}
+.margin20 {
+	margin-top: 20px !important;
+}
+.margin24 {
+	margin-top: 24px !important;
+}
+.margin30 {
+	margin-top: 30px !important;
+}
+.margin40 {
+	margin-top: 40px !important;
+}
+.margin60 {
+	margin-top: 60px !important;
+}
+.margin80 {
+	margin-top: 80px !important;
+}
+
+
+.tt_label {
+	font-size: $label-size;
+	color: $label-color;
+	line-height: 16px;
+}
 
 .row_field {
 	margin-top: 12px;
 	display: flex;
 	flex-direction: column;
 	label {
+		font-size: $label-size;
 		display: block;
-		margin-bottom: 4px;
+		margin-bottom: 6px;
 		line-height: 16px;
 	}
 
 	input[type="text"], input[type="password"], input[type="email"]  {
 		height: 48px;
 		border: 1px solid $border-bold-color;
-		padding: 0 13px;
+		padding: 0 16px;
 		display: block;
+		font-size: $header-size;
+		font-family: $font-stack-headers;
+		text-transform: uppercase;
+
 	}
 
 	input::placeholder { 
@@ -107,12 +178,28 @@ fieldset {
 	}
 
 	select {
+		text-transform: uppercase;
+		font-size: $header-size;
+		font-family: $font-stack-headers;
 		height: 48px;
 		border: 1px solid $border-bold-color;
-		padding: 0 13px;
+		border-radius: 0px;
+		padding: 0 16px;
 		display: block;
 		background: none;
+		-webkit-appearance:none;
 	}
+	.button_link {
+		margin-top: 24px;
+		
+	}
+	&.row_right {
+		.button_link {
+			width: 50%;
+			align-self: flex-end;
+		}
+	}
+
 }
 
 .button_link {
@@ -124,7 +211,8 @@ fieldset {
 	border: 1px solid $border-bold-color;
 	background-color: $primary-color;
 	color: $dark-primary-color;
-	font-size: $label-size;
+	font-size: $header-size;
+	font-family: $font-stack-headers;
 	text-transform: uppercase;
 	font-weight: bold;
 	flex-grow: 0;
@@ -133,6 +221,13 @@ fieldset {
 		color: $primary-color;
 		transition: all 0.1s ease-in-out;
 	}
+}
+
+.ic_telegram_white {
+	background-image: url('~assets/images/telegram_white.svg');
+	width: 12px;
+	height: 12px;
+	display: inline-flex;
 }
 
 
@@ -157,6 +252,8 @@ fieldset {
 	align-items: center;
 	justify-content: center;
 	position: relative;
+	flex-shrink: 0;
+
 	.logo_link {
 		position: absolute;
 		left:16px;
@@ -184,6 +281,8 @@ fieldset {
 .filter {
 	display: flex;
 	align-items: baseline;
+	font-family: $font-stack-headers;
+
 	label {
 		font-size: $label-size;
 		line-height: $label-size;
@@ -217,7 +316,9 @@ fieldset {
 		}
 	}
 }
-
+.ff_account_menu {
+	font-family: $font-stack-headers;
+}
 
 
 
@@ -245,11 +346,12 @@ fieldset {
 			width: 100%;
 			height: $nav_height;
 			border-bottom: 1px solid $border-bold-color;
+			font-family: $font-stack-headers;
 
 			list-style: none;
 			margin: 0;
 			padding: 0;
-			font-size: $primary-size;
+			font-size: $header-size;
 
 			display: flex;
 			justify-content: center;
@@ -332,7 +434,8 @@ fieldset {
 				.row_link {
 					height: 48px;
 					color: $primary-color;
-					font-size: $label-size;
+					font-size: $header-size;
+					font-family: $font-stack-headers;
 					text-transform: uppercase;
 					font-weight: bold;
 					line-height: 48px;
@@ -411,22 +514,155 @@ fieldset {
 }
 
 
-.exchanges_form {
+
+.tt_exchanges {
 	display: flex;
 	width: 100%;
+
+	h2 {
+		margin: 80px 0 0 0;
+	}
+
+	.form_instruction {
+		margin-top: 24px;
+		a {
+			text-decoration: underline;
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+
 	.right_pane, .left_pane {
 		flex-grow: 1;
-		padding: 0 12px
+		padding: 0 24px;
+		width: 0;
+	}
+
+	.left_pane {
+		ul {
+			margin: 0;
+			padding: 0;
+			li {
+				display: flex;
+				line-height: 64px;
+				list-style: none;
+				border-bottom: 1px solid $border-bold-color;
+				span {
+					flex-grow: 1;
+				}
+				.remove_button {
+					flex-grow: 0;
+					font-size: 24px;
+					color: $border-bold-color;
+					align-self: flex-end;
+					padding: 0 6px;
+					cursor: pointer;
+				}
+			}
+		}
 	}
 }
 
+.tt_about {
+	width: 50%;
+	margin: 80px auto;
+	.column_block {
+		display: inline-block;
+		width: 32%;
+		vertical-align: top;
+		h4, p {
+			margin-right: 48px;
 
+		}
+		h4 {
+			margin-top: 24px;
+		}
+		p {
+			margin-top: 4px;
+		}
+	}
+
+	ul {
+
+		margin: 12px 0 0 0;
+		padding: 0;
+		li {
+			display: flex;
+			line-height: 64px;
+			list-style: none;
+			border-bottom: 1px solid $border-bold-color;
+
+			font-family: $font-stack-headers;
+			font-size: $header-size;
+			line-height: 64px;
+			text-transform: uppercase;
+			cursor: pointer;
+
+			.how_to_index {
+				flex-grow: 0;
+				margin-right: 12px;
+			}
+			.how_to_item {
+				flex-grow: 1;
+			}
+			.go_button {
+				flex-grow: 0;
+				font-size: 24px;
+				color: $border-bold-color;
+				align-self: flex-end;
+				padding: 0 6px;
+				cursor: pointer;
+				svg path{
+					fill: $border-bold-color;
+					stroke: $border-bold-color;
+				}
+			}
+			&:hover {
+				.how_to_item {
+					color: $link-color;
+				}
+				.go_button {
+					svg path{
+						fill: $primary-color;
+						stroke: $primary-color;
+					}
+				}
+			}
+			&:last-child {
+				border: none;
+			}
+		}
+	}
+
+	.button_link {
+		display: inline-block;
+		height: 32px;
+		line-height: 34px;
+		margin-bottom: 80px;
+		margin-top: 16px;
+		padding: 0 8px;
+		.ic_telegram_white {
+			margin-right: 8px;
+		}
+	}
+}
+
+.tt_portfolio_field {
+	svg {
+		text {
+				font-family: $font-stack-headers;
+		}
+	}
+}
 
 .content{
 	position: relative;
 }
 
 .coin_details {
+	font-family: $font-stack-headers;
+
 	width: 100%;
 	display: flex;
 	justify-content: space-around;
@@ -460,15 +696,7 @@ fieldset {
 }
 
 
-body {
 
-}
-
-svg {
-  path {
-    fill: #000;
-  }
-}
 
 
 
@@ -511,14 +739,6 @@ svg {
 		font-size: 36px;
 	}
 }
-
-
-
-#main {
-	transition: margin-left .5s;
-	padding: 20px;
-}
-
 @media screen and (max-height: 450px) {
 	.sidenav {padding-top: 15px;}
 	.sidenav a {font-size: 18px;}
@@ -531,7 +751,7 @@ svg {
 }
 .ff_account_menu {
 	@extend .button_link;
-	font-size: $primary-size;
+	font-size: $header-size;
 	font-weight: 100;
 	line-height: 34px;
     height: 32px;

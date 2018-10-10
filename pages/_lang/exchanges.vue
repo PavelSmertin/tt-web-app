@@ -1,13 +1,14 @@
 <template>
 
 
-			<div class="exchanges_form">
+			<div class="tt_exchanges">
 				<div class="left_pane">
 
-					<h1>{{ $t('account.portfolio.added_exchanges') }}</h1>
-					<ul>
+					<h2>{{ $t('account.portfolio.added_exchanges') }}</h2>
+					<ul class="margin40">
 						<li v-for="exchange in exchanges" v-bind:key="exchange.id">
-							{{ exchange.exchange.name }}
+							<span>{{ exchange.exchange.name }}</span>
+							<span class="remove_button">&times;</span>
 						</li>
 					</ul>
 				</div>
@@ -15,13 +16,21 @@
 
 				<form @keydown.enter.stop.prevent="add" name="PortfolioTraiderExchange" class="right_pane">
 					<fieldset>
+
+						<h2>{{ $t('account.portfolio.api_add') }}</h2>
+
+						<div class="form_instruction">
+							{{ $t('account.portfolio.guide') }}
+							<nuxt-link :to="{path: '/'}">{{ $t('account.portfolio.guide_link') }}</nuxt-link>
+						</div>
+
 						<ul v-if="errors" class="row_errors">
 							<li v-for="error of errors" v-bind:key="error">
 								{{error}}
 							</li>
 						</ul>
 
-						<div class="row_field">
+						<div class="row_field margin24">
 							<label class="ff_label">{{ $t('account.portfolio.exchange') }}</label>
 							<select v-model="selected">
 								<option value="">{{ $t('account.portfolio.choose_one') }}</option>
@@ -41,7 +50,7 @@
 							<input type="text" name="apiSecret" v-model="apiSecret">
 						</div>
 
-						<div class="row_field row_tools row_center">
+						<div class="row_field row_tools row_right">
 							<button v-if="!busy" class="button_link" @click.stop.prevent="add">
 								{{ $t('account.portfolio.api_add') }}
 							</button>
@@ -67,6 +76,8 @@
 	const dataFormatter = new Jsona()
 
 	export default {
+
+		layout: 'empty',
 
 		data() {
 			return {
