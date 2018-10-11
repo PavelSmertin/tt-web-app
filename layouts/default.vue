@@ -26,9 +26,9 @@
 			</nuxt-link>
 
 			<div class="filters">
-				<filters :label="$t('home.label_capitalization')" :options="capitalizationOptions" />
-				<filters :label="$t('home.label_profit')" :options="profitOptions" />
-				<filters :label="$t('home.label_interval')" :options="intervalOptions" />
+				<filters :label="$t('home.label_capitalization')" :options="capitalizationOptions" :selectedProp="$store.state.filters.cap"  v-on:updateOption="filter($event, 'cap')" />
+				<filters :label="$t('home.label_profit')" :options="profitOptions" :selectedProp="$store.state.filters.profit" v-on:updateOption="filter($event, 'profit')" />
+				<filters :label="$t('home.label_interval')" :options="intervalOptions" :selectedProp="$store.state.filters.period"  v-on:updateOption="filter($event, 'period')" />
 			</div>
 
 			<nuxt-link 
@@ -62,6 +62,10 @@
 <script>
 	import Filters from '~/components/Filters.vue'
 
+	const FILTER_TYPE_CAP = 'cap'
+	const FILTER_TYPE_PROFIT = 'profit'
+	const FILTER_TYPE_PERIOD = 'period'
+
 	export default {
 		
 		data() {
@@ -74,9 +78,9 @@
 				],
 				profitOptions: [
 					{ name: this.$t('filters.all'), value: 'all' },
-					{ name: this.$t('filters.10p'), value: '10p' },
-					{ name: this.$t('filters.100p'), value: '100p' },
-					{ name: this.$t('filters.1000p'), value: '1000p' },
+					{ name: this.$t('filters.10p'), value: '10' },
+					{ name: this.$t('filters.100p'), value: '100' },
+					{ name: this.$t('filters.1000p'), value: '1000' },
 				],
 				intervalOptions: [
 					{ name: this.$t('filters.interval.1d'), value: '1d' },
@@ -91,12 +95,18 @@
 
 		methods: {
 			openNav() {
-    			this.$refs["tt_sidenav"].style.width = "250px"
+				this.$refs["tt_sidenav"].style.width = "250px"
 			},
 
 			closeNav() {
-			    this.$refs["tt_sidenav"].style.width = "0"
+				this.$refs["tt_sidenav"].style.width = "0"
 			},
-		}
+
+			filter ( filter, type ) {
+				this.$store.commit( 'SET_FILTER', { type: type, value: filter.value } )
+			},
+		},
+
+
 	}
 </script>

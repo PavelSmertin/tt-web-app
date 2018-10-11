@@ -24,15 +24,15 @@
                 type: [Array, Object]
             },
             selectedProp: { 
-                type: Object, 
-                default() { return { value: 'all' }}
+                type: String, 
+                default() { return 'all' }
             },
         },
 
         computed: {
             selectedItem: {
                 get: function () {
-                    return this.selectedItemData || this.selectedProp
+                    return this.selectedItemData || { value: this.selectedProp }
                 },
                 set: function (newValue) {
                     this.selectedItemData = newValue
@@ -46,11 +46,12 @@
                 this.selectedItem = option
                 this.$emit('updateOption', this.selectedItem)
             },
+
             isActiveFilter( option ) {
                 return {
                     'active_filter': option.value === this.selectedItem.value
                 }
-            } 
+            }
         }
     }
 </script>

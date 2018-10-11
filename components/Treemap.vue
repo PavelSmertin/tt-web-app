@@ -147,8 +147,11 @@
 <script>
 	import * as d3 from 'd3'
 	import Jsona from 'jsona'
+	import _ from 'lodash'
+
 
 	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
+
 
 
 	const dataFormatter = new Jsona()
@@ -210,6 +213,7 @@
 			},
 
 		},
+
 		methods: {
 
 			rectPosition: function( node ) {
@@ -358,7 +362,6 @@
 
 
 			async calculateTree() {
-
 				try {
 					const data = await this.$axios.get( requestPortfolio(this.$store.state.filters) )
 					let dataObj = simpleNodes(dataFormatter.deserialize( data.data ))
@@ -402,14 +405,26 @@
 				}
 				return part
 			},
-		}
+		},
+
+		watch: {
+			'$store.state.filters': {
+				handler: _.debounce( function ( newValue ) {
+					this.calculateTree()
+				}, 100 ),
+				deep: true
+			}
+		},
+
+
 	}
 
 
 	function requestPortfolio( filters ) {
-		let filterQuery = ''
-			// (filters.type ? '&filters[news-translated][type]=' + filters.type : '') + 
-			// (filters.symbol ? '&filters[portfolio-coins][symbol]=' + upSymbol(filters.symbol) : '')
+		let filterQuery = 
+			( filters.cap ? '&cap=' + filters.cap : '' ) + 
+			( filters.period ? '&period=' + filters.period : '' ) +
+			( filters.profit ? '&profit=' + filters.profit : '' )
 
 		return REQUEST_PORTFOLIO + filterQuery
 	}
