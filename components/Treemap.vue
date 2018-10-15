@@ -271,39 +271,23 @@
 
 				return {
 					'dx': marginLeft, 
-					'dy': this.hidden( node.data.part ) == 'hidden' ? marginTop : marginTop + fontSize * part, 
+					'dy': marginTop + fontSize * part, 
 					'font-size': fontSize * part,
-					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
 			coinTextSecond: function( node ) {
 
-				let part = node.data.part * 15
-				if ( part > 1 ) {
-					part = 1
-				}
-
 				const marginTop = -4
 				const fontSize = 48
 				const marginLeft = 16
 
-				if (part < 0.5 ) {
-					return {
-						'dx': 0, 
-						'dy': ((fontSize-12) * Math.sqrt(part) )/2,
-						'x': '50%',
-						'y': '50%',
-						'text-anchor': 'middle',
-						'font-size': fontSize * Math.sqrt(part),
-					}
-				} else {
-					return {
-						'dx': marginLeft, 
-						'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * part, 
-						'font-size': fontSize * part ,
-					}
+				return {
+					'dx': marginLeft, 
+					'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * this.part( node.data.part ), 
+					'font-size': fontSize * part ,
 				}
+
 			},
 
 			coinTextThird: function( node ) {
@@ -317,7 +301,6 @@
 					'dx': marginLeft, 
 					'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
 					'font-size': fontSize * part,
-					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
@@ -340,10 +323,6 @@
 				let part = value * 15
 				if ( part > 1 ) {
 					part = 1
-				}
-
-				if ( part < 0.5 ) {
-					part = 0.5
 				}
 
 				return part
