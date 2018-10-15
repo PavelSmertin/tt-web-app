@@ -14,14 +14,15 @@
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
 
 			<animate 
+				:id="'width_animation_'+node.data.name"
 				attributeName="width"
 				dur="200ms" 
 				to="100%"
 				fill="freeze"
 				restart="never"
 				begin="click"
+				:onend="onend"
 			/>
-
 			<animate 
 				attributeName="height"
 				dur="200ms" 
@@ -30,7 +31,6 @@
 				restart="never"
 				begin="click"
 			/>
-
 			<animate 
 				attributeName="x"
 				dur="200ms" 
@@ -39,7 +39,6 @@
 				restart="never"
 				begin="click"
 			/>
-
 			<animate 
 				attributeName="y"
 				dur="200ms" 
@@ -77,9 +76,7 @@
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
 				/>
-
 			</text>
-
 			<text class="symbol" v-bind="coinTextSecond( node )">
 				{{ node.data.name}}
 				<animate 
@@ -98,7 +95,6 @@
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
 				/>
-
 			</text>
 			<text class="part" v-bind="coinTextThird( node )">
 				{{ formatPrice( node.data.part * 100) }}%
@@ -133,7 +129,6 @@
 						:begin="'opacity_animation_'+node.data.name+'.begin'"
 					/>
 				</tspan>
-
 			</text>
 		</svg>
 
@@ -149,13 +144,9 @@
 	import Jsona from 'jsona'
 	import _ from 'lodash'
 
-
 	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
 
-
-
 	const dataFormatter = new Jsona()
-
 
 	export default {
 
@@ -273,102 +264,110 @@
 
 			coinTextFirst: function( node ) {
 
-				let part = this.part( node.data.part )
-				let marginTop = 16
-				let fontSize = 14
-				let marginLeft = 16
+				const part = this.part( node.data.part )
+				const marginTop = 16
+				const fontSize = 14
+				const marginLeft = 16
 
-				if( this.portrait === true ) {
-					return {
-						'dx': marginLeft, 
-						'dy': marginTop + fontSize * part, 
-						'font-size': fontSize * part,
-					}
-				} else {
-					return {
-						'dx': marginLeft, 
-						'dy': marginTop + fontSize * part, 
-						'font-size': fontSize * part,
-					}
+				return {
+					'dx': marginLeft, 
+					'dy': this.hidden( node.data.part ) == 'hidden' ? marginTop : marginTop + fontSize * part, 
+					'font-size': fontSize * part,
+					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
 			coinTextSecond: function( node ) {
 
-				let part = this.part( node.data.part )
-				let marginTop = -4
-				let fontSize = 48
-				let marginLeft = 16
+				let part = node.data.part * 15
+				if ( part > 1 ) {
+					part = 1
+				}
 
-				if( this.portrait === true ) {
+				const marginTop = -4
+				const fontSize = 48
+				const marginLeft = 16
+
+				if (part < 0.5 ) {
 					return {
-						'dx': marginLeft, 
-						'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * part, 
-						'font-size': fontSize * part,
+						'dx': 0, 
+						'dy': ((fontSize-12) * Math.sqrt(part) )/2,
+						'x': '50%',
+						'y': '50%',
+						'text-anchor': 'middle',
+						'font-size': fontSize * Math.sqrt(part),
 					}
 				} else {
 					return {
 						'dx': marginLeft, 
 						'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * part, 
-						'font-size': fontSize * part,
+						'font-size': fontSize * part ,
 					}
 				}
 			},
 
 			coinTextThird: function( node ) {
 
-				let part = this.part( node.data.part )
-				let marginTop = 12
-				let fontSize = 24
-				let marginLeft = 16
+				const part = this.part( node.data.part )
+				const marginTop = 12
+				const fontSize = 24
+				const marginLeft = 16
 
-				if( this.portrait === true ) {
-					return {
-						'dx': marginLeft, 
-						'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
-						'font-size': fontSize * part,
-					}
-				} else {
-					return {
-						'dx': marginLeft, 
-						'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
-						'font-size': fontSize * part,
-					}
+				return {
+					'dx': marginLeft, 
+					'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
+					'font-size': fontSize * part,
+					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
 			coinTextDelta: function( node ) {
 
-				let part = this.part( node.data.part )
-				let marginTop = 12
-				let fontSize = 64
-				let marginLeft = -16
+				const part = this.part( node.data.part )
+				const marginTop = 12
+				const fontSize = 64
+				const marginLeft = -16
 
-
-				if( this.portrait === true ) {
-					return {
-						'dx': marginLeft, 
-						'dy': marginTop + (fontSize - 2) * part, 
-						'font-size': fontSize * part,
-					}
-				} else {
-					return {
-						'dx': marginLeft, 
-						'dy': marginTop + (fontSize - 2) * part, 
-						'font-size': fontSize * part,
-					}
+				return {
+					'dx': marginLeft, 
+					'dy': marginTop + (fontSize - 2) * part, 
+					'font-size': fontSize * part,
+					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
+			part( value ) {
+				let part = value * 15
+				if ( part > 1 ) {
+					part = 1
+				}
+
+				if ( part < 0.5 ) {
+					part = 0.5
+				}
+
+				return part
+			},
+
+			hidden( value ) {
+				let part = value * 15
+				return part < 0.5 ? 'hidden' : 'visibility'
+			},
 
 			async calculateTree() {
 				try {
 					const data = await this.$axios.get( requestPortfolio(this.$store.state.filters) )
+
+					// let dd = dataFormatter.deserialize( data.data )
+					// dd = dd.map(el => el.part)
+					// var sum = dd.reduce(add, 0);
+					// console.log(sum)
+
 					let dataObj = simpleNodes(dataFormatter.deserialize( data.data ))
 
 					let root = d3.hierarchy({"name": "A", "children": dataObj })
 									.sum(function(d) {
-										return d.value
+										return d.value * 100
 									})
 
 					return d3.treemap()
@@ -389,7 +388,7 @@
 
 				//event.path[0].firstChild.beginElement()
 
-				this.$router.push('/ru/'+ node.data.name)
+				//this.$router.push('/ru/'+ node.data.name)
 				this.$emit('node_click', node, this)
 			},
 
@@ -398,13 +397,9 @@
 				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 			},
 
-			part( value ) {
-				let part = value * 15
-				if ( part > 1 ) {
-					part = 1
-				}
-				return part
-			},
+			onend() {
+				console.log('event1')
+			}
 		},
 
 		watch: {
@@ -416,9 +411,11 @@
 			}
 		},
 
-
 	}
 
+	function add(a, b) {
+	    return a + b
+	}
 
 	function requestPortfolio( filters ) {
 		let filterQuery = 
@@ -453,7 +450,7 @@
 	}
 
 	function simpleNodes( nodes ) {
-		return nodes.map( d => {return {'coin_name': d.coin_name, 'name': d.symbol, 'part': d.part, 'delta': d.part_change, 'value': d.amount_total_btc }; })
+		return nodes.map( d => {return {'coin_name': d.coin_name, 'name': d.symbol, 'part': d.part, 'delta': d.part_change, 'value': d.part }; })
 	}
 
 
