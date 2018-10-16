@@ -285,7 +285,7 @@
 				return {
 					'dx': marginLeft, 
 					'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * this.part( node.data.part ), 
-					'font-size': fontSize * part ,
+					'font-size': fontSize * this.part( node.data.part ),
 				}
 
 			},
