@@ -11,21 +11,26 @@
 			:id="node.data.name+'_svg'"
 			>
 
+
+
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
+
+			<Graph :symbol="node.data.name" />
+
 
 			<animate 
 				:id="'width_animation_'+node.data.name"
 				attributeName="width"
-				dur="200ms" 
+				:dur="animationDurable" 
 				to="100%"
 				fill="freeze"
 				restart="never"
 				begin="click"
-				:onend="onend"
+				:onend="onend()"
 			/>
 			<animate 
 				attributeName="height"
-				dur="200ms" 
+				:dur="animationDurable" 
 				to="100%"
 				fill="freeze"
 				restart="never"
@@ -33,7 +38,7 @@
 			/>
 			<animate 
 				attributeName="x"
-				dur="200ms" 
+				:dur="animationDurable" 
 				to="0"
 				fill="freeze"
 				restart="never"
@@ -41,7 +46,7 @@
 			/>
 			<animate 
 				attributeName="y"
-				dur="200ms" 
+				:dur="animationDurable" 
 				to="0"
 				fill="freeze"
 				restart="never"
@@ -50,7 +55,7 @@
 			<animate 
 				:xlink:href="'#'+node.data.name+'_rect'"
 				attributeName="fill-opacity"
-				dur="200ms" 
+				:dur="animationDurable" 
 				to="1"
 				fill="freeze"
 				restart="never"
@@ -62,7 +67,7 @@
 				{{ node.data.coin_name}}
 				<animate 
 					attributeName="font-size"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="14"
 					fill="freeze"
 					restart="never"
@@ -70,7 +75,7 @@
 				/>
 				<animate 
 					attributeName="dy"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="30"
 					fill="freeze"
 					restart="never"
@@ -81,7 +86,7 @@
 				{{ node.data.name}}
 				<animate 
 					attributeName="font-size"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="48"
 					fill="freeze"
 					restart="never"
@@ -89,7 +94,7 @@
 				/>
 				<animate 
 					attributeName="dy"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="74"
 					fill="freeze"
 					restart="never"
@@ -100,7 +105,7 @@
 				{{ formatPrice( node.data.part * 100) }}%
 				<animate 
 					attributeName="font-size"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="24"
 					fill="freeze"
 					restart="never"
@@ -109,7 +114,7 @@
 				/>
 				<animate 
 					attributeName="dy"
-					dur="200ms" 
+					:dur="animationDurable" 
 					to="104"
 					fill="freeze"
 					restart="never"
@@ -122,7 +127,7 @@
 					{{ formatPrice( node.data.delta * 100 ) }}%
 					<animate 
 						attributeName="font-size"
-						dur="200ms" 
+						:dur="animationDurable" 
 						to="0"
 						fill="freeze"
 						restart="never"
@@ -134,7 +139,6 @@
 
 		<use id="useRect" ref="useRect" :xlink:href="'#_rect'" />
 		<use id="useText" ref="useText" :xlink:href="'#_text'" />
-
 	</svg>
 
 </template>
@@ -143,8 +147,12 @@
 	import * as d3 from 'd3'
 	import Jsona from 'jsona'
 	import _ from 'lodash'
+	import Graph from '~/components/Graph.vue'
+
 
 	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
+
+	const REQUEST_GRAPHS = `/api/portfolios/coin-graph`
 
 	const dataFormatter = new Jsona()
 
@@ -153,13 +161,19 @@
 		data() {
 			return { 
 				portrait: false,
+				animationDurable: '50ms',
 				nodes: [],
+				graphs: [],
 			}
 		},
+
 		mounted() {
 			this.portrait = document.getElementById('content').offsetWidth < document.getElementById('content').offsetHeight
 			this.retrieveNodes
+			this.retrieveGraphs
+
 		},
+
 		props: {
 			sizefield: {
 			  type: String,
@@ -186,23 +200,42 @@
 			    default: d3.scaleOrdinal(d3.schemeCategory10)
 			}
 		},
+
 		computed: {
 			styleObject: function() {
 			  return {width: '100%'}
 			},
 			async treemap() { return await this.calculateTree() },
+
 			async retrieveNodes () {
-			  var color = this.color;
-			  var nodes = []
+				var color = this.color;
+				var nodes = []
 
-			  let treemap = await this.treemap
-			  treemap.each(function(d) {
-			    nodes.push(d);
-			  })
+				let treemap = await this.treemap
+				treemap.each(function(d) {
+					nodes.push(d);
+				})
 
-			  this.nodes = nodes
+				this.nodes = nodes
 			},
 
+			async retrieveGraphs () {
+				var color = this.color;
+				var nodes = []
+
+				try {
+					const data = await this.$axios.get( requestGraph(this.$store.state.filters) )
+					this.$store.commit( 'SET_GRAPHS', data.data )
+
+				} catch(error) {
+					console.error(error)
+				}
+
+			},
+		},
+
+		components: {
+			Graph,
 		},
 
 		methods: {
@@ -315,7 +348,6 @@
 					'dx': marginLeft, 
 					'dy': marginTop + (fontSize - 2) * part, 
 					'font-size': fontSize * part,
-					'visibility': this.hidden( node.data.part ),
 				}
 			},
 
@@ -344,7 +376,7 @@
 
 					let dataObj = simpleNodes(dataFormatter.deserialize( data.data ))
 
-					let root = d3.hierarchy({"name": "A", "children": dataObj })
+					let root = d3.hierarchy({"name": "root", "children": dataObj })
 									.sum(function(d) {
 										return d.value * 100
 									})
@@ -377,9 +409,18 @@
 			},
 
 			onend() {
-				console.log('event1')
-			}
+				return "console.log('event1')"
+			},
+
+			symbolToUppercase( value ) {
+				if( value ) {
+					return value.toUpperCase()
+				} else {
+					return null
+				}
+			},
 		},
+
 
 		watch: {
 			'$store.state.filters': {
@@ -404,6 +445,17 @@
 
 		return REQUEST_PORTFOLIO + filterQuery
 	}
+
+	function requestGraph( filters ) {
+		let filterQuery = 
+			( filters.cap ? '?cap=' + filters.cap : '' ) + 
+			'&period=1D'  +
+			( filters.profit ? '&profit=' + filters.profit : '' )
+
+		return REQUEST_GRAPHS + filterQuery
+	}
+
+
 
 	function hierarchyNodes( nodes ) {
 

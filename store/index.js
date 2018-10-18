@@ -2,6 +2,7 @@ export const state = () => ({
 	locales: ['en', 'ru'],
 	locale: 'ru',
 	filters: {cap: 'all', period: '1m', profit: 'all'},
+	graphs: [],
 })
 
 export const mutations = {
@@ -14,6 +15,10 @@ export const mutations = {
 
 	SET_FILTER: function (state, filter) {
 		state.filters[filter.type] = filter.value
+	},
+
+	SET_GRAPHS: function (state, graphs) {
+		state.graphs = graphs
 	},
 
 
