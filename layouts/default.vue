@@ -13,7 +13,7 @@
 				<nuxt-link :to="{ path: '/about' }">{{ $t('nav.about') }}</nuxt-link>
 
 				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
-				<nuxt-link v-else :to="{ path: '/account/signup' }" >{{ $t('account.signin') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signin') }}</nuxt-link>
 			</div>
 		</div>
 
@@ -34,7 +34,7 @@
 
 			<nuxt-link 
 				v-if="!$auth.loggedIn"
-				:to="{ path: '/account/signin' }" 
+				:to="{ path: '/account/signup' }" 
 				class="ff_account_menu">
 				{{ $t('account.signup') }}
 			</nuxt-link>
