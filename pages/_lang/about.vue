@@ -5,7 +5,7 @@
 
 
 		<h1>О СЕРВИСЕ</h1>
-		<p class="margin24">Trader Trends создан с целью отслеживания движеня монет в портфелях криптосообщества и визуализации обобщенных данных. С его помощью можно мониторить изменение долей криптовалют у различных групп трейдеров в реальном времени.</p>
+		<p class="margin24">Trader Trends создан с целью отслеживания движения монет в портфелях криптосообщества и визуализации обобщенных данных. С его помощью можно мониторить изменение долей криптовалют у различных групп трейдеров в реальном времени.</p>
 
 		<h2 class="margin80">КАК РАБОТАЕТ</h2>
 		<p class="margin24">В открытом доступе информация о состоянии портфелей отображается с 7 дневной задержкой.  Для получения данных в реальном времени необходимо зарегистрироваться.</p>
@@ -65,9 +65,12 @@
 
 
 		<h2 class="margin80">ОБРАТНАЯ СВЯЗЬ</h2>
-		<p class="margin24">Присоединяйтесь в наше сообщество Early Adopters в телеграм <a href="#">TraderTrends.FF</a> и получайте первым доступ к новым функциям и эксклюзивным отчетам.</p>
+		<p class="margin24">Присоединяйтесь в наше сообщество Early Adopters в телеграм <a href="https://telegram.im/@TraderTrends" rel="nofollow noopener" target="_blank">TraderTrends.FF</a> и получайте первым доступ к новым функциям и эксклюзивным отчетам.</p>
 
-		<a href="#" class="button_link"><span class="ic_telegram_white"></span><span>TraderTrends.FF</span></a>
+		<a href="https://telegram.im/@TraderTrends" class="button_link" rel="nofollow noopener" target="_blank">
+			<span class="ic_telegram_white"></span>
+			<span>TraderTrends.FF</span>
+		</a>
 
 	</div>
 

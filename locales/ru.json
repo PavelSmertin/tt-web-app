@@ -49,6 +49,8 @@
     "success_password": "Ваш пароль успешно изменен!",
 
     "forgot":  "Забыли пароль?",
+    "forgot_email":  "Укажите ваш E-Mail для восстановления пароля",
+
 
     "portfolio": { 
       "api_key": "API key",

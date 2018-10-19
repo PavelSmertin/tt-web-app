@@ -11,10 +11,6 @@
         <input type="email" name="email" v-model="email">
       </div>
       <div class="row_field">
-        <label class="ff-label">{{ $t('account.login') }}</label>
-        <input type="email" name="user_name" v-model="name">
-      </div>
-      <div class="row_field">
         <label class="ff-label">{{ $t('account.password') }}</label>
         <input type="password" v-model="password" name="password">
       </div>

@@ -4,11 +4,17 @@
 		<div ref="tt_sidenav" class="sidenav">
 			<div class="sidenav_overflow">
 				<a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
-				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
+
 				<nuxt-link :to="{ path: '/' }">{{ $t('nav.traders') }}</nuxt-link>
+
+				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signup' }" >{{ $t('account.signup') }}</nuxt-link>
+
 				<nuxt-link :to="{ path: '/about' }">{{ $t('nav.about') }}</nuxt-link>
-				<a href="#">{{ $t('nav.settings') }}</a>
+
 				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signin') }}</nuxt-link>
+				
 			</div>
 		</div>
 

@@ -4,11 +4,16 @@
 		<div ref="tt_sidenav" class="sidenav">
 			<div class="sidenav_overflow">
 				<a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
-				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
+
 				<nuxt-link :to="{ path: '/' }">{{ $t('nav.traders') }}</nuxt-link>
+
+				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signup') }}</nuxt-link>
+
 				<nuxt-link :to="{ path: '/about' }">{{ $t('nav.about') }}</nuxt-link>
-				<a href="#">{{ $t('nav.settings') }}</a>
+
 				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signin') }}</nuxt-link>
 			</div>
 		</div>
 
@@ -18,11 +23,7 @@
 				:to="{name: 'index'}" 
 				class="logo_link"
 				>
-				<svg width="32px" height="16px" >
-					<g transform="translate(-16.000000, -16.000000)">
-						<path id="logo_path" fill="#fff" d="M41,24 L41,32 L33,32 L33,24 L33,16 L48,16 L48,24 L41,24 Z M31,24 L31,32 L23,32 L23,24 L16,24 L16,16 L31,16 L31,24 Z"></path>
-					</g>
-				</svg>
+				<img src="~assets/images/logo.svg" alt="tt"/>
 			</nuxt-link>
 
 			<div class="filters">
@@ -35,7 +36,7 @@
 				v-if="!$auth.loggedIn"
 				:to="{ path: '/account/signin' }" 
 				class="ff_account_menu">
-				{{ $t('nav.compare') }}
+				{{ $t('account.signup') }}
 			</nuxt-link>
 
 			<span class="burger" v-on:click="openNav()">

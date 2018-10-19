@@ -8,7 +8,7 @@
         </li>
       </ul>
       <div class="row_field">
-        <label class="ff-label">{{ $t('account.email') }}</label>
+        <label class="ff-label">{{ $t('account.forgot_email') }}</label>
         <input type="email" name="email" v-model="email">
       </div>
 
