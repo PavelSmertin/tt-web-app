@@ -199,7 +199,6 @@ fieldset {
 			align-self: flex-end;
 		}
 	}
-
 }
 
 .button_link {
@@ -228,6 +227,32 @@ fieldset {
 	width: 12px;
 	height: 12px;
 	display: inline-flex;
+}
+
+
+
+.ff_close {
+	background: none;
+	border:none;
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	cursor: pointer;
+	padding: 0 12px;
+	height: 56px;
+	&:focus {
+		outline: none;
+	}
+	svg {
+		width: 48px;
+		height: 48px;
+	}
+	&:hover {
+		.stroked {
+			stroke: $link-color;
+		}
+	}
 }
 
 
@@ -665,15 +690,16 @@ fieldset {
 
 	width: 100%;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	z-index: 1;
 	.coin_detail {
+		margin-top: 16px;
 		label {
 			font-size: $second_size;
 		}
 		.top_detail {
 			font-size: 48px;
-			margin-top: 8px;
+			margin-top: 14px;
 			color: $dark-primary-color;
 			&.symbol {
 				color: $primary-color;
@@ -681,18 +707,43 @@ fieldset {
 		}
 		.bottom_detail {
 			font-size: 24px;
-			margin-top: 12px;
+			margin-top: 16px;
 			opacity: 0.4;
+		}
+		&:first-child {
+			margin-left: 64px;
+		}
+		&:last-child {
+			margin-right: 64px;
 		}
 	}
 }
 .chart {
 	position: absolute;
-	background-color: $up-value-color;
+	background-color: $down-value-color;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
+
+	display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: stretch;
+
+	.ff_close {
+		position: absolute;
+		top: 12px;
+		right: 0;
+		z-index: 20;
+	}
+	&.up {
+		background-color: $up-value-color;
+	}
+	.graph {
+		flex-grow: 1;
+		width: 100%;
+	}
 }
 
 

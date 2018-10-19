@@ -2,25 +2,10 @@
 <template>
 
 		<svg viewBox="0 -40 100 150" preserveAspectRatio="none" >
-				<defs>
-				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="1">
-					<stop offset="0%" stop-color="#fff"/>
-					<stop offset="20%" stop-color="#fff" stop-opacity="0"/>
-				</linearGradient>
-				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="1">
-					<stop offset="0%" stop-color="#000"/>
-					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
-				</linearGradient>
-			</defs>
-
-
 			<path class="linePrice" :d="linePrice" vector-effect="non-scaling-stroke" />		
  			<path class="areaPrice" :d="areaPrice"  vector-effect="non-scaling-stroke"/>
-
-
 			<path class="linePart" :d="linePart" vector-effect="non-scaling-stroke" />		
  			<path class="areaPart" :d="areaPart"  vector-effect="non-scaling-stroke"/>
-
 		</svg>
 
 
@@ -72,6 +57,10 @@
 			}
 		},
 
+		mounted() {
+			this.init()
+		},
+
 		methods: {
 
 
@@ -104,23 +93,28 @@
 
 				return { path: path(data), area: area(data) }
 			},
+
+			init() {
+				console.log('init')
+				let lineData = this.$store.state.graphs[this.symbol]
+				if(lineData == undefined) {
+					return
+				}
+				this.lineArray = lineData.map(el => el.price_usdt)
+				this.partArray = lineData.map(el => el.part)
+				let chartPrice = this.calculate(this.lineArray)
+				let chartPart = this.calculate(this.partArray)
+				this.linePrice = chartPrice.path
+				this.areaPrice = chartPrice.area
+				this.linePart = chartPart.path
+				this.areaPart = chartPart.area	
+			},
 		},
 
 		watch: {
 			'$store.state.graphs': {
 				handler: function ( newValue ) {
-					let lineData = this.$store.state.graphs[this.symbol]
-					if(lineData == undefined) {
-						return
-					}
-					this.lineArray = lineData.map(el => el.price_usdt)
-					this.partArray = lineData.map(el => el.part)
-					let chartPrice = this.calculate(this.lineArray)
-					let chartPart = this.calculate(this.partArray)
-					this.linePrice = chartPrice.path
-					this.areaPrice = chartPrice.area
-					this.linePart = chartPart.path
-					this.areaPart = chartPart.area	
+					this.init()
 				},
 				deep: true
 			}

@@ -11,6 +11,17 @@
 			:id="node.data.name+'_svg'"
 			>
 
+			<defs>
+				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="1">
+					<stop offset="0%" stop-color="#fff"/>
+					<stop offset="20%" stop-color="#fff" stop-opacity="0"/>
+				</linearGradient>
+				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="1">
+					<stop offset="0%" stop-color="#000"/>
+					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
+				</linearGradient>
+			</defs>
+
 
 
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
@@ -81,6 +92,14 @@
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
 				/>
+				<animate 
+					attributeName="dx"
+					:dur="animationDurable" 
+					to="64"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
 			</text>
 			<text class="symbol" v-bind="coinTextSecond( node )">
 				{{ node.data.name}}
@@ -96,6 +115,14 @@
 					attributeName="dy"
 					:dur="animationDurable" 
 					to="74"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
+				<animate 
+					attributeName="dx"
+					:dur="animationDurable" 
+					to="64"
 					fill="freeze"
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
@@ -120,6 +147,14 @@
 					restart="never"
 					:begin="'opacity_animation_'+node.data.name+'.begin'"
 				/>
+				<animate 
+					attributeName="dx"
+					:dur="animationDurable" 
+					to="64"
+					fill="freeze"
+					restart="never"
+					:begin="'opacity_animation_'+node.data.name+'.begin'"
+				/>
 			</text>
 
 			<text x="100%"> 
@@ -135,10 +170,19 @@
 					/>
 				</tspan>
 			</text>
+
+
+
 		</svg>
 
 		<use id="useRect" ref="useRect" :xlink:href="'#_rect'" />
 		<use id="useText" ref="useText" :xlink:href="'#_text'" />
+
+<!-- 		<svg width="100%" height="64" y="12" viewBox="0 0 64 64" preserveAspectRatio="xMaxYMin meet">
+			<circle cx="24" cy="24" r="18" fill="#FFFFFF" fill-rule="evenodd"></circle>
+			<polygon points="19 19.8 23.2 24.0000063 19 28.2 19.8 29 24 24.8 28.2 29 29 28.2 24.8 24.0000063 29 19.8 28.2 19 24 23.2 19.8 19" />
+		</svg> -->
+
 	</svg>
 
 </template>
@@ -226,6 +270,8 @@
 				try {
 					const data = await this.$axios.get( requestGraph(this.$store.state.filters) )
 					this.$store.commit( 'SET_GRAPHS', data.data )
+					console.log(this.$store.state.graphs)
+
 
 				} catch(error) {
 					console.error(error)
@@ -449,7 +495,7 @@
 	function requestGraph( filters ) {
 		let filterQuery = 
 			( filters.cap ? '?cap=' + filters.cap : '' ) + 
-			'&period=1D'  +
+			( filters.period ? '&period=' + filters.period : '' ) +
 			( filters.profit ? '&profit=' + filters.profit : '' )
 
 		return REQUEST_GRAPHS + filterQuery
