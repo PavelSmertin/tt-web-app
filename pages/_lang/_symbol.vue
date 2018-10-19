@@ -35,7 +35,7 @@
 				<label>{{ $t('coin.actuality') }}</label>
 				<div class="top_detail">{{ formatDate(coin.updated_at) }}</div>
 				<div class="bottom_detail">
-					<timeago :since="'2018-10-03T10:08:49+00:00'" class="time-ago"></timeago>
+					<timeago :since="coin.updated_at" class="time-ago"></timeago>
 				</div>
 			</div>
 		</div>
