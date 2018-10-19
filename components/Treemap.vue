@@ -270,8 +270,6 @@
 				try {
 					const data = await this.$axios.get( requestGraph(this.$store.state.filters) )
 					this.$store.commit( 'SET_GRAPHS', data.data )
-					console.log(this.$store.state.graphs)
-
 
 				} catch(error) {
 					console.error(error)
@@ -445,7 +443,7 @@
 
 				//event.path[0].firstChild.beginElement()
 
-				//this.$router.push('/ru/'+ node.data.name)
+				this.$router.push('/ru/'+ node.data.name)
 				this.$emit('node_click', node, this)
 			},
 
