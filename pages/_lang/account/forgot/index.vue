@@ -41,7 +41,7 @@
         this.busy = true
         this.errors = null
 
-        return this.$axios.post(`/api/auth/request-password-reset`, 'PasswordResetRequestForm[email]=' + this.email)
+        return this.$axios.post(`/api/auth/request-password-reset`, 'PasswordResetRequestForm[email]=' + this.email + 'endpoint=tt')
           .then((response) => {
             console.log("success")
             this.$router.push({ name: `account-forgot-follow` })

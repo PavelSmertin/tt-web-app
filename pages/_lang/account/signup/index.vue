@@ -60,10 +60,13 @@
             'SignupForm[email]=' + this.email +
             '&SignupForm[password]=' + this.password +
             '&SignupForm[rePassword]=' + this.repassword +
-            '&SignupForm[user_name]=' + this.name
+            '&SignupForm[user_name]=' + this.name +
+            'endpoint=tt'
           )
           .then((response) => {
-            this.$router.push({ name: `account-signup-success` })
+            this.$auth.setToken('api', 'Bearer ' + data.access_token)
+            this.$auth.setUser({})
+            this.$router.push({ name: `index` })
           })
           .catch(e => {
             this.busy = false

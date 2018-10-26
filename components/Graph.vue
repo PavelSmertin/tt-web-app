@@ -1,7 +1,7 @@
 
 <template>
 	<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
-		<rect  :width="graphWidth" :height="graphHeight" fill-opacity="0" stroke-opacity="0" />
+		<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
 		<path :transform="translate" class="linePrice" :d="linePrice" vector-effect="non-scaling-stroke" />		
 		<path :transform="translate" class="areaPrice" :d="areaPrice" vector-effect="non-scaling-stroke" />
 		<path :transform="translate" class="linePart" :d="linePart" vector-effect="non-scaling-stroke" />		
