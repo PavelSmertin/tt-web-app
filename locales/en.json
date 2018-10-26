@@ -68,7 +68,8 @@
     "volume": "Volume",
     "part": "Part",
     "part_short": "Part",
-    "actuality": "Actuality"
+    "actuality": "Actuality",
+    "no_data": "Empty data"
   },
 
   "nav": {

@@ -199,6 +199,10 @@
 
 					let closestPoint = this.points[index-1]
 
+					if(closestPoint == undefined) {
+						return
+					}
+
 
 					//if (this.lastHoverDate.index !== closestDate.index) {
 						//const points = this.points.slice( closestDate.index, closestDate.index + 1 )

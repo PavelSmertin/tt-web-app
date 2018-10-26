@@ -3,6 +3,10 @@
 
 	<svg class="tt_portfolio_field" v-bind:style="styleObject">
 
+		<text class="symbol" y="50%" x="50%" v-bind="noDataVisible">
+			{{ $t('coin.no_data') }}
+		</text>
+
 		<svg 
 			v-for="(node, index) in nodes"
 			v-if="node.children == undefined"
@@ -22,12 +26,9 @@
 				</linearGradient>
 			</defs>
 
-
-
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
 
 			<Graph :symbol="node.data.name" />
-
 
 			<animate 
 				:id="'width_animation_'+node.data.name"
@@ -185,6 +186,7 @@
 
 	</svg>
 
+
 </template>
 
 <script>
@@ -208,6 +210,7 @@
 				animationDurable: '50ms',
 				nodes: [],
 				graphs: [],
+				hasData: true,
 			}
 		},
 
@@ -256,11 +259,18 @@
 				var nodes = []
 
 				let treemap = await this.treemap
-				treemap.each(function(d) {
-					nodes.push(d);
-				})
 
-				this.nodes = nodes
+				if( treemap ) {
+					treemap.each(function(d) {
+						nodes.push(d);
+					})
+
+					this.nodes = nodes
+					this.hasData = true
+				} else {
+					this.nodes = []
+					this.hasData = false
+				}
 			},
 
 			async retrieveGraphs () {
@@ -269,12 +279,19 @@
 
 				try {
 					const data = await this.$axios.get( requestGraph(this.$store.state.filters) )
+
 					this.$store.commit( 'SET_GRAPHS', data.data )
 
 				} catch(error) {
 					console.error(error)
 				}
 
+			},
+
+			noDataVisible () {
+				return {
+					'visibility': this.hasData ? 'hidden' : 'visibility',
+				}
 			},
 		},
 
@@ -348,12 +365,14 @@
 
 				return {
 					'dx': marginLeft, 
-					'dy': marginTop + fontSize * part, 
-					'font-size': fontSize * part,
+					'dy': part ? marginTop + fontSize * part : 50, 
+					'font-size': part ? fontSize * part : fontSize,
 				}
 			},
 
 			coinTextSecond: function( node ) {
+
+				const part = this.part( node.data.part )
 
 				const marginTop = -4
 				const fontSize = 48
@@ -361,8 +380,8 @@
 
 				return {
 					'dx': marginLeft, 
-					'dy': this.coinTextFirst(node).dy + (marginTop + fontSize) * this.part( node.data.part ), 
-					'font-size': fontSize * this.part( node.data.part ),
+					'dy': part ? this.coinTextFirst(node).dy + (marginTop + fontSize) * part : this.coinTextFirst(node).dy + 48, 
+					'font-size': part ? fontSize * part : fontSize,
 				}
 
 			},
@@ -376,8 +395,8 @@
 
 				return {
 					'dx': marginLeft, 
-					'dy': this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part, 
-					'font-size': fontSize * part,
+					'dy': part ? this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part : this.coinTextSecond(node).dy + 24, 
+					'font-size': part ? fontSize * part : fontSize,
 				}
 			},
 
@@ -390,8 +409,8 @@
 
 				return {
 					'dx': marginLeft, 
-					'dy': marginTop + (fontSize - 2) * part, 
-					'font-size': fontSize * part,
+					'dy': part ? marginTop + (fontSize - 2) * part : 50, 
+					'font-size': part ? fontSize * part : fontSize,
 				}
 			},
 
@@ -404,11 +423,6 @@
 				return part
 			},
 
-			hidden( value ) {
-				let part = value * 15
-				return part < 0.5 ? 'hidden' : 'visibility'
-			},
-
 			async calculateTree() {
 				try {
 					const data = await this.$axios.get( requestPortfolio(this.$store.state.filters) )
@@ -417,6 +431,11 @@
 					// dd = dd.map(el => el.part)
 					// var sum = dd.reduce(add, 0);
 					// console.log(sum)
+
+
+					if( data.data.data.length <= 0 ) {
+						return
+					}
 
 					let dataObj = simpleNodes(dataFormatter.deserialize( data.data ))
 
@@ -469,7 +488,7 @@
 		watch: {
 			'$store.state.filters': {
 				handler: _.debounce( function ( newValue ) {
-					this.calculateTree()
+					this.retrieveNodes
 				}, 100 ),
 				deep: true
 			}
