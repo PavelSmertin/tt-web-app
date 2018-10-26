@@ -67,6 +67,7 @@
     "price": "Price",
     "volume": "Volume",
     "part": "Part",
+    "part_short": "Part",
     "actuality": "Actuality"
   },
 

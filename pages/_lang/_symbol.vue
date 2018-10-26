@@ -1,6 +1,5 @@
 <template>
-	<div class="chart" v-bind:class="up ">
-
+	<div class="chart" v-bind:class="up" ref="chart">
 
 		<button v-on:click="onClose()" class="ff_close">
 			<svg  viewBox="0 0 48 48">
@@ -40,22 +39,44 @@
 			</div>
 		</div>
 
-
 		<svg class="graph">
 			<defs>
-				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="1">
+				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#fff"/>
 					<stop offset="20%" stop-color="#fff" stop-opacity="0"/>
 				</linearGradient>
-				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="1">
+				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
 					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
 				</linearGradient>
 			</defs>
-			<Graph :symbol="upSymbol" />
+
+			<Graph :symbol="upSymbol" :interactive="true" v-on:testtest="onSelect" v-on:hide-tooltip="onHideTooltip" />
+			<svg viewBOx="0 0 200 100" v-bind="tooltip()">
+				<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
+				<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
+				<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
+
+
+				<text class="tooltip_date" x="12" y="26" fill="#000">
+					{{ formatDateTime( tooltipPoint.date) }}
+				</text>
+				<text class="tooltip_label" x="12" y="60" fill="#000">
+					{{ $t('coin.price') }}
+				</text>
+				<text class="tooltip_value" x="12" y="85" fill="#000">
+					${{ formatPrice( tooltipPoint.price) }}
+				</text>
+
+				<text class="tooltip_label" x="113" y="60" fill="#000">
+					{{ $t('coin.part_short') }}
+				</text>
+				<text class="tooltip_value" x="113" y="85" fill="#000">
+					{{ formatPrice( tooltipPoint.part * 100) }}%
+				</text>
+
+			</svg>
 		</svg>
-
-
 
 
 
@@ -75,6 +96,13 @@
 
 	export default {
 
+		data() {
+			return {
+				tooltipPoint: {},
+				showTooltip: false,
+			}
+		},
+		
 		components: {
 			Graph,
 		},
@@ -112,6 +140,13 @@
 				let month = date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
 				return `${date.getDate()}.${month}`
 			},
+			formatDateTime( dateString ) {
+				let date = new Date(dateString)
+				let month = date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
+				let hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+				let min = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+				return `${date.getDate()}.${month} ${hour}:${min}`
+			},
 			onClose () {
 				this.$router.push({ name: 'index' })
 			},
@@ -127,6 +162,27 @@
 					console.error(error)
 				}
 			},
+
+			onSelect( position ) {
+				this.showTooltip = true
+				this.tooltipPoint = position
+			},
+
+			onHideTooltip ( hide ) {
+				this.showTooltip = false
+			},
+
+			tooltip() {
+				return { 
+					'x': this.tooltipPoint.offsetX ? this.tooltipPoint.offsetX - 220 : 0,
+					'y': this.tooltipPoint.offsetY ? this.tooltipPoint.offsetY - 120 : 0,
+					'width': 201,
+					'height': 104,
+					'fill': '#f2f2f2',
+					'visibility': this.showTooltip ? 'visibile' : 'hidden',
+				}
+			},
+
 		},
 
 		computed: {
@@ -140,7 +196,8 @@
 			 	// 	}
 
 				return { 'up' : this.coin.part_change >= 0 }
-			}
+			},
+
 		},
 
 	}
@@ -167,11 +224,16 @@
 		name: 'timeago',
 		locale: 'ru-RU',
 		locales: {
-		// you will need json-loader in webpack 1
-		'ru-RU': require('assets/locales/ru-RU.json')
+			// you will need json-loader in webpack 1
+			'ru-RU': require('assets/locales/ru-RU.json')
 		}
 	})
 
 
 
 </script>
+
+<style lang="sass" scoped>
+
+
+</style>

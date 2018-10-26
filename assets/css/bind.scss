@@ -692,6 +692,7 @@ fieldset {
 	display: flex;
 	justify-content: space-between;
 	z-index: 1;
+	position: absolute;
 	.coin_detail {
 		margin-top: 16px;
 		label {
@@ -809,4 +810,23 @@ fieldset {
     position: absolute;
     right: 64px;
     text-align: center;
+}
+
+
+.tooltip_date {
+	font-size: 16px;
+	font-family: $font-stack-headers;
+	color: $primary-color;
+}
+.tooltip_label {
+	font-size: 12px;
+	font-weight: 100;
+	color: $primary-color;
+}
+
+.tooltip_value {
+	font-size: 24px;
+	font-family: $font-stack-headers;
+	color: $primary-color;
+
 }

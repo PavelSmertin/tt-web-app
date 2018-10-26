@@ -12,11 +12,11 @@
 			>
 
 			<defs>
-				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="1">
+				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#fff"/>
-					<stop offset="20%" stop-color="#fff" stop-opacity="0"/>
+					<stop offset="15%" stop-color="#fff" stop-opacity="0"/>
 				</linearGradient>
-				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="1">
+				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
 					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
 				</linearGradient>
