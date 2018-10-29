@@ -61,7 +61,7 @@
             '&SignupForm[password]=' + this.password +
             '&SignupForm[rePassword]=' + this.repassword +
             '&SignupForm[user_name]=' + this.name +
-            'endpoint=tt'
+            '&SignupForm[endpoint]=tt'
           )
           .then((response) => {
             this.$auth.setToken('api', 'Bearer ' + data.access_token)
