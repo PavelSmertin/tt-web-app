@@ -64,7 +64,7 @@
             '&SignupForm[endpoint]=tt'
           )
           .then((response) => {
-            this.$auth.setToken('api', 'Bearer ' + data.access_token)
+            this.$auth.setToken('api', 'Bearer ' + response.access_token)
             this.$auth.setUser({})
             this.$router.push({ name: `index` })
           })
