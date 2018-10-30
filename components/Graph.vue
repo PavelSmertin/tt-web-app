@@ -79,6 +79,8 @@
 			},
 
 			init() {
+
+				console.log('init')
 				this.initPoints()
 				this.initLines()
 
@@ -152,6 +154,7 @@
 
 			initPoints() {
 				let lineData = this.$store.state.graphs[ this.symbol ]
+				this.points = []
 				if( lineData ) {
 					this.points = lineData.map( el => { return { date: new Date(el.created_at), price: el.price_usdt, part: el.part }  })
 				}

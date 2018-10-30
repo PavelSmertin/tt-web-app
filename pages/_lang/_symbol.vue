@@ -243,9 +243,9 @@
 
 		watch: {
 			'$store.state.filters': {
-				handler: _.debounce( function ( newValue ) {
-					this.retrieveCoin()
-					this.retrieveGraph()
+				handler: _.debounce( async function ( newValue ) {
+					await Promise.all([this.retrieveCoin(), this.retrieveGraph()])
+					this.$store.commit( 'TERMINATE_FILTER_LOADING' )
 				}, 100 ),
 				deep: true
 			},
