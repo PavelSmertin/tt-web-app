@@ -13,7 +13,7 @@
 			<div class="coin_detail">
 				<label>{{ coin.coin_name }}</label>
 				<div class="top_detail symbol">{{ coin.symbol }}</div>
-				<div class="bottom_detail">{{ formatPrice(coin.part * 100) }}%</div>
+				<div v-if="coin.part" class="bottom_detail">{{ formatPrice(coin.part * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.price') }}</label>
@@ -22,18 +22,18 @@
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.volume') }}</label>
-				<div class="top_detail">{{ formatPrice(coin.amount_total) }}{{ coin.symbol }}</div>
-				<div class="bottom_detail">${{ formatPrice(coin.amount_total_usdt) }}</div>
+				<div v-if="coin.amount_total" class="top_detail">{{ formatPrice(coin.amount_total) }}{{ coin.symbol }}</div>
+				<div v-if="coin.amount_total_usdt" class="bottom_detail">${{ formatPrice(coin.amount_total_usdt) }}</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.part') }}</label>
-				<div class="top_detail">{{ formatPrice(coin.part * 100) }}%</div>
-				<div class="bottom_detail">{{ formatPrice(coin.part_change * 100) }}%</div>
+				<div v-if="coin.part" class="top_detail">{{ formatPrice(coin.part * 100) }}%</div>
+				<div v-if="coin.part_change" class="bottom_detail">{{ formatPrice(coin.part_change * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.actuality') }}</label>
-				<div class="top_detail">{{ formatDate(coin.updated_at) }}</div>
-				<div class="bottom_detail">
+				<div v-if="coin.updated_at" class="top_detail">{{ formatDate(coin.updated_at) }}</div>
+				<div v-if="coin.updated_at" class="bottom_detail">
 					<timeago :since="coin.updated_at" class="time-ago"></timeago>
 				</div>
 			</div>
@@ -88,6 +88,7 @@
 	import VueTimeago from 'vue-timeago'
 	import Vue from 'vue'
 	import Graph from '~/components/Graph.vue'
+	import _ from 'lodash'
 
 	const REQUEST_COIN = `/api/portfolios/free-coin/`
 	const REQUEST_GRAPH = `/api/portfolios/coin-graph/` //BTC?interval=1D`
@@ -113,13 +114,27 @@
 			}
 		},
 
-		async asyncData ({ app, params }) {
+		async asyncData ({ app, params, store }) {
 			let coin = null
 			let upSymbol = symbolToUppercase(params.symbol)
 
 			try {
-				let data = await app.$axios.get( REQUEST_COIN + upSymbol  )
+				let data = await app.$axios.get( requestCoin(upSymbol, store.state.filters) )
 				coin = dataFormatter.deserialize( data.data )
+
+				if( coin == undefined ) {
+					coin = {
+								coin_name: '',
+								symbol: upSymbol, 
+								coin_price: null,
+								price_percent_change: null,
+								part: null, 
+								amount_total: null, 
+								amount_total_usdt: null, 
+								part_change: null,
+							}
+				}
+
 			} catch (e) {
 				console.log(e)
 			}
@@ -131,32 +146,59 @@
 		},
 
 		methods: {
+
 			formatPrice( value ) {
 				let val = (value/1).toFixed(2)
 				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 			},
+
 			formatDate( dateString ) {
-				let date = new Date(dateString)
-				let month = date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
+				let date 	= new Date(dateString)
+				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
 				return `${date.getDate()}.${month}`
 			},
+
 			formatDateTime( dateString ) {
-				let date = new Date(dateString)
-				let month = date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				let hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-				let min = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+				let date 	= new Date(dateString)
+				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
+				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
 				return `${date.getDate()}.${month} ${hour}:${min}`
 			},
+
 			onClose () {
 				this.$router.push({ name: 'index' })
 			},
 
+			async retrieveCoin () {
+				try {
+					const data = await this.$axios.get(requestCoin( this.upSymbol, this.$store.state.filters ))
+					let coinName = this.coin.coin_name
+					let coinPrice = this.coin.coin_price
+					let coinPriceChange = this.coin.price_percent_change
+					this.coin = dataFormatter.deserialize( data.data )
+					if( this.coin == undefined ) {
+						this.coin = {
+									coin_name: coinName,
+									symbol: this.upSymbol, 
+									coin_price: coinPrice,
+									price_percent_change: coinPriceChange,
+									part: null, 
+									amount_total: null, 
+									amount_total_usdt: null, 
+									part_change: null,
+								}
+					}
+				} catch(error) {
+					console.error(error)
+				}
+			},
+
 			async retrieveGraph () {
-				var color = this.color;
 				var nodes = []
 
 				try {
-					const data = await this.$axios.get( requestGraph(this.upSymbol, this.$store.state.filters) )
+					const data = await this.$axios.get(requestGraph( this.upSymbol, this.$store.state.filters ))
 					this.$store.commit( 'SET_GRAPH', {symbol: this.upSymbol, data: data.data[this.upSymbol]} )
 				} catch(error) {
 					console.error(error)
@@ -168,7 +210,7 @@
 				this.tooltipPoint = position
 			},
 
-			onHideTooltip ( hide ) {
+			onHideTooltip( hide ) {
 				this.showTooltip = false
 			},
 
@@ -195,9 +237,24 @@
 			 	// 		fillOpacity = 0.75 + delta / 4
 			 	// 	}
 
-				return { 'up' : this.coin.part_change >= 0 }
+				return { 'up' : (this.coin && this.coin.part_change) >= 0 }
 			},
+		},
 
+		watch: {
+			'$store.state.filters': {
+				handler: _.debounce( function ( newValue ) {
+					this.retrieveCoin()
+					this.retrieveGraph()
+				}, 100 ),
+				deep: true
+			},
+			// '$store.state.filters.period': {
+			// 	handler: _.debounce( function ( newValue ) {
+			// 		this.retrieveGraph()
+			// 	}, 100 ),
+			// 	deep: true
+			// }
 		},
 
 	}
@@ -210,15 +267,21 @@
 		}
 	}
 
-	function requestGraph( symbol, filters ) {
+	function requestCoin( symbol, filters ) {
 		let filterQuery = 
-			( filters.cap ? '?cap=' + filters.cap : '' ) + 
-			( filters.period ? '&period=' + filters.period : '' ) +
-			( filters.profit ? '&profit=' + filters.profit : '' )
-
-		return REQUEST_GRAPH + symbol +  filterQuery
+					( filters.cap ? '?cap=' + filters.cap : '' ) + 
+					( filters.period ? '&period=' + filters.period : '' ) +
+					( filters.profit ? '&profit=' + filters.profit : '' ) 
+		return REQUEST_COIN + symbol +  filterQuery
 	}
 
+	function requestGraph( symbol, filters ) {
+		let filterQuery = 
+					( filters.cap ? '?cap=' + filters.cap : '' ) + 
+					( filters.period ? '&period=' + filters.period : '' ) +
+					( filters.profit ? '&profit=' + filters.profit : '' )
+		return REQUEST_GRAPH + symbol +  filterQuery
+	}
 
 	Vue.use(VueTimeago, {
 		name: 'timeago',

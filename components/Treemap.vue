@@ -218,7 +218,6 @@
 			this.portrait = document.getElementById('content').offsetWidth < document.getElementById('content').offsetHeight
 			this.retrieveNodes
 			this.retrieveGraphs
-
 		},
 
 		props: {
@@ -383,7 +382,6 @@
 					'dy': part ? this.coinTextFirst(node).dy + (marginTop + fontSize) * part : this.coinTextFirst(node).dy + 48, 
 					'font-size': part ? fontSize * part : fontSize,
 				}
-
 			},
 
 			coinTextThird: function( node ) {
@@ -489,9 +487,16 @@
 			'$store.state.filters': {
 				handler: _.debounce( function ( newValue ) {
 					this.retrieveNodes
+					this.retrieveGraphs
 				}, 100 ),
 				deep: true
-			}
+			},
+			// '$store.state.filters.period': {
+			// 	handler: _.debounce( function ( newValue ) {
+			// 		this.retrieveGraphs
+			// 	}, 100 ),
+			// 	deep: true
+			// }
 		},
 
 	}
