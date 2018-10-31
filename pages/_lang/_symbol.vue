@@ -39,7 +39,7 @@
 			</div>
 		</div>
 
-		<svg class="graph">
+		<svg class="graph" preserveAspectRatio="none">
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#fff"/>
@@ -52,11 +52,11 @@
 			</defs>
 
 			<Graph :symbol="upSymbol" :interactive="true" v-on:testtest="onSelect" v-on:hide-tooltip="onHideTooltip" />
-			<svg viewBOx="0 0 200 100" v-bind="tooltip()">
+
+			<svg viewBox="0 0 200 100" v-bind="tooltip()">
 				<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
 				<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
 				<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
-
 
 				<text class="tooltip_date" x="12" y="26" fill="#000">
 					{{ formatDateTime( tooltipPoint.date) }}
@@ -67,15 +67,14 @@
 				<text class="tooltip_value" x="12" y="85" fill="#000">
 					${{ formatPrice( tooltipPoint.price) }}
 				</text>
-
 				<text class="tooltip_label" x="113" y="60" fill="#000">
 					{{ $t('coin.part_short') }}
 				</text>
 				<text class="tooltip_value" x="113" y="85" fill="#000">
 					{{ formatPrice( tooltipPoint.part * 100) }}%
 				</text>
-
 			</svg>
+
 		</svg>
 
 

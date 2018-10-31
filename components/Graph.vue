@@ -1,13 +1,33 @@
 
 <template>
-	<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
-		<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-		<path :transform="translate" class="linePrice" :d="linePrice" vector-effect="non-scaling-stroke" />		
-		<path :transform="translate" class="areaPrice" :d="areaPrice" vector-effect="non-scaling-stroke" />
-		<path :transform="translate" class="linePart" :d="linePart" vector-effect="non-scaling-stroke" />		
-		<path :transform="translate" class="areaPart" :d="areaPart" vector-effect="non-scaling-stroke" />
-		<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
+	<svg>
+		<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
+
+			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
+			<path :transform="translate" class="linePrice" :d="linePrice" vector-effect="non-scaling-stroke" />		
+			<path :transform="translate" class="areaPrice" :d="areaPrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="linePart" :d="linePart" vector-effect="non-scaling-stroke" />		
+			<path :transform="translate" class="areaPart" :d="areaPart" vector-effect="non-scaling-stroke" />
+			<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
+
+		</svg>
+
+		<svg x="48" :y="graphHeight - 64" viewBox="0 0 24 24" width="400" height="24" v-if=" interactive && points && points.length > 0" preserveAspectRatio="xMinYMin meet">
+				<g >
+					<circle v-bind="partLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"/>
+					<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
+						{{ $t('coin.part') }}
+					</text>
+
+					<circle v-bind="priceLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"  />
+					<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
+						{{ $t('coin.price') }}
+					</text>
+				</g>
+		</svg>
+
 	</svg>
+
 </template>
 
 <script>
@@ -66,10 +86,13 @@
 
 		computed: {
 			viewBox() {
-				return `0 0 ${this.graphWidth} ${this.graphHeight*1.6}`
+				return `0 0 ${this.graphWidth} ${this.graphHeight * 1.6}`
 			},
 			translate() {
-				return `translate(0,${this.graphHeight/2})`
+				return `translate(0, ${this.graphHeight / 2})`
+			},
+			translateLegend() {
+				return `translate(50,${this.graphHeight * 1.6 - 50})`
 			},
 		},
 
@@ -98,14 +121,15 @@
 				part.domain(d3.extent(this.points, el => el.part))
 
 				let svg = d3.select(".graph")
-				svg.selectAll("g").remove()
+				svg.selectAll(".axis").remove()
 
 				// append bottom axis
 				let g = svg.append("g")
 
 				g.attr("transform", "translate(0, " + (this.graphHeight-25) + ")")
-				      	.attr("vector-effect", "non-scaling-stroke")
-				      	.call(dateAxis)
+						.attr("vector-effect", "non-scaling-stroke")
+						.attr("class", "axis")
+						.call(dateAxis)
 
 				g.selectAll("line").attr("stroke", "none")
 				g.selectAll("path").attr("stroke", "none")
@@ -116,6 +140,7 @@
 
 				g//.attr("transform", "translate(0," + (this.graphHeight-25) + ")")
 				      	.attr("vector-effect", "non-scaling-stroke")
+				      	.attr("class", "axis")
 				      	.call(partAxis)
 
 				g.selectAll("line").attr("stroke", "none")
@@ -128,6 +153,7 @@
 
 				g.attr("transform", "translate(" + (this.graphWidth) + ",0 )")
 				      	.attr("vector-effect", "non-scaling-stroke")
+				      	.attr("class", "axis")
 				      	.call(priceAxis)
 
 				g.selectAll("line").attr("stroke", "none")
@@ -172,7 +198,7 @@
 				const areaPrice = d3.area()
 									.curve(d3.curveBasis)
 									.x(d => scale.date(d.date))
-									.y0(d => this.graphHeight * 2)
+									.y0(d => this.graphHeight * 1.6)
 									.y1(d => scale.price(d.price))
 
 				this.linePrice = pathPrice( this.points )
@@ -249,7 +275,7 @@
 					'x1': this.verticalLinePosition.x,
 					'x2': this.verticalLinePosition.x,
 					'y1': 0,
-					'y2': this.graphHeight*2,
+					'y2': this.graphHeight * 1.6,
 				}
 			},
 
@@ -261,6 +287,38 @@
 
 				}
 			},
+
+			partLegendMarker() {
+				return {
+					'cx': 10,
+					'cy': 6,
+				}
+			},
+			partLegendLabel() {
+				return {
+					'x': 24,
+					'y': 11,
+					'font-size': 12,
+				}
+
+			},
+			priceLegendMarker() {
+				return {
+					'cx': 200,
+					'cy': 6,
+
+				}
+
+			},
+			priceLegendLabel() {
+				return {
+					'x': 214,
+					'y': 11,
+					'font-size': 12,
+				}
+
+			},
+
 
 			formatDateTime( dateString ) {
 				let date = new Date(dateString)

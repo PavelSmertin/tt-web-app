@@ -13,7 +13,6 @@ export const mutations = {
 		}
 	},
 
-
 	SET_FILTER: function (state, filter) {
 		state.filters[filter.type] = filter.value
 		state.filterLoading = true
@@ -31,9 +30,5 @@ export const mutations = {
 	TERMINATE_FILTER_LOADING: function (state ) {
 		state.filterLoading = false
 	},
-
-
-
-
 
 }
