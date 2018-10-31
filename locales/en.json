@@ -72,6 +72,12 @@
     "no_data": "Empty data"
   },
 
+  "coin_info": {
+    "volume": "translate",
+    "part": "translate",
+    "actuality": "translate"
+  },
+
   "nav": {
     "account": "Account",
     "traders": "Traders",

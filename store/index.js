@@ -14,8 +14,10 @@ export const mutations = {
 	},
 
 	SET_FILTER: function (state, filter) {
+		if( filter.value != state.filters[filter.type] ) {
+			state.filterLoading = true
+		}
 		state.filters[filter.type] = filter.value
-		state.filterLoading = true
 	},
 
 	SET_GRAPHS: function (state, graphs) {

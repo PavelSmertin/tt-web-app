@@ -14,7 +14,7 @@
 				</div>
 
 
-				<form @keydown.enter.stop.prevent="add" name="PortfolioTraiderExchange" class="right_pane">
+				<form @keydown.enter.stop.prevent="add" name="PortfolioTraderExchange" class="right_pane">
 					<fieldset>
 
 						<h2>{{ $t('account.portfolio.api_add') }}</h2>
@@ -123,9 +123,9 @@
 				this.errors = null
 
 				return this.$axios.post( POST_EXCHANGE_ACCOUNT,
-						'PortfolioTraiderExchange[exchange_id]=' + this.selected +
-						'&PortfolioTraiderExchange[api_access]=' + this.apiKey +
-						'&PortfolioTraiderExchange[api_secret]=' + this.apiSecret
+						'PortfolioTraderExchange[exchange_id]=' + this.selected +
+						'&PortfolioTraderExchange[api_access]=' + this.apiKey +
+						'&PortfolioTraderExchange[api_secret]=' + this.apiSecret
 					)
 				.then((response) => {
 					this.busy = false

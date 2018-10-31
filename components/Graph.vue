@@ -13,17 +13,17 @@
 		</svg>
 
 		<svg x="48" :y="graphHeight - 64" viewBox="0 0 24 24" width="400" height="24" v-if=" interactive && points && points.length > 0" preserveAspectRatio="xMinYMin meet">
-				<g >
-					<circle v-bind="partLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"/>
-					<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-						{{ $t('coin.part') }}
-					</text>
+			<g>
+				<circle v-bind="partLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"/>
+				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
+					{{ $t('coin.part') }}
+				</text>
 
-					<circle v-bind="priceLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"  />
-					<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-						{{ $t('coin.price') }}
-					</text>
-				</g>
+				<circle v-bind="priceLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"  />
+				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
+					{{ $t('coin.price') }}
+				</text>
+			</g>
 		</svg>
 
 	</svg>
@@ -103,10 +103,8 @@
 
 			init() {
 
-				console.log('init')
 				this.initPoints()
 				this.initLines()
-
 
 				let date = d3.scaleTime().range([0, this.graphWidth])
 				let price = d3.scaleLinear().range([this.graphHeight, 0])
