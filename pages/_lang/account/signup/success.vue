@@ -49,7 +49,7 @@
           return
         }
 
-        return this.$axios.post( `/api/auth/resend-confirmation-email`, 'ResendConfirmationCode[email]=' + username + 'ResendConfirmationCode[endpoint]=tt' )
+        return this.$axios.post( `/api/auth/resend-confirmation-email`, 'ResendConfirmationCode[email]=' + username + '&ResendConfirmationCode[endpoint]=tt' )
           .then(response => {
             if( response.data.success ) {
               this.showMessage( this.$t('account.resend_success'))
