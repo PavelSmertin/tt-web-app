@@ -32,7 +32,6 @@
 							</g>
 						</g>
 					</svg>
-
 					<div class="info_text" v-bind:class="{ 'info_active': showInfo.volume }">
 						{{ $t('coin_info.volume') }}
 					</div>
