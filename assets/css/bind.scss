@@ -722,8 +722,10 @@ fieldset {
 				right: 50%;
 				z-index: 9;
 
-				display: none;
-				
+				visibility: hidden;
+				opacity: 0;
+				transition: visibility 0s, opacity 0.1s ease-in-out;
+
 				font-size: $label-size;
 				color: $label-color;
 				line-height: 16px;
@@ -732,8 +734,10 @@ fieldset {
 				padding: 12px;
 				box-shadow: 0 2px 8px 0 rgba(0,0,0,0.15);
 
+
 				&.info_active {
-					display: block;
+					visibility: visible;
+					opacity: 1;
 				}
 			}
 		}

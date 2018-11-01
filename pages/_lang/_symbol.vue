@@ -21,7 +21,7 @@
 				<div class="bottom_detail">{{ formatPrice(coin.price_percent_change * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
-				<label @mousemove="mouseoverVolume"  @mouseleave="mouseleaveVolume">
+				<label @mousemove="mouseover('volume')"  @mouseleave="clearInfo">
 					<span>{{ $t('coin.volume') }}</span>
 					<svg width="14px" height="14px" viewBox="0 0 14 14">
 						<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -33,7 +33,7 @@
 						</g>
 					</svg>
 
-					<div class="info_text" v-bind:class="{ 'info_active': showInfoVolume }">
+					<div class="info_text" v-bind:class="{ 'info_active': showInfo.volume }">
 						{{ $t('coin_info.volume') }}
 					</div>
 				</label>
@@ -41,7 +41,7 @@
 				<div v-if="coin.amount_total_usdt" class="bottom_detail">${{ formatPrice(coin.amount_total_usdt) }}</div>
 			</div>
 			<div class="coin_detail">
-				<label @mousemove="mouseoverPart"  @mouseleave="mouseleavePart">
+				<label @mousemove="mouseover('part')"  @mouseleave="clearInfo">
 					<span>{{ $t('coin.part') }}</span>
 					<svg width="14px" height="14px" viewBox="0 0 14 14">
 						<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -52,7 +52,7 @@
 							</g>
 						</g>
 					</svg>
-					<div class="info_text" v-bind:class="{ 'info_active': showInfoPart }">
+					<div class="info_text" v-bind:class="{ 'info_active': showInfo.part }">
 						{{ $t('coin_info.part') }}
 					</div>
 				</label>
@@ -60,7 +60,7 @@
 				<div v-if="coin.part_change" class="bottom_detail">{{ formatPrice(coin.part_change * 100) }}%</div>
 			</div>
 			<div class="coin_detail">
-				<label @mousemove="mouseoverActuality" @mouseleave="mouseleaveActuality">
+				<label @mousemove="mouseover('actuality')" @mouseleave="clearInfo">
 					<span>{{ $t('coin.actuality') }}</span>
 					<svg width="14px" height="14px" viewBox="0 0 14 14">
 						<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -71,7 +71,7 @@
 							</g>
 						</g>
 					</svg>
-					<div class="info_text" v-bind:class="{ 'info_active': showInfoActuality }">
+					<div class="info_text" v-bind:class="{ 'info_active': showInfo.actuality }">
 						{{ $t('coin_info.actuality') }}
 					</div>
 				</label>
@@ -143,6 +143,13 @@
 			return {
 				tooltipPoint: {},
 				showTooltip: false,
+
+				showInfo: {
+						volume: false, 
+						part: false, 
+						actuality: false
+				},
+
 				showInfoPart: false,
 				showInfoVolume: false,
 				showInfoActuality: false,
@@ -157,6 +164,12 @@
 			if( this.$store.state.graphs[this.symbol] == undefined ) {
 				this.retrieveGraph()
 			}
+
+			this.debounceTimer = _.debounce( function ( app, option ) {
+					app.clearInfo()
+					app.showInfo[option] = true
+			}, 200 )
+
 		},
 
 		async asyncData ({ app, params, store }) {
@@ -270,58 +283,18 @@
 				}
 			},
 
-			mouseoverVolume() {
-				if( this.showInfoVolume ) {
+			mouseover( option ) {
+				if( this.showInfo[option] ) {
 					return
 				}
-				let app = this
-				_.debounce( function ( ) {
-					app.showInfoVolume = true
-					app.showInfoPart = false
-					app.showInfoActuality = false
-				}, 500 ) ()
+				this.debounceTimer(this, option)
 			},
 
-			mouseoverPart() {
-				if( this.showInfoPart ) {
-					return
-				}
-				let app = this
-				_.debounce( function ( ) {
-					app.showInfoVolume = false
-					app.showInfoPart = true
-					app.showInfoActuality = false
-				}, 500 ) ()
-			},
-
-			mouseoverActuality() {
-				if( this.showInfoActuality ) {
-					return
-				}
-				let app = this
-				 _.debounce( function ( ) {
-					app.showInfoVolume = false
-					app.showInfoPart = false
-					app.showInfoActuality = true
-				}, 500 ) ()
-			},
-
-			mouseleaveVolume($el) {
-				this.showInfoVolume = false
-				this.showInfoPart = false
-				this.showInfoActuality = false
-			},
-
-			mouseleavePart($el) {
-				this.showInfoVolume = false
-				this.showInfoPart = false
-				this.showInfoActuality = false
-			},
-
-			mouseleaveActuality($el) {
-				this.showInfoVolume = false;
-				this.showInfoPart = false;
-				this.showInfoActuality = false;
+			clearInfo() {
+				this.debounceTimer.cancel()
+				this.showInfo.volume = false
+				this.showInfo.part = false
+				this.showInfo.actuality = false
 			},
 
 
@@ -383,6 +356,13 @@
 		return REQUEST_GRAPH + symbol +  filterQuery
 	}
 
+	function showInfo( app, option ) {
+		app.showInfoVolume = false
+		app.showInfoPart = false
+		app.showInfoActuality = false
+		app[option] = true
+	}
+
 	Vue.use(VueTimeago, {
 		name: 'timeago',
 		locale: 'ru-RU',
@@ -395,8 +375,3 @@
 
 
 </script>
-
-<style lang="sass" scoped>
-
-
-</style>
