@@ -75,7 +75,8 @@
   "coin_info": {
     "volume": "translate",
     "part": "translate",
-    "actuality": "translate"
+    "actuality": "translate",
+    "actuality_reg": "translate"
   },
 
   "nav": {

@@ -17,12 +17,12 @@
 
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
-					<stop offset="0%" stop-color="#fff"/>
-					<stop offset="15%" stop-color="#fff" stop-opacity="0"/>
-				</linearGradient>
-				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
 					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
+				</linearGradient>
+				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
+					<stop offset="0%" stop-color="#fff"/>
+					<stop offset="15%" stop-color="#fff" stop-opacity="0"/>
 				</linearGradient>
 			</defs>
 
@@ -158,12 +158,22 @@
 				/>
 			</text>
 
-			<text x="100%"> 
-				<tspan class="delta" v-bind="coinTextDelta( node )" text-anchor="end">
-					{{ formatPrice( node.data.delta * 100 ) }}%
+			<text v-bind="coinTextDeltaWrap( node )"> 
+				<tspan class="delta" v-bind="coinTextDeltaIcon( node )" v-html="getSign(node)  ">
 					<animate 
 						attributeName="font-size"
-						:dur="animationDurable" 
+						:dur="animationDurable"
+						to="0"
+						fill="freeze"
+						restart="never"
+						:begin="'opacity_animation_'+node.data.name+'.begin'"
+					/>
+				</tspan>
+				<tspan class="delta" v-bind="coinTextDelta( node )">
+					{{ formatPrice( node.data.delta * 100 ) }}
+					<animate 
+						attributeName="font-size"
+						:dur="animationDurable"
 						to="0"
 						fill="freeze"
 						restart="never"
@@ -254,7 +264,6 @@
 			async treemap() { return await this.calculateTree() },
 
 			async retrieveNodes () {
-				var color = this.color;
 				var nodes = []
 
 				let treemap = await this.treemap
@@ -273,7 +282,6 @@
 			},
 
 			async retrieveGraphs () {
-				var color = this.color;
 				var nodes = []
 
 				try {
@@ -358,13 +366,12 @@
 			coinTextFirst: function( node ) {
 
 				const part = this.part( node.data.part )
-				const marginTop = 16
+				const margin = 16
 				const fontSize = 14
-				const marginLeft = 16
 
 				return {
-					'dx': marginLeft, 
-					'dy': part ? marginTop + fontSize * part : 50, 
+					'dx': part ? margin * part : margin, 
+					'dy': part ? (margin + fontSize) * part : 50, 
 					'font-size': part ? fontSize * part : fontSize,
 				}
 			},
@@ -375,10 +382,10 @@
 
 				const marginTop = -4
 				const fontSize = 48
-				const marginLeft = 16
+				const margin = 16
 
 				return {
-					'dx': marginLeft, 
+					'dx': part ? margin * part : margin, 
 					'dy': part ? this.coinTextFirst(node).dy + (marginTop + fontSize) * part : this.coinTextFirst(node).dy + 48, 
 					'font-size': part ? fontSize * part : fontSize,
 				}
@@ -389,31 +396,49 @@
 				const part = this.part( node.data.part )
 				const marginTop = 12
 				const fontSize = 24
-				const marginLeft = 16
+				const margin = 16
 
 				return {
-					'dx': marginLeft, 
+					'dx': part ? margin * part : margin, 
 					'dy': part ? this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part : this.coinTextSecond(node).dy + 24, 
 					'font-size': part ? fontSize * part : fontSize,
 				}
 			},
 
-			coinTextDelta: function( node ) {
-
-				const part = this.part( node.data.part )
-				const marginTop = 12
-				const fontSize = 64
-				const marginLeft = -16
-
+			coinTextDeltaWrap: function( node ) {
 				return {
-					'dx': marginLeft, 
-					'dy': part ? marginTop + (fontSize - 2) * part : 50, 
-					'font-size': part ? fontSize * part : fontSize,
+					'x': '100%',
+					'y': '100%',
 				}
 			},
 
-			part( value ) {
-				let part = value * 15
+			coinTextDeltaIcon: function( node ) {
+
+				const part = this.part( node.data.part, 15 )
+				const margin = 16
+				const fontSize = 36
+
+				return {
+					'dx': part ? -(margin * part) : -margin, 
+					'dy': part ? -(margin * part) : -margin, 
+					'font-size': part ? fontSize * part : fontSize,
+					'text-anchor': 'end',
+				}
+			},
+
+			coinTextDelta: function( node ) {
+
+				const part = this.part( node.data.part, 15 )
+				const fontSize = 64
+
+				return {
+					'font-size': part ? fontSize * part : fontSize,
+					'text-anchor': 'end',
+				}
+			},
+
+			part( value, k = 35 ) {
+				let part = value > 0.01 ? value * k : value * k //* 3
 				if ( part > 1 ) {
 					part = 1
 				}
@@ -479,6 +504,10 @@
 				} else {
 					return null
 				}
+			},
+
+			getSign( node ) {
+				return node.data.delta > 0 ? '&#9650;' : (node.data.delta < 0 ? '&#9660;' : '')
 			},
 		},
 

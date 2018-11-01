@@ -72,11 +72,12 @@
 					</svg>
 					<div class="info_text" v-bind:class="{ 'info_active': showInfo.actuality }">
 						{{ $t('coin_info.actuality') }}
+						<p v-if="$auth.loggedIn !== true" >* {{ $t('coin_info.actuality_reg') }}</p>
 					</div>
 				</label>
 				<div v-if="coin.updated_at" class="top_detail">{{ formatDate(coin.updated_at) }}</div>
 				<div v-if="coin.updated_at" class="bottom_detail">
-					<timeago :since="coin.updated_at" class="time-ago"></timeago>
+					<timeago :since="coin.updated_at" class="time-ago"></timeago> назад
 				</div>
 			</div>
 		</div>
@@ -84,12 +85,12 @@
 		<svg class="graph" preserveAspectRatio="none">
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
-					<stop offset="0%" stop-color="#fff"/>
-					<stop offset="20%" stop-color="#fff" stop-opacity="0"/>
-				</linearGradient>
-				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
 					<stop offset="15%" stop-color="#000" stop-opacity="0"/>
+				</linearGradient>
+				<linearGradient id="GradientPart" x1="0" x2="0" y1="0" y2="5">
+					<stop offset="0%" stop-color="#fff"/>
+					<stop offset="15%" stop-color="#fff" stop-opacity="0"/>
 				</linearGradient>
 			</defs>
 

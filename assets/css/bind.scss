@@ -735,7 +735,9 @@ fieldset {
 				padding: 12px;
 				box-shadow: 0 2px 8px 0 rgba(0,0,0,0.15);
 
-
+				p {
+					margin-top: 12px;
+				}
 				&.info_active {
 					visibility: visible;
 					opacity: 1;

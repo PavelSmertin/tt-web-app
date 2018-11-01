@@ -14,12 +14,12 @@
 
 		<svg x="48" :y="graphHeight - 64" viewBox="0 0 24 24" width="400" height="24" v-if=" interactive && points && points.length > 0" preserveAspectRatio="xMinYMin meet">
 			<g>
-				<circle v-bind="partLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"/>
+				<circle v-bind="partLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"/>
 				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.part') }}
 				</text>
 
-				<circle v-bind="priceLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"  />
+				<circle v-bind="priceLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
 				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.price') }}
 				</text>
@@ -350,24 +350,24 @@
 
 	.linePrice 
 		fill: none
-		stroke: #fff
+		stroke: #000
+		opacity: 0.2
 		stroke-width: 1px
 
 	.linePart
 		fill: none
-		stroke: #000
-		opacity: 0.2
+		stroke: #fff
 		stroke-width: 1px
 
 
 
 	.areaPrice
 		fill: url(#GradientPrice)
-		opacity: 0.3
+		opacity: 0.2
 
 	.areaPart
 		fill: url(#GradientPart)
-		opacity: 0.2
+		opacity: 0.3
 
 	.selector
 		stroke: #fff
