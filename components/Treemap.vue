@@ -312,10 +312,10 @@
 
 			rectPosition: function( node ) {
 
-				let xPosition = node.x0 + '%'
-				let width = (node.x1 - node.x0) + '%'
-				let yPosition =  node.y0 + '%'
-				let height = (node.y1 - node.y0) + '%'
+				let xPosition = node.x0 ? node.x0 + '%' : 0
+				let width = (node.x1 - node.x0) ? (node.x1 - node.x0) + '%' : 0
+				let yPosition =  node.y0 ? node.y0 + '%' : 0
+				let height = (node.y1 - node.y0) ? (node.y1 - node.y0) + '%' : 0
 
 				if( this.portrait === true ) {
 					return {
