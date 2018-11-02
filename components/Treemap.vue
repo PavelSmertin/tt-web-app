@@ -159,7 +159,7 @@
 			</text>
 
 			<text v-bind="coinTextDeltaWrap( node )"> 
-				<tspan class="delta" v-bind="coinTextDeltaIcon( node )" v-html="getSign(node)  ">
+				<tspan class="delta" v-bind="coinTextDeltaIcon( node )" v-html="getSign(node)">
 					<animate 
 						attributeName="font-size"
 						:dur="animationDurable"
@@ -226,6 +226,8 @@
 
 		mounted() {
 			this.portrait = document.getElementById('content').offsetWidth < document.getElementById('content').offsetHeight
+			this.isDevice = document.getElementById('content').offsetWidth < 769
+
 			this.retrieveNodes
 			this.retrieveGraphs
 		},
@@ -365,43 +367,48 @@
 
 			coinTextFirst: function( node ) {
 
+				const partCoinText = this.partCoinText( node.data.part )
 				const part = this.part( node.data.part )
-				const margin = 16
+				const margin = this.isDevice ? 8 : 16
 				const fontSize = 14
 
 				return {
 					'dx': part ? margin * part : margin, 
-					'dy': part ? (margin + fontSize) * part : 50, 
-					'font-size': part ? fontSize * part : fontSize,
+					'dy': this.isDevice ? 3 * part : (part ? margin * part + fontSize * partCoinText : 50), 
+					'font-size': this.isDevice ? 0 : (partCoinText ? fontSize * partCoinText : fontSize),
 				}
 			},
 
 			coinTextSecond: function( node ) {
 
+				const partCoinText = this.partCoinText( node.data.part )
 				const part = this.part( node.data.part )
 
 				const marginTop = -4
 				const fontSize = 48
-				const margin = 16
+				const margin = this.isDevice ? 8 : 16
 
 				return {
 					'dx': part ? margin * part : margin, 
-					'dy': part ? this.coinTextFirst(node).dy + (marginTop + fontSize) * part : this.coinTextFirst(node).dy + 48, 
-					'font-size': part ? fontSize * part : fontSize,
+					'dy': part ? this.coinTextFirst(node).dy + (marginTop + fontSize) * partCoinText : this.coinTextFirst(node).dy + 48, 
+					'font-size': partCoinText ? fontSize * partCoinText : fontSize,
+
 				}
 			},
 
 			coinTextThird: function( node ) {
 
+				const partCoinText = this.partCoinText( node.data.part )
 				const part = this.part( node.data.part )
+
 				const marginTop = 12
 				const fontSize = 24
-				const margin = 16
+				const margin = this.isDevice ? 8 : 16
 
 				return {
 					'dx': part ? margin * part : margin, 
-					'dy': part ? this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * part : this.coinTextSecond(node).dy + 24, 
-					'font-size': part ? fontSize * part : fontSize,
+					'dy': this.isDevice ? 0 : (part ? this.coinTextSecond(node).dy + (marginTop + fontSize - 6) * partCoinText : this.coinTextSecond(node).dy + 24), 
+					'font-size': this.isDevice ? 0 : ( partCoinText ? fontSize * partCoinText : fontSize ),
 				}
 			},
 
@@ -409,12 +416,13 @@
 				return {
 					'x': '100%',
 					'y': '100%',
+					'visibility': this.isDevice ? 'hidden' : 'visibility',
 				}
 			},
 
 			coinTextDeltaIcon: function( node ) {
 
-				const part = this.part( node.data.part, 15 )
+				const part = this.part( node.data.part )
 				const margin = 16
 				const fontSize = 36
 
@@ -428,7 +436,7 @@
 
 			coinTextDelta: function( node ) {
 
-				const part = this.part( node.data.part, 15 )
+				const part = this.part( node.data.part )
 				const fontSize = 64
 
 				return {
@@ -437,7 +445,17 @@
 				}
 			},
 
-			part( value, k = 35 ) {
+			part( value ) {
+				let part = value > 0.01 ? value * 15 : value * 15 //* 3
+				if ( part > 1 ) {
+					part = 1
+				}
+
+				return part
+			},
+
+			partCoinText( value ) {
+				let k = this.isDevice ? 15 : 35 
 				let part = value > 0.01 ? value * k : value * k //* 3
 				if ( part > 1 ) {
 					part = 1

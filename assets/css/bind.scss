@@ -21,6 +21,8 @@ $link-color: #8FCC14;
 $link-color-bg: #D9D9D9;
 
 $border-bold-color: #979797;
+$border-thin-color: #E6E6E6;
+
 
 $header-size: 16px;
 $primary-size: 14px;
@@ -261,6 +263,7 @@ fieldset {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
+	overflow: hidden;
 	.toolbar {
 		height:48px;
 	}
@@ -303,6 +306,14 @@ fieldset {
 		}
 	}
 }
+@media (max-width: 769px) {
+	.toolbar {
+		.filters {
+			display: none;
+		}
+	}
+}
+
 .content {
 	background-color: $bg-toolbar-color;
 	display: flex;
@@ -316,7 +327,6 @@ fieldset {
 .filter {
 	display: flex;
 	align-items: baseline;
-	font-family: $font-stack-headers;
 
 	label {
 		font-size: $label-size;
@@ -328,6 +338,7 @@ fieldset {
 		margin: 0;
 		padding: 0;
 		display: flex;
+		font-family: $font-stack-headers;
 		li {
 			list-style: none;
 			margin: 0;
@@ -706,7 +717,7 @@ fieldset {
 	.coin_detail {
 		flex-shrink: 0;
 		flex-grow: 0;
-		flex-basis: 200px;
+		flex-basis: 10px;
 		margin-top: 16px;
 		label {
 			font-size: $second_size;
@@ -765,6 +776,40 @@ fieldset {
 		}
 	}
 }
+
+@media (max-width: 769px) {
+	.coin_details {
+		flex-wrap: wrap;
+		position: relative;
+		justify-content: stretch;
+		margin: 0 12px;
+		width: auto;
+		.coin_detail {
+			margin-top: 8px;
+			flex-basis: auto;
+			align-self: stretch;
+			flex-grow: 1;
+			width: 50%;
+			align-content: stretch;
+			&:first-child {
+				width: 100%;
+				margin-left: 0;
+			}
+			&:last-child {
+				margin-right: 0px;
+			}
+			.top_detail {
+				font-size: 36px;
+				margin-top: 4px;
+			}
+			.bottom_detail {
+				font-size: 16px;
+				margin-top: 3px;
+			}
+		}
+	}
+}
+
 .chart {
 	position: absolute;
 	background-color: $down-value-color;
@@ -799,49 +844,96 @@ fieldset {
 
 
 .sidenav {
-	height: 100%;
 	width: 0;
 	position: fixed;
 	z-index: 1;
-	top: 0;
+	top: 48px;
+	bottom: 0;
 	right: 0;
-	background-color: #111;
+	background-color: $bg-toolbar-color;
 	overflow-x: hidden; 
-	padding-top: 60px;
 	transition: 0.5s;
 	z-index: 10;
 	.sidenav_overflow {
-		width: 250px;
+		width: 340px;
 		overflow: hidden;
 	}
 
 	a {
-		padding: 8px 8px 8px 32px;
+		margin: 0px 16px;
+		padding: 8px 0;
 		text-decoration: none;
 		text-transform: uppercase;
-		color: $dark-primary-color;
+		color: $primary-color;
 		display: block;
 		transition: 0.3s;
+		border-bottom: 1px solid $border-thin-color; 
+		font-weight: bold;
+		font-size: 12px;
 		&.nuxt-link-exact-active {
 			color: $up-value-color;
+		}
+
+		&:last-child {
+			border: none;
 		}
 	}
 
 	a:hover {
 		color: $up-value-color;
 	}
+	.filters {
+		.filter {
+			&:first-child {
+				margin-top: 16px;
+			}
+			display: block;
+			margin: 0 10px 0 12px;
 
-	.closebtn {
-		position: absolute;
-		top: 8px;
-		font-size: 36px;
+			label {
+				margin: 0;
+				padding: 0;
+			}
+			ul {
+				margin-bottom: 8px;
+				display: flex;
+    			justify-content: stretch;
+    			li {
+    				flex-grow: 1;
+					list-style: none;
+					margin: 0;
+					padding: 0;
+
+					border: 2px solid $link-color-bg;
+					margin-right: -2px;
+					margin-left: 0px;
+					padding: 3px 6px;
+
+					&:hover:not(.active_filter) {
+						background-color: $link-color-bg;
+						border-color: $link-color-bg;
+						border: 2px solid $link-color-bg;
+					}
+
+
+					&.active_filter {
+						background-color: $alternative-color-bg;
+						color: $alternative-color-text;
+						border: 2px solid $alternative-color-bg;
+						z-index: 1
+					}
+				}
+			}
+		}
 	}
 }
-@media screen and (max-height: 450px) {
-	.sidenav {padding-top: 15px;}
-	.sidenav a {font-size: 18px;}
-}
 
+.closebtn {
+	cursor: pointer;
+    position: absolute;
+    right: 16px;
+    font-size: 36px;
+}
 .burger {
 	cursor: pointer;
     position: absolute;
@@ -856,6 +948,11 @@ fieldset {
     position: absolute;
     right: 64px;
     text-align: center;
+}
+@media (max-width: 769px) { 
+	.ff_account_menu {
+		display: none;
+	}
 }
 
 
@@ -878,10 +975,8 @@ fieldset {
 }
 
 .portfolio_container {
-
 	width: 100%;
 	height: 100%;
-
 }
 
 .empty_message{
@@ -890,5 +985,4 @@ fieldset {
 	bottom: 0;
 	left: 0;
 	right: 0;
-
 }

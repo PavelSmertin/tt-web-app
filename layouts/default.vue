@@ -1,19 +1,25 @@
 <template>
 	<div class="layout">
 
-		<div ref="tt_sidenav" class="sidenav">
+		<div ref="tt_sidenav" class="sidenav" >
 			<div class="sidenav_overflow">
-				<a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
 
-				<nuxt-link :to="{ path: '/' }">{{ $t('nav.traders') }}</nuxt-link>
+				<div class="filters">
+					<filters :label="$t('home.label_capitalization')" :options="capitalizationOptions" :selectedProp="$store.state.filters.cap"  v-on:updateOption="filter($event, 'cap')" />
+					<filters :label="$t('home.label_profit')" :options="profitOptions" :selectedProp="$store.state.filters.profit" v-on:updateOption="filter($event, 'profit')" />
+					<filters :label="$t('home.label_interval')" :options="intervalOptions" :selectedProp="$store.state.filters.period"  v-on:updateOption="filter($event, 'period')" />
+					<div v-if="$store.state.filterLoading" class="loading"></div>
+				</div>
 
-				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
-				<nuxt-link v-else :to="{ path: '/account/signup' }" >{{ $t('account.signup') }}</nuxt-link>
+				<nuxt-link :to="{ path: '/' }" v-on:click.native="closeNav()">{{ $t('nav.traders') }}</nuxt-link>
 
-				<nuxt-link :to="{ path: '/about' }">{{ $t('nav.about') }}</nuxt-link>
+				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }" v-on:click.native="closeNav()">{{ $t('nav.account') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signup' }" v-on:click.native="closeNav()" >{{ $t('account.signup') }}</nuxt-link>
+
+				<nuxt-link :to="{ path: '/about' }" v-on:click.native="closeNav">{{ $t('nav.about') }}</nuxt-link>
 
 				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
-				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signin') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" v-on:click.native="closeNav()">{{ $t('account.signin') }}</nuxt-link>
 			</div>
 		</div>
 
@@ -40,7 +46,10 @@
 				{{ $t('account.signup') }}
 			</nuxt-link>
 
-			<span class="burger" v-on:click="openNav()">
+
+				
+			<a v-if="sidenavActive" href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
+			<span v-else class="burger" v-on:click="openNav()">
 				<svg width="24px" height="18px" viewBox="0 0 24 18">
 					<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 						<g transform="translate(-1400.000000, -15.000000)" fill="#000000">
@@ -54,8 +63,8 @@
 
 		</div>
 
-		<div class="content" id="content">
-			<nuxt/>
+		<div class="content" id="content" >
+			<nuxt v-on:navigate="closeNav()"/>
 		</div>
 
 	</div>
@@ -72,6 +81,7 @@
 		
 		data() {
 			return {
+				sidenavActive: false,
 				capitalizationOptions: [
 					{ name: this.$t('filters.all'), value: 'all' },
 					{ name: this.$t('filters.10k'), value: '10k' },
@@ -97,14 +107,18 @@
 
 		methods: {
 			openNav() {
-				this.$refs["tt_sidenav"].style.width = "250px"
+				this.$refs["tt_sidenav"].style.width = "340px"
+				this.sidenavActive = true
 			},
 
 			closeNav() {
 				this.$refs["tt_sidenav"].style.width = "0"
+				this.sidenavActive = false
+
 			},
 
 			filter ( filter, type ) {
+				this.closeNav();
 				this.$store.commit( 'SET_FILTER', { type: type, value: filter.value } )
 			},
 		},

@@ -3,17 +3,16 @@
 
 		<div ref="tt_sidenav" class="sidenav">
 			<div class="sidenav_overflow">
-				<a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
 
-				<nuxt-link :to="{ path: '/' }">{{ $t('nav.traders') }}</nuxt-link>
+				<nuxt-link :to="{ path: '/' }" v-on:click.native="closeNav()">{{ $t('nav.traders') }}</nuxt-link>
 
-				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }">{{ $t('nav.account') }}</nuxt-link>
-				<nuxt-link v-else :to="{ path: '/account/signup' }" >{{ $t('account.signup') }}</nuxt-link>
+				<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }" v-on:click.native="closeNav()">{{ $t('nav.account') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signup' }" v-on:click.native="closeNav()" >{{ $t('account.signup') }}</nuxt-link>
 
-				<nuxt-link :to="{ path: '/about' }">{{ $t('nav.about') }}</nuxt-link>
+				<nuxt-link :to="{ path: '/about' }" v-on:click.native="closeNav()">{{ $t('nav.about') }}</nuxt-link>
 
 				<a v-if="$auth.loggedIn" href="javascript:void(0)" v-on:click="$auth.logout()">{{ $t('nav.logout') }}</a>
-				<nuxt-link v-else :to="{ path: '/account/signin' }" >{{ $t('account.signin') }}</nuxt-link>
+				<nuxt-link v-else :to="{ path: '/account/signin' }" v-on:click.native="closeNav()" >{{ $t('account.signin') }}</nuxt-link>
 				
 			</div>
 		</div>
@@ -32,7 +31,8 @@
 			</nuxt-link>
 
 
-			<span class="burger" v-on:click="openNav()">
+			<a v-if="sidenavActive" href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">&times;</a>
+			<span v-else class="burger" v-on:click="openNav()">
 				<svg width="24px" height="18px" viewBox="0 0 24 18">
 					<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 						<g transform="translate(-1400.000000, -15.000000)" fill="#000000">
@@ -57,13 +57,21 @@
 
 	export default {
 		
+		data() {
+			return {
+				sidenavActive: false,
+			}
+		},
+
 		methods: {
 			openNav() {
-    			this.$refs["tt_sidenav"].style.width = "250px"
+    			this.$refs["tt_sidenav"].style.width = "340px"
+				this.sidenavActive = true
 			},
 
 			closeNav() {
 			    this.$refs["tt_sidenav"].style.width = "0"
+				this.sidenavActive = false
 			},
 		}
 	}
