@@ -112,7 +112,9 @@
 			},
 
 			closeNav() {
-				this.$refs["tt_sidenav"].style.width = "0"
+				if( this.$refs["tt_sidenav"] ) {
+					this.$refs["tt_sidenav"].style.width = "0"
+				}
 				this.sidenavActive = false
 
 			},

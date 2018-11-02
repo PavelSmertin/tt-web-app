@@ -8,6 +8,7 @@
   "dependencies": {
     "@nuxtjs/auth": "^4.5.2",
     "@nuxtjs/axios": "^5.3.2",
+    "@nuxtjs/google-gtag": "^1.0.4",
     "@nuxtjs/proxy": "^1.2.4",
     "d3": "^5.7.0",
     "jsona": "^1.2.0",
