@@ -78,14 +78,14 @@ export default {
 	],
 
 	'google-gtag': {
-		id: 'UA-52990017-2', // required
+		id: 'UA-52990017-1', // required
 		config:{
 			// this are the config options for `gtag
 			// check out official docs: https://developers.google.com/analytics/devguides/collection/gtagjs/
 			anonymize_ip: true, // anonymize IP 
 			send_page_view: false, // might be necessary to avoid duplicated page track on page reload
 			linker:{
-				domains:['tt.ff.ru']
+				domains:['ff.ru', 'tt.ff.ru']
 			}
 		},
 		debug: false, // enable to track in dev mode
