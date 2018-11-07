@@ -82,7 +82,7 @@
 			</div>
 		</div>
 
-		<svg class="graph" preserveAspectRatio="none">
+		<svg class="graph">
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
@@ -117,10 +117,7 @@
 					{{ formatPrice( tooltipPoint.part * 100) }}%
 				</text>
 			</svg>
-
 		</svg>
-
-
 
 	</div>
 </template>

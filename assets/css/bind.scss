@@ -267,11 +267,17 @@ fieldset {
     justify-items: stretch;
 	.toolbar {
 		height: 48px;
-		flex-grow: 0;
+		position: fixed;
+		left: 0;
+		right: 0;
 	}
 	.content {
 		height: 0;
 		flex-grow: 1;
+		margin-top: 48px;
+	}
+	.content_scrollable {
+		margin-top: 48px;
 	}
 }
 
@@ -281,19 +287,64 @@ fieldset {
 	background-color: $bg-toolbar-color;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	position: relative;
 	flex-shrink: 0;
 
-	.logo_link {
-		position: absolute;
-		left:16px;
+	&.bordered {
+		border-bottom: 1px solid $border-thin-color
+	}
+
+	.logo_wrap {
 		display: flex;
-		#logo_path {
-			fill: $primary-color;
+
+		.logo_link {
+			display: flex;
+			#logo_path {
+				fill: $primary-color;
+			}
+
+		}
+		.divider {
+			width: 0px;
+			border-left: 1px solid $border-thin-color;
+			margin: 0px 16px;
+			margin-bottom: 4px;
+		}
+		.profile_capital {
+			font-family: $font-stack-headers;
+			color: $border-bold-color;
+			text-transform: uppercase;
+			font-size: $header-size;
+
+		}
+	}
+
+	.tool_wrap {
+		display: flex;
+		.ff_account_menu {
+			@extend .button_link;
+			font-family: $font-stack-headers;
+			display: block;
+			font-size: $header-size;
+			font-weight: 100;
+			line-height: 34px;
+			height: 32px;
+			text-align: center;
+		}
+		.burger {
+			cursor: pointer;
+			display: inline-block;
+			margin-left: 24px;
+		}
+		.closebtn {
+			cursor: pointer;
+			font-size: 36px;
 		}
 
 	}
+
+
 	.filters {
 		display: flex;
 		align-items: baseline;
@@ -314,6 +365,11 @@ fieldset {
 		.filters {
 			display: none;
 		}
+		.tool_wrap {
+			.ff_account_menu {
+				display: none;
+			}
+		}
 	}
 }
 
@@ -322,8 +378,13 @@ fieldset {
 	display: flex;
 	align-items: stretch;
 	justify-content: stretch;
+	position: relative;
 }
-
+@media (max-width: 769px) {
+	.content_scrollable {
+		margin-top: 48px;
+	}
+}
 
 
 /************ COMPONENTS **************/
@@ -365,12 +426,6 @@ fieldset {
 		}
 	}
 }
-.ff_account_menu {
-	font-family: $font-stack-headers;
-}
-
-
-
 
 
 /* account page */
@@ -396,6 +451,7 @@ fieldset {
 			height: $nav_height;
 			border-bottom: 1px solid $border-bold-color;
 			font-family: $font-stack-headers;
+			flex-shrink: 0;
 
 			list-style: none;
 			margin: 0;
@@ -529,6 +585,17 @@ fieldset {
 		background: none; 
 		.form_pane {
 
+			.navigation {
+				border: none;	
+				li {
+					.nuxt-link-active {
+						border-bottom: none;
+						border-top: 2px solid $primary-color;
+						line-height: 52px;
+					}
+				}
+			}
+
 			margin-top: 0;
 			border: none;
 			width: 100%;
@@ -540,10 +607,18 @@ fieldset {
 			form, .flash_form {
 				width: 80%;
 
+				padding: 0;
+
 				.row_tools {
-					flex-direction: column;
-					justify-content: flex-end;
-					align-items: center;
+					flex-direction: row-reverse;
+					justify-content: space-between;
+					align-items: stretch;
+					.button_link {
+						margin: 0;
+					}
+					.row_link {
+						margin: 0;
+					}
 					input {
 						margin-right: 0px;
 					}
@@ -696,6 +771,12 @@ fieldset {
 		}
 	}
 }
+@media (max-width: 769px) { 
+	.tt_about {
+		width: auto;
+		margin: 24px;
+	}
+}
 
 .tt_portfolio_field {
 	svg {
@@ -705,9 +786,6 @@ fieldset {
 	}
 }
 
-.content{
-	position: relative;
-}
 
 .coin_details {
 	font-family: $font-stack-headers;
@@ -814,17 +892,11 @@ fieldset {
 }
 
 .chart {
-	position: absolute;
 	background-color: $down-value-color;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-
+	overflow: auto;
+	width: 100%;
 	display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-self: stretch;
+	flex-direction: column;
 
 	.ff_close {
 		position: absolute;
@@ -836,15 +908,17 @@ fieldset {
 		background-color: $up-value-color;
 	}
 	.graph {
-		flex-grow: 1;
 		width: 100%;
+		flex-grow: 1;
 	}
 }
 
+@media (max-width: 769px) {
+	.chart {
+		overflow: hidden;
+	}
 
-
-
-
+}
 
 .sidenav {
 	width: 0;
@@ -859,7 +933,11 @@ fieldset {
 	z-index: 10;
 	.sidenav_overflow {
 		width: 340px;
-		overflow: hidden;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-content: space-between;
 	}
 
 	a {
@@ -929,32 +1007,25 @@ fieldset {
 			}
 		}
 	}
-}
 
-.closebtn {
-	cursor: pointer;
-    position: absolute;
-    right: 16px;
-    font-size: 36px;
-}
-.burger {
-	cursor: pointer;
-    position: absolute;
-    right: 16px;
-}
-.ff_account_menu {
-	@extend .button_link;
-	font-size: $header-size;
-	font-weight: 100;
-	line-height: 34px;
-    height: 32px;
-    position: absolute;
-    right: 64px;
-    text-align: center;
-}
-@media (max-width: 769px) { 
-	.ff_account_menu {
-		display: none;
+	.sidenav_footer {
+		display: flex;
+		padding: 16px;
+		.sidenav_item {
+			flex-grow: 1;
+			width: 0;
+			font-size: 12px;
+			line-height: 16px;
+			color: $border-bold-color;
+			&:first-child {
+				margin-right: 16px;
+			}
+		}
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
 	}
 }
 
@@ -969,7 +1040,6 @@ fieldset {
 	font-weight: 100;
 	color: $primary-color;
 }
-
 .tooltip_value {
 	font-size: 24px;
 	font-family: $font-stack-headers;

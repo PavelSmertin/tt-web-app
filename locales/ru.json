@@ -23,7 +23,8 @@
   "home": {
     "label_capitalization": "Капитал",
     "label_profit": "Доходность",
-    "label_interval": "Период"
+    "label_interval": "Период",
+    "description": "Trader Trends – cервис отслеживания портфелей криптотрейдеров"
   },
 
   "account": {
@@ -61,7 +62,16 @@
       "choose_one": "Выберите один из вариантов",
       "guide": "Для анализа своего портфеля и доступа к актуальным данным, привяжите свои аккаунты на биржах.",
       "guide_link": "Инструкция"
-    }
+    },
+
+    "total_capital": "Общий капитал"
+
+  },
+
+  "profile": {
+    "traders": "traders",
+    "capital": "capital",
+    "updated_at": "updated"
   },
 
   "coin": {

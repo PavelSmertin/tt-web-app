@@ -22,7 +22,8 @@
   "home": {
     "label_capitalization": "Capital",
     "label_profit": "Profit",
-    "label_interval": "Period"
+    "label_interval": "Period",
+    "description": "Trader Trends – portfolio discovery service"
   },
 
   "account": {
@@ -60,7 +61,16 @@
       "choose_one": "Choose one",
       "guide": "Link your exchange.",
       "guide_link": "Instruction"
-    }
+    },
+
+    "total_capital": "Total capital"
+
+  },
+
+  "profile": {
+    "traders": "traders",
+    "capital": "capital",
+    "updated_at": "updated"
   },
 
   "coin": {

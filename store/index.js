@@ -4,6 +4,7 @@ export const state = () => ({
 	filters: {cap: 'all', period: '1d', profit: 'all'},
 	graphs: {},
 	filterLoading: false,
+	profile: {},
 })
 
 export const mutations = {
@@ -27,6 +28,12 @@ export const mutations = {
 	SET_GRAPH: function (state, graph) {
 		state.graphs = {}
 		state.graphs[graph.symbol] = graph.data
+	},
+
+	SET_PROFILE: function (state, profile) {
+		state.profile.tradersCount  = profile.traders_count
+		state.profile.capital       = profile.capital
+		state.profile.updatedAt 	= profile.updated_at
 	},
 
 	TERMINATE_FILTER_LOADING: function (state ) {

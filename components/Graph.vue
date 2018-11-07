@@ -12,7 +12,7 @@
 
 		</svg>
 
-		<svg x="48" :y="graphHeight - 64" viewBox="0 0 24 24" width="400" height="24" v-if=" interactive && points && points.length > 0" preserveAspectRatio="xMinYMin meet">
+		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
 			<g>
 				<circle v-bind="partLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"/>
 				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
@@ -25,9 +25,7 @@
 				</text>
 			</g>
 		</svg>
-
 	</svg>
-
 </template>
 
 <script>
@@ -67,9 +65,12 @@
 		},
 
 		mounted() {
+			this.isDevice = document.getElementById('content').offsetWidth < 769
+
 			if( this.$parent.$refs.chart ) {
 				this.graphWidth = this.$parent.$refs.chart.offsetWidth
 				this.graphHeight = this.$parent.$refs.chart.offsetHeight
+				console.log(this.$parent.$refs.chart.offsetHeight, this.$refs.graph.getBBox())
 			}
 
 			if(this.$store.state.graphs[ this.symbol ]) {
@@ -91,9 +92,6 @@
 			translate() {
 				return `translate(0, ${this.graphHeight / 2})`
 			},
-			translateLegend() {
-				return `translate(50,${this.graphHeight * 1.6 - 50})`
-			},
 		},
 
 		methods: {
@@ -110,8 +108,8 @@
 				let price = d3.scaleLinear().range([this.graphHeight, 0])
 				let part = d3.scaleLinear().range([this.graphHeight, 0])
 
-				let dateAxis = d3.axisBottom(date).tickFormat(d => this.formatDateTime(d))
-				let priceAxis = d3.axisLeft(price).tickFormat(d => "$" + this.formatPrice(d, 0)).ticks(5)
+				let dateAxis = d3.axisBottom(date).tickFormat(d => this.formatDateTime(d)).ticks(3)
+				let priceAxis = d3.axisRight(price).tickFormat(d => "$" + this.formatPrice(d, 0)).ticks(5)
 				let partAxis = d3.axisRight(part).tickFormat(d => this.formatPrice(d * 100)+"%").ticks(5)
 
 				date.domain(d3.extent(this.points, el => el.date))
@@ -119,44 +117,53 @@
 				part.domain(d3.extent(this.points, el => el.part))
 
 				let svg = d3.select(".graph")
+
 				svg.selectAll(".axis").remove()
 
-				// append bottom axis
-				let g = svg.append("g")
+				if( !this.isDevice ) {
+					// append bottom axis
+					let bottomAxisSvg = svg.append("svg")
 
-				g.attr("transform", "translate(0, " + (this.graphHeight-25) + ")")
-						.attr("vector-effect", "non-scaling-stroke")
-						.attr("class", "axis")
-						.call(dateAxis)
+					bottomAxisSvg
+							.attr("viewBox", `0 0 ${this.graphWidth} 20`)
+							.attr("vector-effect", "non-scaling-stroke")
+							.attr("class", "axis")
+							.attr("preserveAspectRatio", "xMidYMax meet")
+							.call(dateAxis)
 
-				g.selectAll("line").attr("stroke", "none")
-				g.selectAll("path").attr("stroke", "none")
-				g.selectAll(".tick text").attr("x", 4).attr("fill", "#fff")
+					bottomAxisSvg.selectAll("line").attr("stroke", "none")
+					bottomAxisSvg.selectAll("path").attr("stroke", "none")
+					bottomAxisSvg.selectAll(".tick text").attr("x", 4).attr("fill", "#fff")
+				}
 
 				// append left axis
-				g = svg.append("g")
+				let leftAxisSvg = svg.append("svg")
 
-				g//.attr("transform", "translate(0," + (this.graphHeight-25) + ")")
+				leftAxisSvg
+						.attr("viewBox", `0 0 20 ${this.graphHeight}`)
 				      	.attr("vector-effect", "non-scaling-stroke")
 				      	.attr("class", "axis")
+				      	.attr("preserveAspectRatio", "xMinYMin meet")
 				      	.call(partAxis)
 
-				g.selectAll("line").attr("stroke", "none")
-				g.selectAll("path").attr("stroke", "none")
-				g.selectAll(".tick text").attr("fill", "#fff").attr("y", "10").attr("transform", "rotate(-90)")
+				leftAxisSvg.selectAll("line").attr("stroke", "none")
+				leftAxisSvg.selectAll("path").attr("stroke", "none")
+				leftAxisSvg.selectAll(".tick text").attr("fill", "#fff").attr("y", "10").attr("transform", "rotate(-90)")
 
 
 				// append right axis
-				g = svg.append("g")
+				let rightAxisSvg = svg.append("svg")
 
-				g.attr("transform", "translate(" + (this.graphWidth) + ",0 )")
-				      	.attr("vector-effect", "non-scaling-stroke")
-				      	.attr("class", "axis")
-				      	.call(priceAxis)
+				rightAxisSvg
+					.attr("viewBox", `0 0 20 ${this.graphHeight}`)
+					.attr("vector-effect", "non-scaling-stroke")
+					.attr("class", "axis")
+					.attr("preserveAspectRatio", "xMaxYMin meet")
+					.call(priceAxis)
 
-				g.selectAll("line").attr("stroke", "none")
-				g.selectAll("path").attr("stroke", "none")
-				g.selectAll(".tick text").attr("text-anchor", "end").attr("y", "-10").attr("fill", "#fff").attr("transform", "rotate(-90)")
+				rightAxisSvg.selectAll("line").attr("stroke", "none")
+				rightAxisSvg.selectAll("path").attr("stroke", "none")
+				rightAxisSvg.selectAll(".tick text").attr("y", "10").attr("fill", "#fff").attr("transform", "rotate(-90)")
 
 			},
 
@@ -286,6 +293,16 @@
 				}
 			},
 
+			legend() {
+				return {
+					'x': 24,
+					'y': this.isDevice ? 0 : -24,
+					'viewBox': `0 0 ${this.graphWidth} 24`,
+					'preserveAspectRatio': "xMinYMax meet",
+
+				}
+			},
+
 			partLegendMarker() {
 				return {
 					'cx': 10,
@@ -376,6 +393,12 @@
 
 	.graph_point
 		fill: #fff
+
+	.tick 
+		opacity: 0
+		font-size: 36px
+		text
+			font-size: 36px
 	
 </style>
 
