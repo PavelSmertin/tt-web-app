@@ -6,6 +6,7 @@
 	import Treemap from '~/components/Treemap.vue'
 
 	export default {
+		
 		components: {
 			Treemap,
 		},

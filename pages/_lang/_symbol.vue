@@ -82,7 +82,7 @@
 			</div>
 		</div>
 
-		<svg class="graph">
+		<svg class="graph" ref="grafBox">
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
@@ -150,6 +150,8 @@
 				showInfoPart: false,
 				showInfoVolume: false,
 				showInfoActuality: false,
+				tooltipWidth: 200,
+				tooltipHeight: 100,
 			}
 		},
 		
@@ -200,6 +202,12 @@
 			}
 		},
 
+		computed: {
+			tooltipViewBox() {
+				return `0 0 ${this.tooltipWidth} ${this.tooltipHeight}`
+			},
+		},
+
 		methods: {
 
 			formatPrice( value ) {
@@ -209,16 +217,18 @@
 
 			formatDate( dateString ) {
 				let date 	= new Date(dateString)
+				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
 				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				return `${date.getDate()}.${month}`
+				return `${day}.${month}`
 			},
 
 			formatDateTime( dateString ) {
 				let date 	= new Date(dateString)
+				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
 				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
 				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
 				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-				return `${date.getDate()}.${month} ${hour}:${min}`
+				return `${day}.${month} ${hour}:${min}`
 			},
 
 			onClose () {
@@ -244,7 +254,7 @@
 									part_change: null,
 								}
 					}
-				} catch(error) {
+				} catch( error ) {
 					console.error(error)
 				}
 			},
@@ -270,13 +280,24 @@
 			},
 
 			tooltip() {
+
 				return { 
-					'x': this.tooltipPoint.offsetX ? this.tooltipPoint.offsetX - 220 : 0,
-					'y': this.tooltipPoint.offsetY ? this.tooltipPoint.offsetY - 120 : 0,
+					'x': this.tooltipPoint.offsetX ? this.tooltipPoint.offsetX + this.tooltipPosition().x : 0,
+					'y': this.tooltipPoint.offsetY ? this.tooltipPoint.offsetY + this.tooltipPosition().y : 0,
 					'width': 201,
 					'height': 104,
 					'fill': '#f2f2f2',
 					'visibility': this.showTooltip ? 'visibile' : 'hidden',
+				}
+			},
+
+			tooltipPosition() {
+				let height = this.$refs.grafBox.getBoundingClientRect().height
+				let offsetY = height - this.tooltipPoint.offsetY - this.tooltipHeight + 40
+
+				return {
+					x: this.tooltipPoint.offsetX - this.tooltipWidth > 0 ?  -this.tooltipWidth - 20 : 20,
+					y: offsetY > 0 ?  -60 : -60 + offsetY,
 				}
 			},
 

@@ -99,7 +99,7 @@
 	const FILTER_TYPE_PERIOD = 'period'
 
 	export default {
-		
+
 		data() {
 			return {
 				sidenavActive: false,
@@ -122,6 +122,7 @@
 				],
 			}
 		},
+
 		components: {
 			Filters,
 		},
@@ -174,10 +175,6 @@
 				let sec 	= date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
 				return `${day}.${month} ${hour}:${min}:${sec} GMT`
 			},
-
-
 		},
-
-
 	}
 </script>

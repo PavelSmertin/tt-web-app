@@ -1,15 +1,13 @@
 
 <template>
-	<svg>
+	<svg ref="graphWrap">
 		<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
-
 			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-			<path :transform="translate" class="linePrice" :d="linePrice" vector-effect="non-scaling-stroke" />		
+			<path :transform="translate" class="linePrice" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />		
 			<path :transform="translate" class="areaPrice" :d="areaPrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="linePart" :d="linePart" vector-effect="non-scaling-stroke" />		
+			<path :transform="translate" class="linePart" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />		
 			<path :transform="translate" class="areaPart" :d="areaPart" vector-effect="non-scaling-stroke" />
 			<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
-
 		</svg>
 
 		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
@@ -25,6 +23,10 @@
 				</text>
 			</g>
 		</svg>
+
+		<circle v-if="interactive" v-bind="markerPrice()" />
+		<circle v-if="interactive" v-bind="markerPart()" />
+
 	</svg>
 </template>
 
@@ -56,8 +58,10 @@
 				areaPart: '',
 				selector: '',
 				areaSelector: '',
-				lastHoverDate: {},
+				lastHoverIndex: 0,
 				verticalLinePosition: {},
+				markerPricePosition: {},
+				markerPartPosition: {},
 				graphWidth: 100,
 				graphHeight: 100,
 
@@ -70,17 +74,16 @@
 			if( this.$parent.$refs.chart ) {
 				this.graphWidth = this.$parent.$refs.chart.offsetWidth
 				this.graphHeight = this.$parent.$refs.chart.offsetHeight
-				console.log(this.$parent.$refs.chart.offsetHeight, this.$refs.graph.getBBox())
 			}
 
 			if(this.$store.state.graphs[ this.symbol ]) {
 				this.init()
 			}
 			window.addEventListener('resize', this.handleResize)
-			this.handleResize();
+			this.handleResize()
 		},
 
-			destroyed() {
+		destroyed() {
 			window.removeEventListener('resize', this.handleResize)
 		},
 
@@ -219,15 +222,24 @@
 			mouseover({ offsetX, offsetY }) {
 
 				const scales = this.getScales()
-				const svg = this.$refs.graph
-				const pt = svg.createSVGPoint()
+				const svg = this.$refs.graphWrap
+
+				if( svg == undefined) {
+					return
+				}
+
+				let pt = svg.createSVGPoint()
 				pt.x = offsetX
 				pt.y = offsetY
 				const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse())
 
-				if (this.points && this.points.length > 0) {
-					let closestDate = this.getClosestDate(scales.date.invert(svgPoint.x));
+				let markerPricePosition = this.findYatX(svgPoint.x, this.$refs.linePrice) // svg reper
+				let markerPartPosition 	= this.findYatX(svgPoint.x, this.$refs.linePart) // svg reper
 
+				this.markerPricePosition = this.convertCoords(markerPricePosition.x, markerPricePosition.y, this.$refs.linePrice.getScreenCTM())
+				this.markerPartPosition 	= this.convertCoords(markerPartPosition.x, markerPartPosition.y, this.$refs.linePart.getScreenCTM())
+
+				if (this.points && this.points.length > 0) {
 
 					let index = bisectDate(this.points, scales.date.invert(svgPoint.x))
 
@@ -237,42 +249,22 @@
 						return
 					}
 
+					this.verticalLinePosition = { 
+						x: svgPoint.x, 
+						y: svgPoint.y, 
+						date: closestPoint.date, 
+						price: closestPoint.price,
+						part: closestPoint.part,
+						offsetX: this.markerPartPosition.x,
+						offsetY: (this.markerPartPosition.y + this.markerPricePosition.y) / 2,
+					}
 
-					//if (this.lastHoverDate.index !== closestDate.index) {
-						//const points = this.points.slice( closestDate.index, closestDate.index + 1 )
-
-						this.verticalLinePosition = { 
-							x: svgPoint.x, 
-							y: svgPoint.y, 
-							date: closestPoint.date, 
-							price: closestPoint.price,
-							part: closestPoint.part,
-							offsetX: offsetX,
-							offsetY: offsetY,
-						}
-
-						this.$emit('testtest', this.verticalLinePosition )
-						
-					//	this.lastHoverDate = closestDate;
-					//}
+					this.$emit('testtest', this.verticalLinePosition )
 				}
 			},
 
 			mouseleave() {
 				this.$emit('hide-tooltip' )
-			},
-
-			getClosestDate(date) {
-				return this.points
-					.map((point, index) => {
-
-							return { 
-								date: point.date,
-								diff: Math.abs(point.date - date),
-								index,
-							}
-						})
-						.reduce((memo, val) => (memo.diff < val.diff ? memo : val))
 			},
 
 			verticalLine() {
@@ -299,6 +291,30 @@
 					'y': this.isDevice ? 0 : -24,
 					'viewBox': `0 0 ${this.graphWidth} 24`,
 					'preserveAspectRatio': "xMinYMax meet",
+
+				}
+			},
+
+			markerPrice () {
+				return {
+					'cx': this.markerPricePosition.x,
+					'cy': this.markerPricePosition.y,
+					'r': 3,
+					'stroke': 'none',
+					'fill': '#000',
+					'fill-opacity': 0.5,
+				}
+			},
+
+			markerPart () {
+				return {
+					'cx': this.markerPartPosition.x,
+					'cy': this.markerPartPosition.y,
+					'r': 3,
+					'stroke': 'none',
+					'fill': '#fff',
+					'fill-opacity': 1,
+
 
 				}
 			},
@@ -334,19 +350,52 @@
 
 			},
 
-
 			formatDateTime( dateString ) {
-				let date = new Date(dateString)
-				let month = date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				let hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-				let min = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-				return `${date.getDate()}.${month} ${hour}:${min}`
+				let date 	= new Date(dateString)
+				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
+				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+				return `${day}.${month} ${hour}:${min}`
 			},
 
 			formatPrice( value ) {
 				let val = (value/1).toFixed(2)
 				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 			},
+
+			findYatX(x, linePath) {
+				let beginning = 0,
+					pos,
+					end = linePath.getTotalLength(),
+					target = null
+
+				while (true){
+					target = Math.floor((beginning + end) / 2)
+					pos = linePath.getPointAtLength(target)
+
+					if ((target === end || target === beginning) && Math.floor(pos.x) !== Math.floor(x)) {
+						return pos
+					}
+					if (Math.floor(pos.x) > Math.floor(x))  {
+						end = target
+					} else if (Math.floor(pos.x) < Math.floor(x)) { 
+						beginning = target
+					} else  { //position found
+						return pos
+					} 
+				}
+
+			},
+
+			convertCoords(x,y, matrix) {
+				let offset = this.$refs.graphWrap.getBoundingClientRect()
+				return {
+					x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
+					y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
+				}
+			},
+
 
 		},
 
