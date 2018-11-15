@@ -50,11 +50,10 @@
 
         return this.$auth
           .loginWith('api', {
-            data: 'LoginForm[email]=' + this.email + '&LoginForm[password]=' + this.password
-          })
-          .catch( e => {
-
-            console.log(e)
+            data: 'LoginForm[email]=' + this.email + '&LoginForm[password]=' + this.password,
+          }).then((response) => {
+            this.$toast.success(this.$t('account.success_auth'))
+          }).catch( e => {
             this.busy = false
             this.errors = e.response.data.errors.map((el) => { return el.title})
             var element = this.$parent.$refs["scroll_container_account"];

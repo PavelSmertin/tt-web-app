@@ -68,7 +68,7 @@
 	import Jsona from 'jsona'
 
 	const REQUEST_EXCHANGES 			= `/api/portfolios/exchanges?per-page=10000`
-	const REQUEST_PORTFOLIOS_EXCHANGES 	= `/api/portfolio/trader-exchanges?include=balances,exchange`
+	const REQUEST_PORTFOLIOS_EXCHANGES	= `/api/portfolio/trader-exchanges?include=balances,exchange`
 	const POST_EXCHANGE_ACCOUNT			= `/api/portfolios/add-exchange`
 
 	const CHOOSE_ONE = ``

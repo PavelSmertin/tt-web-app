@@ -787,6 +787,7 @@ fieldset {
 }
 
 
+
 .coin_details {
 	font-family: $font-stack-headers;
 
@@ -857,6 +858,7 @@ fieldset {
 		}
 	}
 }
+
 
 @media (max-width: 769px) {
 	.coin_details {
@@ -1058,3 +1060,30 @@ fieldset {
 	left: 0;
 	right: 0;
 }
+
+
+
+
+/* ************* portfolio page **************** */
+.portfolio_page {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	.portfolio_graph_wrap {
+		height: 100%;
+		flex-grow: 1;
+    	flex-shrink: 2;
+    	.portfolio_graph {
+			width: 100%;
+			height: 100%;
+    	}
+	}
+	.portfolio_treemap {
+		height: 100%;
+		flex-grow: 2;
+	}
+}
+
+
+

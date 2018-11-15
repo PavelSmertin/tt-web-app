@@ -47,7 +47,8 @@
     "restore": "Restore",
     "congratulations": "Congratulations!",
     "success_password": "Password changed successful",
-
+    "success_auth": "Successfully authenticated",
+    "success_signup": "Successfully registrated",
 
     "forgot":  "Forgot password?",
     "forgot_email":  "Email",
@@ -69,7 +70,14 @@
 
   "profile": {
     "traders": "traders",
-    "capital": "capital",
+    "capital": "Capital",
+    "change_capital": "Change capital",
+    "change_capital_short": "Capital",
+    "lowest_capital": "Lowest capital",
+    "change_price": "Change price",
+    "change_price_short": "Price",
+    "efficiency": "Trader efficiency",
+    "rating": "Trader rating",
     "updated_at": "updated"
   },
 

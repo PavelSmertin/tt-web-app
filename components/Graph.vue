@@ -1,23 +1,23 @@
 
 <template>
-	<svg ref="graphWrap">
+	<svg>
 		<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
 			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-			<path :transform="translate" class="linePrice" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />		
-			<path :transform="translate" class="areaPrice" :d="areaPrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="linePart" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />		
-			<path :transform="translate" class="areaPart" :d="areaPart" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="linePart" :stroke="first.color" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="areaPart" :fill="'url(#'+first.gradient+')'" :d="areaPart" vector-effect="non-scaling-stroke" />
 			<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
 		</svg>
 
 		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
 			<g>
-				<circle v-bind="partLegendMarker()" r="6" fill="#fff" vector-effect="non-scaling-stroke"/>
+				<circle v-bind="partLegendMarker()" r="6" :fill="second.color" vector-effect="non-scaling-stroke"/>
 				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.part') }}
 				</text>
 
-				<circle v-bind="priceLegendMarker()" r="6" fill="#000" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
+				<circle v-bind="priceLegendMarker()" r="6" :fill="first.color" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
 				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.price') }}
 				</text>
@@ -29,6 +29,9 @@
 
 	</svg>
 </template>
+
+Цвет графиков
+Цвет 
 
 <script>
 	import * as d3 from 'd3'
@@ -45,6 +48,18 @@
 			interactive: {
 				type: Boolean,
 				default: false
+			},
+			first: {
+				type: Object,
+				default: () => ({color: '#fff', gradient: 'GradientPart', opacity: 0.3, label: ''})
+			},
+			second: {
+				type: Object,
+				default: () => ({color: '#000', gradient: 'GradientPrice', opacity: 0.2, label: ''})
+			},
+			primaryColor: {
+				type: String,
+				default: '#fff'
 			}
 
 		},
@@ -71,9 +86,10 @@
 		mounted() {
 			this.isDevice = document.getElementById('content').offsetWidth < 769
 
-			if( this.$parent.$refs.chart ) {
-				this.graphWidth = this.$parent.$refs.chart.offsetWidth
-				this.graphHeight = this.$parent.$refs.chart.offsetHeight
+			if ( this.$parent.$refs.graphWrap ) {
+				let offset = this.$parent.$refs.graphWrap.getBoundingClientRect()
+				this.graphWidth = offset.width
+				this.graphHeight = offset.height
 			}
 
 			if(this.$store.state.graphs[ this.symbol ]) {
@@ -222,7 +238,7 @@
 			mouseover({ offsetX, offsetY }) {
 
 				const scales = this.getScales()
-				const svg = this.$refs.graphWrap
+				const svg = this.$refs.graph
 
 				if( svg == undefined) {
 					return
@@ -273,6 +289,7 @@
 					'x2': this.verticalLinePosition.x,
 					'y1': 0,
 					'y2': this.graphHeight * 1.6,
+					'stroke': this.primaryColor,
 				}
 			},
 
@@ -288,7 +305,7 @@
 			legend() {
 				return {
 					'x': 24,
-					'y': this.isDevice ? 0 : -24,
+					'y': this.isDevice ? 0 : -this.graphHeight / 30,
 					'viewBox': `0 0 ${this.graphWidth} 24`,
 					'preserveAspectRatio': "xMinYMax meet",
 
@@ -301,7 +318,7 @@
 					'cy': this.markerPricePosition.y,
 					'r': 3,
 					'stroke': 'none',
-					'fill': '#000',
+					'fill': this.second.color,
 					'fill-opacity': 0.5,
 				}
 			},
@@ -312,7 +329,7 @@
 					'cy': this.markerPartPosition.y,
 					'r': 3,
 					'stroke': 'none',
-					'fill': '#fff',
+					'fill': this.first.color,
 					'fill-opacity': 1,
 
 
@@ -389,7 +406,7 @@
 			},
 
 			convertCoords(x,y, matrix) {
-				let offset = this.$refs.graphWrap.getBoundingClientRect()
+				let offset = this.$refs.graph.getBoundingClientRect()
 				return {
 					x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
 					y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
@@ -416,32 +433,22 @@
 
 	.linePrice 
 		fill: none
-		stroke: #000
 		opacity: 0.2
 		stroke-width: 1px
 
 	.linePart
 		fill: none
-		stroke: #fff
 		stroke-width: 1px
 
-
-
 	.areaPrice
-		fill: url(#GradientPrice)
 		opacity: 0.2
 
 	.areaPart
-		fill: url(#GradientPart)
 		opacity: 0.3
 
 	.selector
-		stroke: #fff
 		opacity: 1
 		stroke-width: 1px
-
-	.graph_point
-		fill: #fff
 
 	.tick 
 		opacity: 0

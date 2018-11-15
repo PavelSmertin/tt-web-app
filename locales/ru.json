@@ -48,6 +48,8 @@
     "restore": "Восстановить",
     "congratulations": "Поздравляем!",
     "success_password": "Ваш пароль успешно изменен!",
+    "success_auth": "Вход выполнен",
+    "success_signup": "Регистрация завершена",
 
     "forgot":  "Забыли пароль?",
     "forgot_email":  "Укажите ваш E-Mail для восстановления пароля",
@@ -70,7 +72,14 @@
 
   "profile": {
     "traders": "traders",
-    "capital": "capital",
+    "capital": "Капитал",
+    "change_capital": "Рост капитала",
+    "change_capital_short": "Капитал",
+    "lowest_capital": "Максимальная просадка",
+    "change_price": "Рост рынка",
+    "change_price_short": "Рынок",
+    "efficiency": "Эффективность торговли",
+    "rating": "Рейтинг трейдера",
     "updated_at": "updated"
   },
 

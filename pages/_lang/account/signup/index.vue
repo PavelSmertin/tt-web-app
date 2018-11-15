@@ -66,6 +66,7 @@
           .then((response) => {
             this.$auth.setToken('api', 'Bearer ' + response.access_token)
             this.$auth.setUser({})
+            this.$toast.success(this.$t('account.success_signup'))
             this.$router.push({ name: `index` })
           })
           .catch(e => {

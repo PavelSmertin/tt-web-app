@@ -1,5 +1,5 @@
 <template>
-	<div class="chart" v-bind:class="up" ref="chart">
+	<div class="chart" v-bind:class="up" ref="graphWrap">
 
 		<button v-on:click="onClose()" class="ff_close">
 			<svg  viewBox="0 0 48 48">
@@ -82,7 +82,7 @@
 			</div>
 		</div>
 
-		<svg class="graph" ref="grafBox">
+		<svg class="graph" ref="graphBox">
 			<defs>
 				<linearGradient id="GradientPrice" x1="0" x2="0" y1="0" y2="5">
 					<stop offset="0%" stop-color="#000"/>
@@ -140,16 +140,11 @@
 			return {
 				tooltipPoint: {},
 				showTooltip: false,
-
 				showInfo: {
 						volume: false, 
 						part: false, 
 						actuality: false
 				},
-
-				showInfoPart: false,
-				showInfoVolume: false,
-				showInfoActuality: false,
 				tooltipWidth: 200,
 				tooltipHeight: 100,
 			}
@@ -292,7 +287,7 @@
 			},
 
 			tooltipPosition() {
-				let height = this.$refs.grafBox.getBoundingClientRect().height
+				let height = this.$refs.graphBox.getBoundingClientRect().height
 				let offsetY = height - this.tooltipPoint.offsetY - this.tooltipHeight + 40
 
 				return {
@@ -372,13 +367,6 @@
 					( filters.period ? '&period=' + filters.period : '' ) +
 					( filters.profit ? '&profit=' + filters.profit : '' )
 		return REQUEST_GRAPH + symbol +  filterQuery
-	}
-
-	function showInfo( app, option ) {
-		app.showInfoVolume = false
-		app.showInfoPart = false
-		app.showInfoActuality = false
-		app[option] = true
 	}
 
 	Vue.use(VueTimeago, {
