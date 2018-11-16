@@ -3,6 +3,7 @@ export const state = () => ({
 	locale: 'ru',
 	filters: {cap: 'all', period: '1d', profit: 'all'},
 	graphs: {},
+	graphsUniq: {},
 	filterLoading: false,
 	profile: {},
 })
@@ -23,6 +24,10 @@ export const mutations = {
 
 	SET_GRAPHS: function (state, graphs) {
 		state.graphs = graphs
+	},	
+
+	SET_GRAPHS_UNIQ: function (state, graphs) {
+		state.graphsUniq = graphs
 	},
 
 	SET_GRAPH: function (state, graph) {

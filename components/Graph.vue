@@ -3,21 +3,21 @@
 	<svg>
 		<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
 			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-			<path :transform="translate" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
 			<path :transform="translate" class="linePart" :stroke="first.color" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
 			<path :transform="translate" class="areaPart" :fill="'url(#'+first.gradient+')'" :d="areaPart" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translate" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
 			<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
 		</svg>
 
 		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
 			<g>
-				<circle v-bind="partLegendMarker()" r="6" :fill="second.color" vector-effect="non-scaling-stroke"/>
+				<circle v-bind="partLegendMarker()" r="6" :fill="first.color" vector-effect="non-scaling-stroke"/>
 				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.part') }}
 				</text>
 
-				<circle v-bind="priceLegendMarker()" r="6" :fill="first.color" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
+				<circle v-bind="priceLegendMarker()" r="6" :fill="second.color" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
 				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
 					{{ $t('coin.price') }}
 				</text>
@@ -44,6 +44,10 @@
 			symbol: {
 				type: String,
 				default: 'BTC'
+			},
+			type: {
+				type: String,
+				default: 'avg_portfolio'
 			},
 			interactive: {
 				type: Boolean,
@@ -92,7 +96,7 @@
 				this.graphHeight = offset.height
 			}
 
-			if(this.$store.state.graphs[ this.symbol ]) {
+			if( this.getGraph() ) {
 				this.init()
 			}
 			window.addEventListener('resize', this.handleResize)
@@ -203,7 +207,7 @@
 			},
 
 			initPoints() {
-				let lineData = this.$store.state.graphs[ this.symbol ]
+				let lineData = this.getGraph()
 				this.points = []
 				if( lineData ) {
 					this.points = lineData.map( el => { return { date: new Date(el.created_at), price: el.price_usdt, part: el.part }  })
@@ -405,7 +409,7 @@
 
 			},
 
-			convertCoords(x,y, matrix) {
+			convertCoords( x, y, matrix ) {
 				let offset = this.$refs.graph.getBoundingClientRect()
 				return {
 					x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
@@ -413,11 +417,25 @@
 				}
 			},
 
-
+			getGraph() {
+				if( this.type == 'avg_portfolio' ) {
+					return this.$store.state.graphs[ this.symbol ]
+				}				
+				if( this.type == 'uniq_portfolio' ) {
+					return this.$store.state.graphsUniq[ this.symbol ]
+				}
+			},
 		},
 
 		watch: {
 			'$store.state.graphs': {
+				handler: function ( newValue ) {
+					this.init()
+				},
+				deep: true
+			},
+
+			'$store.state.graphsUniq': {
 				handler: function ( newValue ) {
 					this.init()
 				},

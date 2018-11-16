@@ -1,7 +1,7 @@
 
 <template>
 
-	<svg class="tt_portfolio_field" v-bind:style="styleObject">
+	<svg class="tt_portfolio_field" width="100%">
 
 		<text class="symbol" y="50%" x="50%" v-bind="noDataVisible">
 			{{ $t('coin.no_data') }}
@@ -28,7 +28,7 @@
 
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
 
-			<Graph :symbol="node.data.name" />
+			<Graph :type="type" :symbol="node.data.name" />
 
 			<animate 
 				:id="'width_animation_'+node.data.name"
@@ -205,11 +205,6 @@
 	import _ from 'lodash'
 	import Graph from '~/components/Graph.vue'
 
-
-	const REQUEST_PORTFOLIO = `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
-
-	const REQUEST_GRAPHS = `/api/portfolios/coin-graph`
-
 	const dataFormatter = new Jsona()
 
 	export default {
@@ -233,6 +228,20 @@
 		},
 
 		props: {
+			requestPortfolio: {
+				type: String,
+				default: `/api/portfolio/free-coin-info?fields[portfolio-balance]=id,symbol,coin_name,part_change,part,amount_total_usdt,amount_total_btc,amount_total`
+			},
+			requestGraphs: {
+				type: String,
+				default: `/api/portfolios/coin-graph`
+			},
+
+			type: {
+				type: String,
+				default: 'avg_portfolio'
+			},
+
 			sizefield: {
 			  type: String,
 			  default: 'size'
@@ -260,9 +269,7 @@
 		},
 
 		computed: {
-			styleObject: function() {
-			  return {width: '100%'}
-			},
+
 			async treemap() { return await this.calculateTree() },
 
 			async retrieveNodes () {
@@ -287,9 +294,15 @@
 				var nodes = []
 
 				try {
-					const data = await this.$axios.get( requestGraph(this.$store.state.filters) )
+					const data = await this.$axios.get( request(this.requestGraphs, this.$store.state.filters) )
 
-					this.$store.commit( 'SET_GRAPHS', data.data )
+					if( this.type == 'uniq_portfolio') {
+						this.$store.commit( 'SET_GRAPHS_UNIQ', data.data )
+					}
+
+					if( this.type == 'avg_portfolio') {
+						this.$store.commit( 'SET_GRAPHS', data.data )
+					}
 
 				} catch(error) {
 					console.error(error)
@@ -464,9 +477,29 @@
 				return part
 			},
 
+			symbolToUppercase( value ) {
+				if( value ) {
+					return value.toUpperCase()
+				} else {
+					return null
+				}
+			},
+
+			getSign( node ) {
+				return node.data.delta > 0 ? '&#9650;' : (node.data.delta < 0 ? '&#9660;' : '')
+			},
+
+			formatPrice( value ) {
+				let val = (value/1).toFixed(2)
+				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+			},
+
+
+
+
 			async calculateTree() {
 				try {
-					const data = await this.$axios.get( requestPortfolio(this.$store.state.filters) )
+					const data = await this.$axios.get( request(this.requestPortfolio, this.$store.state.filters) )
 
 					// let dd = dataFormatter.deserialize( data.data )
 					// dd = dd.map(el => el.part)
@@ -507,26 +540,12 @@
 				this.$emit('node_click', node, this)
 			},
 
-			formatPrice( value ) {
-				let val = (value/1).toFixed(2)
-				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-			},
-
 			onend() {
 				return "console.log('event1')"
 			},
 
-			symbolToUppercase( value ) {
-				if( value ) {
-					return value.toUpperCase()
-				} else {
-					return null
-				}
-			},
 
-			getSign( node ) {
-				return node.data.delta > 0 ? '&#9650;' : (node.data.delta < 0 ? '&#9660;' : '')
-			},
+
 		},
 
 
@@ -552,25 +571,19 @@
 	    return a + b
 	}
 
-	function requestPortfolio( filters ) {
-		let filterQuery = 
-			( filters.cap ? '&cap=' + filters.cap : '' ) + 
-			( filters.period ? '&period=' + filters.period : '' ) +
-			( filters.profit ? '&profit=' + filters.profit : '' )
-
-		return REQUEST_PORTFOLIO + filterQuery
+	function request( request, filters ) {
+		let result = concatParam(request, 'cap', filters.cap)
+		result = concatParam(result, 'period', filters.period)
+		result = concatParam(result, 'profit', filters.profit)
+		return result
 	}
 
-	function requestGraph( filters ) {
-		let filterQuery = 
-			( filters.cap ? '?cap=' + filters.cap : '' ) + 
-			( filters.period ? '&period=' + filters.period : '' ) +
-			( filters.profit ? '&profit=' + filters.profit : '' )
-
-		return REQUEST_GRAPHS + filterQuery
+	function concatParam( request, param, value ) {
+		if( value == undefined || value == null ) {
+			return
+		}
+		return request + (request.indexOf('?') > 0 ? '&' : '?') + param + '=' + value
 	}
-
-
 
 	function hierarchyNodes( nodes ) {
 

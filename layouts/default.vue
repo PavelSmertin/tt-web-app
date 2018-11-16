@@ -37,7 +37,7 @@
 		</div>
 
 
-		<div class="toolbar">
+		<div class="toolbar" v-bind:class="bordered">
 			<div class=logo_wrap>
 				<nuxt-link 
 					:to="{name: 'index'}" 
@@ -125,6 +125,14 @@
 
 		components: {
 			Filters,
+		},
+
+		computed: {
+			bordered() {
+				return {
+					'bordered' : this.$route.name != 'index'
+				}
+			}
 		},
 
 		methods: {

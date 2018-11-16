@@ -7,22 +7,22 @@
 			<div class="coin_details">
 				<div class="coin_detail">
 					<label>{{ $t('profile.capital') }}</label>
-					<div class="top_detail symbol">${{ account.capital }}</div>
+					<div class="top_detail symbol">${{ account.cap_usdt }}</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.change_capital') }}</label>
-					<div class="top_detail">${{ formatPrice(account.change_capital * 100) }}%</div>
+					<div class="top_detail">{{ formatPrice(account.cap_change * 100) }}%</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.lowest_capital') }}</label>
-					<div class="top_detail">{{ formatPrice(account.lowest_capital * 100) }}%</div>
+					<div class="top_detail">{{ formatPrice(account.max_down * 100) }}%</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.change_price') }}</label>
-					<div class="top_detail">{{ formatPrice(account.change_price * 100) }}%</div>
+					<div class="top_detail">{{ formatPrice(account.total_cap_change * 100) }}%</div>
 				</div>
 				<div class="coin_detail">
-					<label @mousemove="mouseover('actuality')" @mouseleave="clearInfo">
+					<label @mousemove="mouseover('efficiency')" @mouseleave="clearInfo">
 						<span>{{ $t('profile.efficiency') }}</span>
 						<svg width="14px" height="14px" viewBox="0 0 14 14">
 							<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -33,8 +33,8 @@
 								</g>
 							</g>
 						</svg>
-						<div class="info_text" v-bind:class="{ 'info_active': showInfo.actuality }">
-							{{ $t('coin_info.actuality') }}
+						<div class="info_text" v-bind:class="{ 'info_active': showInfo.efficiency }">
+							{{ $t('profile.efficiency_info') }}
 						</div>
 					</label>
 					<div class="top_detail">{{ formatPrice(account.efficiency * 100) }}%</div>
@@ -92,7 +92,7 @@
 
 		</div>
 
-		<treemap  class="portfolio_treemap" />
+		<treemap :type="'uniq_portfolio'" :requestPortfolio="requestPortfolio" :requestGraphs="requestGraphs" class="portfolio_treemap" />
 
 	</div>
 </template>
@@ -108,16 +108,10 @@
 
 	const dataFormatter = new Jsona()
 
-
-
-	const REQUEST_ACCOUNT 	= `/api/portfolios/free-coin/BTC`
-
-	const REQUEST_COIN 		= `/api/portfolios/free-coin/`
-	const REQUEST_GRAPH		= `/api/portfolios/coin-graph/`
+	const REQUEST_PORTFOLIO 	= `/api/portfolios/trader-dashboard`
 
 	const REQUEST_COINS 	= `/api/portfolios/trader-coins`
 	const REQUEST_GRAPHS 	= `/api/portfolios/trader-coins-graph`
-
 
 	export default {
 		components: {
@@ -143,15 +137,16 @@
 			let account = null
 
 			try {
-				let data = await app.$axios.get( requestCoin('BTC', store.state.filters) )
-				account = dataFormatter.deserialize( data.data )
+				let data = await app.$axios.get( requestPortfolio( store.state.filters) )
+
+				account = data.data.data
 
 				if( account == undefined || account == null ) {
 					account = {
-								capital: null,
-								change_capital: null,
-								lowest_capital: null, 
-								change_price: null, 
+								cap_usdt: null,
+								cap_change: null,
+								max_down: null, 
+								total_cap_change: null, 
 								efficiency: null, 
 								rating: null,
 							}
@@ -167,10 +162,6 @@
 		},
 
 		mounted() {
-			if( this.$store.state.graphs[this.symbol] == undefined ) {
-				this.retrieveGraph()
-			}
-
 			this.debounceTimer = _.debounce( function ( app, option ) {
 					app.clearInfo()
 					app.showInfo[option] = true
@@ -181,6 +172,12 @@
 		computed: {
 			tooltipViewBox() {
 				return `0 0 ${this.tooltipWidth} ${this.tooltipHeight}`
+			},
+			requestPortfolio() {
+				return REQUEST_COINS
+			},
+			requestGraphs() {
+				return REQUEST_GRAPHS
 			},
 		},
 
@@ -209,40 +206,6 @@
 
 			onClose () {
 				this.$router.push({ name: 'index' })
-			},
-
-			async retrieveCoin () {
-				try {
-					const data = await this.$axios.get(requestCoin( this.upSymbol, this.$store.state.filters ))
-
-					let coinName = this.coin.coin_name
-					let coinPrice = this.coin.coin_price
-					let coinPriceChange = this.coin.price_percent_change
-					this.account = dataFormatter.deserialize( data.data )
-					if( this.account == undefined ) {
-						this.account = {
-							capital: null,
-							change_capital: null,
-							lowest_capital: null, 
-							change_price: null, 
-							efficiency: null, 
-							rating: null,
-						}
-					}
-				} catch( error ) {
-					console.error(error)
-				}
-			},
-
-			async retrieveGraph () {
-				var nodes = []
-
-				try {
-					const data = await this.$axios.get(requestGraph( this.upSymbol, this.$store.state.filters ))
-					this.$store.commit( 'SET_GRAPH', {symbol: this.upSymbol, data: data.data[this.upSymbol]} )
-				} catch(error) {
-					console.error(error)
-				}
 			},
 
 			onSelect( position ) {
@@ -288,30 +251,11 @@
 				this.showInfo.efficiency = false
 			},
 		},
-
-		watch: {
-			'$store.state.filters': {
-				handler: _.debounce( async function ( newValue ) {
-					await Promise.all([this.retrieveCoin(), this.retrieveGraph()])
-					this.$store.commit( 'TERMINATE_FILTER_LOADING' )
-				}, 100 ),
-				deep: true
-			},
-		},
 	}
 
-
-
-	function requestCoin( symbol, filters ) {
-		let filterQuery = 
-					( filters && filters.period ? '?period=' + filters.period : '' )
-		return REQUEST_COIN + symbol +  filterQuery
-	}
-
-	function requestGraph( symbol, filters ) {
-		let filterQuery = 
-					( filters && filters.period ? '?period=' + filters.period : '' )
-		return REQUEST_GRAPH + symbol +  filterQuery
+	function requestPortfolio( filters ) {
+		let filterQuery = filters && filters.period ? '?period=' + filters.period : ''
+		return REQUEST_PORTFOLIO +  filterQuery
 	}
 
 </script>
