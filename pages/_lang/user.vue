@@ -7,7 +7,7 @@
 			<div class="coin_details">
 				<div class="coin_detail">
 					<label>{{ $t('profile.capital') }}</label>
-					<div class="top_detail symbol">${{ account.cap_usdt }}</div>
+					<div class="top_detail symbol">${{ formatPrice(account.cap_usdt) }}</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.change_capital') }}</label>
@@ -79,13 +79,13 @@
 						{{ $t('profile.change_capital_short') }}
 					</text>
 					<text class="tooltip_value" x="12" y="85" fill="#000">
-						{{ formatPrice( tooltipPoint.price) }}%
+						{{ formatPrice( tooltipPoint.part * 100) }}%
 					</text>
 					<text class="tooltip_label" x="113" y="60" fill="#000">
 						{{ $t('profile.change_price_short') }}
 					</text>
 					<text class="tooltip_value" x="113" y="85" fill="#000">
-						{{ formatPrice( tooltipPoint.part * 100) }}%
+						{{ formatPrice( tooltipPoint.price * 100) }}%
 					</text>
 				</svg>
 			</svg>
