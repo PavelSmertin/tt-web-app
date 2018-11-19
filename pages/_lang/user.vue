@@ -58,10 +58,10 @@
 					</linearGradient>
 				</defs>
 
-				<Graph :symbol="upSymbol" 
-						:interactive="true" 
-						:first="{color: '#FF9900', gradient: 'GradientFirst', opacity: 0.2, label: 'first' }" 
-						:second="{color: '#007ACC', gradient: 'GradientSecond', opacity: 0.2, label: 'second' }" 
+				<Graph  :interactive="true"
+						:type="'dinamic_portfolio'"
+						:first="{color: '#FF9900', gradient: 'GradientFirst', opacity: 0.2, label: $t('profile.change_capital') }" 
+						:second="{color: '#007ACC', gradient: 'GradientSecond', opacity: 0.2, label: $t('profile.change_price') }" 
 						:primaryColor="'#ccc'"
 						v-on:testtest="onSelect" 
 						v-on:hide-tooltip="onHideTooltip" 
@@ -79,7 +79,7 @@
 						{{ $t('profile.change_capital_short') }}
 					</text>
 					<text class="tooltip_value" x="12" y="85" fill="#000">
-						${{ formatPrice( tooltipPoint.price) }}
+						{{ formatPrice( tooltipPoint.price) }}%
 					</text>
 					<text class="tooltip_label" x="113" y="60" fill="#000">
 						{{ $t('profile.change_price_short') }}
@@ -89,7 +89,6 @@
 					</text>
 				</svg>
 			</svg>
-
 		</div>
 
 		<treemap :type="'uniq_portfolio'" :requestPortfolio="requestPortfolio" :requestGraphs="requestGraphs" class="portfolio_treemap" />
@@ -129,7 +128,7 @@
 				tooltipWidth: 200,
 				tooltipHeight: 100,
 				account: {},
-				upSymbol: 'BTC',
+				portfolioGraph: {},
 			}
 		},
 
@@ -141,6 +140,8 @@
 
 				account = data.data.data
 
+				store.commit( 'SET_GRAPH_DINAMIC', data.data.graph )
+				console.log( data.data.graph )
 				if( account == undefined || account == null ) {
 					account = {
 								cap_usdt: null,

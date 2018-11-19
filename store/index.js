@@ -30,6 +30,10 @@ export const mutations = {
 		state.graphsUniq = graphs
 	},
 
+	SET_GRAPH_DINAMIC: function (state, graph) {
+		state.graphDinamic = graph
+	},
+
 	SET_GRAPH: function (state, graph) {
 		state.graphs = {}
 		state.graphs[graph.symbol] = graph.data

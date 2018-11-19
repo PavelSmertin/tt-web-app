@@ -14,12 +14,12 @@
 			<g>
 				<circle v-bind="partLegendMarker()" r="6" :fill="first.color" vector-effect="non-scaling-stroke"/>
 				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-					{{ $t('coin.part') }}
+					{{ first.label }}
 				</text>
 
 				<circle v-bind="priceLegendMarker()" r="6" :fill="second.color" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
 				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-					{{ $t('coin.price') }}
+					{{ second.label }}
 				</text>
 			</g>
 		</svg>
@@ -30,13 +30,14 @@
 	</svg>
 </template>
 
-Цвет графиков
-Цвет 
-
 <script>
 	import * as d3 from 'd3'
 
 	let bisectDate = d3.bisector(function(d) { return d.date; }).right
+
+	const TYPE_DINAMIC_PORTFOLIO 	= 'dinamic_portfolio'
+	const TYPE_UNIQ_PORTFOLIO 		= 'uniq_portfolio'
+	const TYPE_AVG_PORTFOLIO 		= 'avg_portfolio'
 
 	export default {
 
@@ -55,11 +56,11 @@
 			},
 			first: {
 				type: Object,
-				default: () => ({color: '#fff', gradient: 'GradientPart', opacity: 0.3, label: ''})
+				default: () => ({color: '#fff', gradient: 'GradientPart', opacity: 0.3, })
 			},
 			second: {
 				type: Object,
-				default: () => ({color: '#000', gradient: 'GradientPrice', opacity: 0.2, label: ''})
+				default: () => ({color: '#000', gradient: 'GradientPrice', opacity: 0.2, })
 			},
 			primaryColor: {
 				type: String,
@@ -99,6 +100,15 @@
 			if( this.getGraph() ) {
 				this.init()
 			}
+
+			if( this.first.label == undefined ) {
+				this.first.label = this.$t('coin.part')
+			}
+
+			if( this.second.label == undefined ) {
+				this.second.label = this.$t('coin.price')
+			}
+
 			window.addEventListener('resize', this.handleResize)
 			this.handleResize()
 		},
@@ -210,7 +220,12 @@
 				let lineData = this.getGraph()
 				this.points = []
 				if( lineData ) {
-					this.points = lineData.map( el => { return { date: new Date(el.created_at), price: el.price_usdt, part: el.part }  })
+					this.points = lineData.map( el => { 
+						return { 
+							date: 	new Date(el.created_at), 
+							price: 	this.type == TYPE_DINAMIC_PORTFOLIO ? el.total_cap : el.price_usdt, 
+							part: 	this.type == TYPE_DINAMIC_PORTFOLIO ? el.cap_change : el.part }  
+						})
 				}
 			},
 
@@ -418,11 +433,14 @@
 			},
 
 			getGraph() {
-				if( this.type == 'avg_portfolio' ) {
+				if( this.type == TYPE_AVG_PORTFOLIO ) {
 					return this.$store.state.graphs[ this.symbol ]
 				}				
-				if( this.type == 'uniq_portfolio' ) {
+				if( this.type == TYPE_UNIQ_PORTFOLIO ) {
 					return this.$store.state.graphsUniq[ this.symbol ]
+				}
+				if( this.type == TYPE_DINAMIC_PORTFOLIO ) {
+					return this.$store.state.graphDinamic
 				}
 			},
 		},
