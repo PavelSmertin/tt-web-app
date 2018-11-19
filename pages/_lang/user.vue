@@ -132,29 +132,28 @@
 			}
 		},
 
-		async asyncData ({ app, params, store }) {
+		async asyncData ({ app, params, store, redirect }) {
 			let account = null
 
 			try {
 				let data = await app.$axios.get( requestPortfolio( store.state.filters) )
-
 				account = data.data.data
-
 				store.commit( 'SET_GRAPH_DINAMIC', data.data.graph )
-				console.log( data.data.graph )
-				if( account == undefined || account == null ) {
-					account = {
-								cap_usdt: null,
-								cap_change: null,
-								max_down: null, 
-								total_cap_change: null, 
-								efficiency: null, 
-								rating: null,
-							}
-				}
-
 			} catch (e) {
-				console.log(e)
+				if (e.response && e.response.status == 401) {
+					redirect({ name: `account-signin` })
+				}
+			}
+
+			if( account == undefined || account == null ) {
+				account = {
+							cap_usdt: null,
+							cap_change: null,
+							max_down: null, 
+							total_cap_change: null, 
+							efficiency: null, 
+							rating: null,
+						}
 			}
 
 			return {
