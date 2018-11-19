@@ -251,6 +251,29 @@
 				this.showInfo.efficiency = false
 			},
 		},
+
+		watch: {
+			'$store.state.filters.period': {
+				handler: _.debounce( async function ( newValue ) {
+
+					try {
+						let data = await this.$axios.get( requestPortfolio( this.$store.state.filters) )
+
+						console.log(data.data)
+
+						this.account = data.data.data
+						this.$store.commit( 'SET_GRAPH_DINAMIC', data.data.graph )
+					} catch (e) {
+						console.log(e)
+						if (e.response && e.response.status == 401) {
+							redirect({ name: `account-signin` })
+						}
+					}
+
+				}, 100 ),
+				deep: true
+			},
+		},
 	}
 
 	function requestPortfolio( filters ) {
