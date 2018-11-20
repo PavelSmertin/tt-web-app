@@ -450,7 +450,7 @@
 				handler: function ( newValue ) {
 					this.init()
 				},
-				deep: true
+				deep: true,
 			},
 
 			'$store.state.graphsUniq': {

@@ -237,6 +237,7 @@
 			},
 
 			async retrieveGraph () {
+
 				var nodes = []
 
 				try {

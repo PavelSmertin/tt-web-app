@@ -224,7 +224,10 @@
 			this.isDevice = document.getElementById('content').offsetWidth < 769
 
 			this.retrieveNodes
-			this.retrieveGraphs
+
+			if( Object.keys(this.$store.state.graphs).length <= 0 ) {
+				this.retrieveGraphs
+			}
 		},
 
 		props: {
@@ -477,14 +480,6 @@
 				return part
 			},
 
-			symbolToUppercase( value ) {
-				if( value ) {
-					return value.toUpperCase()
-				} else {
-					return null
-				}
-			},
-
 			getSign( node ) {
 				return node.data.delta > 0 ? '&#9650;' : (node.data.delta < 0 ? '&#9660;' : '')
 			},
@@ -500,12 +495,6 @@
 			async calculateTree() {
 				try {
 					const data = await this.$axios.get( request(this.requestPortfolio, this.$store.state.filters) )
-
-					// let dd = dataFormatter.deserialize( data.data )
-					// dd = dd.map(el => el.part)
-					// var sum = dd.reduce(add, 0);
-					// console.log(sum)
-
 
 					if( data.data.data.length <= 0 ) {
 						return
@@ -536,7 +525,7 @@
 
 				//event.path[0].firstChild.beginElement()
 
-				this.$router.push('/ru/'+ node.data.name)
+				this.$router.push('/ru/'+ this.downSymbol(node.data.name))
 				this.$emit('node_click', node, this)
 			},
 
@@ -544,6 +533,11 @@
 				return "console.log('event1')"
 			},
 
+			downSymbol( value ) {
+				if( value ) {
+					return value.toLowerCase()
+				}
+			}
 
 
 		},
@@ -557,12 +551,6 @@
 				}, 100 ),
 				deep: true
 			},
-			// '$store.state.filters.period': {
-			// 	handler: _.debounce( function ( newValue ) {
-			// 		this.retrieveGraphs
-			// 	}, 100 ),
-			// 	deep: true
-			// }
 		},
 
 	}
