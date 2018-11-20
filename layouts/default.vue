@@ -29,7 +29,7 @@
 					</div>
 					<ul class="sidenav_item">
 						<li>{{$store.state.profile.tradersCount}} {{ $t('profile.traders') }}</li>
-						<li>${{ nFormatter($store.state.profile.capital, 0)}} {{ $t('profile.capital') }}</li>
+						<li>${{ collapseSum($store.state.profile.capital, 0)}} {{ $t('profile.capital') }}</li>
 						<li>{{ $t('profile.updated_at') }} {{formatDateTime($store.state.profile.updatedAt)}}</li>
 					</ul>
 				</div>
@@ -49,7 +49,7 @@
 				<div class="divider">
 				</div>
 
-				<div class="profile_capital"> ${{ nFormatter($store.state.profile.capital , 0) }} {{ $t('account.total_capital') }}</div>
+				<div class="profile_capital"> ${{ collapseSum($store.state.profile.capital , 0) }} {{ $t('account.total_capital') }}</div>
 			</div>
 
 
@@ -93,12 +93,16 @@
 
 <script>
 	import Filters from '~/components/Filters.vue'
+	import { Common } from '~/mixins/common.js'
+
 
 	const FILTER_TYPE_CAP = 'cap'
 	const FILTER_TYPE_PROFIT = 'profit'
 	const FILTER_TYPE_PERIOD = 'period'
 
 	export default {
+
+		mixins: [ Common ],
 
 		data() {
 			return {
@@ -164,36 +168,6 @@
 			filter ( filter, type ) {
 				this.closeNav();
 				this.$store.commit( 'SET_FILTER', { type: type, value: filter.value } )
-			},
-
-		 	nFormatter(num, digits) {
-				var si = [
-					{ value: 1, symbol: "" },
-					{ value: 1E3, symbol: "K" },
-					{ value: 1E6, symbol: "M" },
-					{ value: 1E9, symbol: "G" },
-					{ value: 1E12, symbol: "T" },
-					{ value: 1E15, symbol: "P" },
-					{ value: 1E18, symbol: "E" }
-				]
-				var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-				var i;
-				for (i = si.length - 1; i > 0; i--) {
-					if (num >= si[i].value) {
-						break
-					}
-				}
-				return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol
-			},
-
-			formatDateTime( dateString ) {
-				let date 	= new Date(dateString)
-				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-				let sec 	= date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-				return `${day}.${month} ${hour}:${min}:${sec} GMT`
 			},
 		},
 	}

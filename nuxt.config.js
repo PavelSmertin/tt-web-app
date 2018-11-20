@@ -56,7 +56,7 @@ export default {
 
 
 	router: {
-		middleware: 'i18n',
+		middleware: ['i18n', 'stats'],
 		extendRoutes (routes, resolve) {
 			let parent 		= routes.find((route) => {return route.path === '/:lang'})
 			let langRoute 	= routes.find( r => r.path.includes(':lang') )

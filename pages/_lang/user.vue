@@ -102,6 +102,7 @@
 	import Treemap from '~/components/Treemap.vue'
 	import Graph from '~/components/Graph.vue'
 	import Jsona from 'jsona'
+	import { Common } from '~/mixins/common.js'
 
 	import _ from 'lodash'
 
@@ -117,6 +118,8 @@
 			Treemap,
 			Graph,
 		},
+
+		mixins: [ Common ],
 
 		data() {
 			return {
@@ -182,43 +185,17 @@
 		},
 
 		methods: {
-
-			formatPrice( value ) {
-				let val = (value/1).toFixed(2)
-				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-			},
-
-			formatDate( dateString ) {
-				let date 	= new Date(dateString)
-				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				return `${day}.${month}`
-			},
-
-			formatDateTime( dateString ) {
-				let date 	= new Date(dateString)
-				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-				return `${day}.${month} ${hour}:${min}`
-			},
-
 			onClose () {
 				this.$router.push({ name: 'index' })
 			},
-
 			onSelect( position ) {
 				this.showTooltip = true
 				this.tooltipPoint = position
 			},
-
 			onHideTooltip( hide ) {
 				this.showTooltip = false
 			},
-
 			tooltip() {
-
 				return { 
 					'x': this.tooltipPoint.offsetX ? this.tooltipPoint.offsetX + this.tooltipPosition().x : 0,
 					'y': this.tooltipPoint.offsetY ? this.tooltipPoint.offsetY + this.tooltipPosition().y : 0,
@@ -228,7 +205,6 @@
 					'visibility': this.showTooltip ? 'visibile' : 'hidden',
 				}
 			},
-
 			tooltipPosition() {
 				let height = this.$refs.graphBox.getBoundingClientRect().height
 				let offsetY = height - this.tooltipPoint.offsetY - this.tooltipHeight + 40
@@ -238,7 +214,6 @@
 					y: offsetY > 0 ?  -60 : -60 + offsetY,
 				}
 			},
-
 			mouseover( option ) {
 				if( this.showInfo[option] ) {
 					return
@@ -258,9 +233,6 @@
 
 					try {
 						let data = await this.$axios.get( requestPortfolio( this.$store.state.filters) )
-
-						console.log(data.data)
-
 						this.account = data.data.data
 						this.$store.commit( 'SET_GRAPH_DINAMIC', data.data.graph )
 					} catch (e) {

@@ -1,7 +1,7 @@
 
 <template>
 
-	<svg class="tt_portfolio_field" width="100%">
+	<svg class="tt_treemap" width="100%">
 
 		<text class="symbol" y="50%" x="50%" v-bind="noDataVisible">
 			{{ $t('coin.no_data') }}

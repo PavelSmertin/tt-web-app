@@ -18,7 +18,7 @@
 
 
 <script>
-export default {
-	layout: 'empty',
+	export default {
+		layout: 'empty',
 	}
 </script>
