@@ -16,6 +16,7 @@
 
 					<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }" v-on:click.native="closeNav()">{{ $t('nav.account') }}</nuxt-link>
 					<nuxt-link v-else :to="{ path: '/account/signup' }" v-on:click.native="closeNav()" >{{ $t('account.signup') }}</nuxt-link>
+					<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/user' }" v-on:click.native="closeNav()">{{ $t('nav.portfolio') }}</nuxt-link>
 
 					<nuxt-link :to="{ path: '/about' }" v-on:click.native="closeNav">{{ $t('nav.about') }}</nuxt-link>
 
@@ -52,11 +53,10 @@
 				<div class="profile_capital"> ${{ collapseSum($store.state.profile.capital , 0) }} {{ $t('account.total_capital') }}</div>
 			</div>
 
-
 			<div class="filters">
-				<filters v-if="capFilterVisibility" :label="$t('home.label_capitalization')" :options="capitalizationOptions" :selectedProp="$store.state.filters.cap"  v-on:updateOption="filter($event, 'cap')" />
-				<filters v-if="profitFilterVisibility" :label="$t('home.label_profit')" :options="profitOptions" :selectedProp="$store.state.filters.profit" v-on:updateOption="filter($event, 'profit')" />
-				<filters :label="$t('home.label_interval')" :options="intervalOptions" :selectedProp="$store.state.filters.period"  v-on:updateOption="filter($event, 'period')" />
+				<filters v-on:filterHover="mouseover('capital')" v-on:filterLeave="clearInfo" v-if="capFilterVisibility" :label="$t('home.label_capitalization')" :options="capitalizationOptions" :selectedProp="$store.state.filters.cap"  v-on:updateOption="filter($event, 'cap')" />
+				<filters v-on:filterHover="mouseover('profit')" v-on:filterLeave="clearInfo" v-if="profitFilterVisibility" :label="$t('home.label_profit')" :options="profitOptions" :selectedProp="$store.state.filters.profit" v-on:updateOption="filter($event, 'profit')" />
+				<filters v-on:filterHover="mouseover('period')" v-on:filterLeave="clearInfo" :label="$t('home.label_interval')" :options="intervalOptions" :selectedProp="$store.state.filters.period" v-on:updateOption="filter($event, 'period')" />
 				<div v-if="$store.state.filterLoading" class="loading"></div>
 			</div>
 
@@ -86,6 +86,18 @@
 
 		<div class="content" id="content" >
 			<nuxt v-on:navigate="closeNav()"/>
+		</div>
+
+		<div class="info_block">
+			<div class="filter_info_text" v-bind:class="{ 'info_active': showInfo.capital }">
+				{{ $t('coin_info.capital') }}
+			</div>
+			<div class="filter_info_text" v-bind:class="{ 'info_active': showInfo.profit }">
+				{{ $t('coin_info.profit') }}
+			</div>
+			<div class="filter_info_text" v-bind:class="{ 'info_active': showInfo.period }">
+				{{ $t('coin_info.period') }}
+			</div>
 		</div>
 
 	</div>
@@ -124,6 +136,12 @@
 					{ name: this.$t('filters.interval.1w'), value: '1w' },
 					{ name: this.$t('filters.interval.1m'), value: '1m' },
 				],
+
+				showInfo: {
+					capital: 	false, 
+					profit: 	false, 
+					period: 	false
+				},
 			}
 		},
 
@@ -132,6 +150,11 @@
 		},
 
 		mounted() {
+			this.debounceTimer = _.debounce( function ( app, option ) {
+				app.clearInfo()
+				app.showInfo[option] = true
+			}, 500 )
+
 		},
 
 		computed: {
@@ -168,6 +191,20 @@
 			filter ( filter, type ) {
 				this.closeNav();
 				this.$store.commit( 'SET_FILTER', { type: type, value: filter.value } )
+			},
+
+			mouseover( option ) {
+				if( this.showInfo[option] ) {
+					return
+				}
+				this.debounceTimer(this, option)
+			},
+
+			clearInfo() {
+				this.debounceTimer.cancel()
+				this.showInfo.capital = false
+				this.showInfo.profit = false
+				this.showInfo.period = false
 			},
 		},
 	}

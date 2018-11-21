@@ -2,7 +2,7 @@
     <div class="filter">
         <label>{{ label }}</label>
         <ul>
-            <li v-for="option in options" @click="filter(option)" class="filter_item" v-bind:class="isActiveFilter(option)">
+            <li @mousemove="mousemove" @mouseleave="mouseleave" v-for="option in options" @click="filter(option)" class="filter_item" v-bind:class="isActiveFilter(option)">
                 {{ option.name }}
             </li>
         </ul>
@@ -51,7 +51,14 @@
                 return {
                     'active_filter': option.value === this.selectedItem.value
                 }
-            }
+            },
+
+            mousemove() {
+                this.$emit('filterHover')
+            },            
+            mouseleave() {
+                this.$emit('filterLeave')
+            },
         }
     }
 </script>

@@ -64,7 +64,9 @@
       "guide_link": "Instruction"
     },
 
-    "total_capital": "Total capital"
+    "total_capital": "Total capital",
+
+    "permission_denied": "permission denied"
 
   },
 
@@ -94,11 +96,15 @@
     "volume": "translate",
     "part": "translate",
     "actuality": "translate",
-    "actuality_reg": "translate"
+    "actuality_reg": "translate",
+    "capital": "translate",
+    "profit": "translate",
+    "period": "translate"
   },
 
   "nav": {
     "account": "Account",
+    "portfolio": "My portfolio",
     "traders": "Traders",
     "about": "About",
     "settings": "Settings",

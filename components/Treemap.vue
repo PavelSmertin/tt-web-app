@@ -307,8 +307,19 @@
 						this.$store.commit( 'SET_GRAPHS', data.data )
 					}
 
-				} catch(error) {
-					console.error(error)
+				} catch(e) {
+					if( e.response && e.response.status == 403 ) {
+						this.$toast.show(this.$t('account.permission_denied'), {
+							duration: null,
+							action : {
+								text : 'Ok',
+								onClick : (e, toastObject) => {
+									toastObject.goAway(0)
+								}
+							},
+		    			})
+					}
+					console.error(e)
 				}
 
 			},
