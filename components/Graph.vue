@@ -1,13 +1,13 @@
 
 <template>
-	<svg>
-		<svg ref="graph" class="lines" @mousemove="mouseover" @mouseleave="mouseleave" :viewBox="viewBox" preserveAspectRatio="none" >
+	<svg @mousemove="mouseover" @mouseleave="mouseleave"  >
+
+		<svg ref="graph" :viewBox="viewBox" preserveAspectRatio="none" >
 			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-			<path :transform="translate" class="linePart" :stroke="first.color" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="areaPart" :fill="'url(#'+first.gradient+')'" :d="areaPart" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translate" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
-			<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
+			<path :transform="translateSecond" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translateSecond" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
+			<path :transform="translateFirst" class="linePart" :stroke="first.color" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
+			<path :transform="translateFirst" class="areaPart" :fill="'url(#'+first.gradient+')'" :d="areaPart" vector-effect="non-scaling-stroke" />
 		</svg>
 
 		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
@@ -24,6 +24,8 @@
 			</g>
 		</svg>
 
+		<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
+
 		<circle v-if="interactive" v-bind="markerPrice()" />
 		<circle v-if="interactive" v-bind="markerPart()" />
 
@@ -39,6 +41,8 @@
 	const TYPE_UNIQ_PORTFOLIO 		= 'uniq_portfolio'
 	const TYPE_AVG_PORTFOLIO 		= 'avg_portfolio'
 
+	const HEIGHT_COEF = 1.6
+
 	export default {
 
 		props: {
@@ -48,7 +52,7 @@
 			},
 			type: {
 				type: String,
-				default: 'avg_portfolio'
+				default: TYPE_AVG_PORTFOLIO
 			},
 			interactive: {
 				type: Boolean,
@@ -65,6 +69,10 @@
 			primaryColor: {
 				type: String,
 				default: '#fff'
+			},
+			scaledRelative: {
+				type: Boolean,
+				default: false
 			}
 
 		},
@@ -80,8 +88,8 @@
 				areaSelector: '',
 				lastHoverIndex: 0,
 				verticalLinePosition: {},
-				markerPricePosition: {},
-				markerPartPosition: {},
+				markerSecondPosition: {},
+				markerFirstPosition: {},
 				graphWidth: 100,
 				graphHeight: 100,
 
@@ -120,10 +128,32 @@
 
 		computed: {
 			viewBox() {
-				return `0 0 ${this.graphWidth} ${this.graphHeight * 1.6}`
+				return `0 ${ -this.graphHeight * 0 } ${ this.graphWidth } ${ this.graphHeight * 1 }`
 			},
-			translate() {
-				return `translate(0, ${this.graphHeight / 2})`
+
+			graphRange() {
+				let firstMax = Math.max( ...this.points.map(el => el.part ) )
+				let firstMin = Math.min( ...this.points.map(el => el.part ) )
+				let secondMax = Math.max( ...this.points.map(el => el.price ) )
+				let secondMin = Math.min( ...this.points.map(el => el.price ) )
+				let max = Math.max( firstMax, secondMax )
+				let min = Math.min( firstMin, secondMin )
+				let firstStart 		= -firstMax / (max - min)
+				let secondStart 	= -secondMax / (max - min)
+				let firstEnd 		= -firstMin / (max - min)
+				let secondEnd 		= -secondMin / (max - min)
+				let firstOffsetY 	= firstStart - Math.min( firstStart, secondStart )
+				let secondOffsetY 	= secondStart - Math.min( firstStart, secondStart )
+
+				return { firstStart, firstEnd, firstOffsetY, secondStart, secondEnd, secondOffsetY }
+			},
+			translateFirst() {
+				let firstScale = this.scaledRelative ? this.graphHeight * ( this.graphRange.firstOffsetY ? this.graphRange.firstOffsetY : 0 ) : 0
+				return `translate(0, ${ firstScale })`
+			},				
+			translateSecond() {
+				let secondScale = this.scaledRelative ? this.graphHeight * ( this.graphRange.secondOffsetY ? this.graphRange.secondOffsetY : 0 ) : 0
+				return `translate(0, ${ secondScale })`
 			},
 		},
 
@@ -201,19 +231,24 @@
 			},
 
 			getScales() {
-				let date = d3.scaleTime().range([0, this.graphWidth])
-				let price = d3.scaleLinear().range([this.graphHeight, 0])
-				let part = d3.scaleLinear().range([this.graphHeight, 0])
 
-				let dateAxis = d3.axisBottom(date).tickFormat(function(d){ return d.date;});
-				let priceAxis = d3.axisLeft(price)
-				let partAxis = d3.axisRight(part)
+				let date = d3.scaleTime().range([0, this.graphWidth])
+
+				let firstScale = this.scaledRelative ? this.graphRange.firstEnd - this.graphRange.firstStart : 1
+				let secondScale = this.scaledRelative ? this.graphRange.secondEnd - this.graphRange.secondStart : 1
+
+				let first = d3.scaleLinear().range([ this.graphHeight * firstScale, 0 ])
+				let second = d3.scaleLinear().range([ this.graphHeight * secondScale, 0 ])
+
+				let dateAxis = d3.axisBottom(date).tickFormat( d => d.date )
+				let firstAxis = d3.axisRight(first)
+				let secondAxis = d3.axisLeft(second)
 
 				date.domain(d3.extent(this.points, el => el.date))
-				price.domain(d3.extent(this.points, el => el.price))
-				part.domain(d3.extent(this.points, el => el.part))
+				first.domain(d3.extent(this.points, el => el.part))
+				second.domain(d3.extent(this.points, el => el.price))
 
-				return { date, price, part }
+				return { date, first, second }
 			},
 
 			initPoints() {
@@ -231,27 +266,31 @@
 
 			initLines() {
 
-				let scale = this.getScales()
+				let scales = this.getScales()
 
-				const pathPrice = d3.line()
-									.curve(d3.curveBasis)
-									.x(d => scale.date(d.date))
-									.y(d => scale.price(d.price))
+				const pathFirst = d3.line()
+										.curve(d3.curveBasis)
+										.x(d => scales.date(d.date))
+										.y(d => scales.first(d.part))
 
-				const areaPrice = d3.area()
-									.curve(d3.curveBasis)
-									.x(d => scale.date(d.date))
-									.y0(d => this.graphHeight * 1.6)
-									.y1(d => scale.price(d.price))
+				const areaFirst = d3.area()
+										.curve(d3.curveBasis)
+										.x(d => scales.date(d.date))
+										.y0(d => this.graphHeight * HEIGHT_COEF )
+										.y1(d => scales.first(d.part))
 
-				this.linePrice = pathPrice( this.points )
-				this.areaPrice = areaPrice( this.points )
+				this.linePart = pathFirst(this.points)
+				this.areaPart = areaFirst(this.points)
 
-				const pathPart = pathPrice.y(d => scale.part(d.part))
-				const areaPart = areaPrice.y1(d => scale.part(d.part))
+				const pathSecond = pathFirst
+										.y(d => scales.second(d.price))
+				const areaSecond = areaFirst
+										.y0(d => this.graphHeight * HEIGHT_COEF )
+										.y1(d => scales.second(d.price))
 
-				this.linePart = pathPart(this.points)
-				this.areaPart = areaPart(this.points)
+				this.linePrice = pathSecond( this.points )
+				this.areaPrice = areaSecond( this.points )
+
 			},
 
 			mouseover({ offsetX, offsetY }) {
@@ -268,11 +307,11 @@
 				pt.y = offsetY
 				const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse())
 
-				let markerPricePosition = this.findYatX(svgPoint.x, this.$refs.linePrice) // svg reper
-				let markerPartPosition 	= this.findYatX(svgPoint.x, this.$refs.linePart) // svg reper
+				let markerSecondPosition = this.findYatX(svgPoint.x, this.$refs.linePrice) // svg reper
+				let markerFirstPosition 	= this.findYatX(svgPoint.x, this.$refs.linePart) // svg reper
 
-				this.markerPricePosition = this.convertCoords(markerPricePosition.x, markerPricePosition.y, this.$refs.linePrice.getScreenCTM())
-				this.markerPartPosition 	= this.convertCoords(markerPartPosition.x, markerPartPosition.y, this.$refs.linePart.getScreenCTM())
+				this.markerSecondPosition = this.convertCoords(markerSecondPosition.x, markerSecondPosition.y, this.$refs.linePrice.getScreenCTM())
+				this.markerFirstPosition 	= this.convertCoords(markerFirstPosition.x, markerFirstPosition.y, this.$refs.linePart.getScreenCTM())
 
 				if (this.points && this.points.length > 0) {
 
@@ -290,8 +329,8 @@
 						date: closestPoint.date, 
 						price: closestPoint.price,
 						part: closestPoint.part,
-						offsetX: this.markerPartPosition.x,
-						offsetY: (this.markerPartPosition.y + this.markerPricePosition.y) / 2,
+						offsetX: this.markerFirstPosition.x,
+						offsetY: (this.markerFirstPosition.y + this.markerFirstPosition.y) / 2,
 					}
 
 					this.$emit('testtest', this.verticalLinePosition )
@@ -307,7 +346,7 @@
 					'x1': this.verticalLinePosition.x,
 					'x2': this.verticalLinePosition.x,
 					'y1': 0,
-					'y2': this.graphHeight * 1.6,
+					'y2': this.graphHeight,
 					'stroke': this.primaryColor,
 				}
 			},
@@ -333,8 +372,8 @@
 
 			markerPrice () {
 				return {
-					'cx': this.markerPricePosition.x,
-					'cy': this.markerPricePosition.y,
+					'cx': this.markerSecondPosition.x,
+					'cy': this.markerSecondPosition.y,
 					'r': 3,
 					'stroke': 'none',
 					'fill': this.second.color,
@@ -344,8 +383,8 @@
 
 			markerPart () {
 				return {
-					'cx': this.markerPartPosition.x,
-					'cy': this.markerPartPosition.y,
+					'cx': this.markerFirstPosition.x,
+					'cy': this.markerFirstPosition.y,
 					'r': 3,
 					'stroke': 'none',
 					'fill': this.first.color,

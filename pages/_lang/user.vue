@@ -63,6 +63,7 @@
 						:first="{color: '#FF9900', gradient: 'GradientFirst', opacity: 0.2, label: $t('profile.change_capital') }" 
 						:second="{color: '#007ACC', gradient: 'GradientSecond', opacity: 0.2, label: $t('profile.change_price') }" 
 						:primaryColor="'#ccc'"
+						:scaledRelative="true"
 						v-on:testtest="onSelect" 
 						v-on:hide-tooltip="onHideTooltip" 
 						/>
