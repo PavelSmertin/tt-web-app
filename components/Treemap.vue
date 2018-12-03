@@ -27,8 +27,8 @@
 			</defs>
 
 			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
-
-			<Graph :type="type" :symbol="node.data.name" />
+			
+			<Graph :type="type" :mainCoin="index == 1" :symbol="node.data.name" />
 
 			<animate 
 				:id="'width_animation_'+node.data.name"

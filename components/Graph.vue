@@ -1,39 +1,39 @@
 
 <template>
-	<svg @mousemove="mouseover" @mouseleave="mouseleave"  >
 
-		<svg ref="graph" :viewBox="viewBox" preserveAspectRatio="none" >
-			<rect  :width="graphWidth" :height="graphHeight*1.6" fill-opacity="0" stroke-opacity="0" />
-			<path :transform="translateSecond" class="linePrice" :stroke="second.color" :d="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translateSecond" class="areaPrice" :fill="'url(#'+second.gradient+')'" :d="areaPrice" vector-effect="non-scaling-stroke" />
-			<path :transform="translateFirst" class="linePart" :stroke="first.color" :d="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
-			<path :transform="translateFirst" class="areaPart" :fill="'url(#'+first.gradient+')'" :d="areaPart" vector-effect="non-scaling-stroke" />
-		</svg>
+	<svg>
+		<svg ref="graph" :viewBox="viewBox" preserveAspectRatio="none" @mousemove="mouseover" @mouseleave="mouseleave">
+			<rect :width="graphWidth" :height="graphHeight" fill-opacity="0" stroke-opacity="0" />
+			<path v-bind="bindSecondLine()" class="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
+			<path v-bind="bindSecondArea()" class="areaPrice" vector-effect="non-scaling-stroke" />
+			<path v-bind="bindFirstLine()" class="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
+			<path v-bind="bindFirstArea()" class="areaPart" vector-effect="non-scaling-stroke" />
 
-		<svg v-if=" interactive && points && points.length > 0"  v-bind="legend()">
-			<g>
-				<circle v-bind="partLegendMarker()" r="6" :fill="first.color" vector-effect="non-scaling-stroke"/>
-				<text class="tooltip_label" v-bind="partLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-					{{ first.label }}
-				</text>
-
-				<circle v-bind="priceLegendMarker()" r="6" :fill="second.color" fill-opacity="0.5" vector-effect="non-scaling-stroke"  />
-				<text class="tooltip_label" v-bind="priceLegendLabel()" fill="#000" vector-effect="non-scaling-stroke">
-					{{ second.label }}
-				</text>
+			<g v-if="interactive">
+				<line v-bind="bindVerticalLine()" class="selector" vector-effect="non-scaling-stroke" />
+				<circle v-bind="bindMarkerSecond()" />
+				<circle v-bind="bindMarkerFirst()" />
 			</g>
+
 		</svg>
 
-		<line v-if="interactive" class="selector" v-bind="verticalLine()"  vector-effect="non-scaling-stroke" />
-
-		<circle v-if="interactive" v-bind="markerPrice()" />
-		<circle v-if="interactive" v-bind="markerPart()" />
-
+		<svg v-if=" (interactive || mainCoin) && points && points.length > 0" v-bind="bindLegend()">
+			<circle v-bind="bindFirstLegendMarker()" vector-effect="non-scaling-stroke"/>
+			<text v-bind="bindFirstLegendLabel()" class="tooltip_label">
+				{{ first.label }}
+			</text>
+			<circle v-bind="bindSecondLegendMarker()" vector-effect="non-scaling-stroke"  />
+			<text v-bind="bindSecondLegendLabel()" class="tooltip_label">
+				{{ second.label }}
+			</text>
+		</svg>
 	</svg>
+
 </template>
 
 <script>
 	import * as d3 from 'd3'
+	import { Common } from '~/mixins/common.js'
 
 	let bisectDate = d3.bisector(function(d) { return d.date; }).right
 
@@ -45,6 +45,8 @@
 
 	export default {
 
+		mixins: [ Common ],
+
 		props: {
 			symbol: {
 				type: String,
@@ -55,6 +57,10 @@
 				default: TYPE_AVG_PORTFOLIO
 			},
 			interactive: {
+				type: Boolean,
+				default: false
+			},
+			mainCoin: {
 				type: Boolean,
 				default: false
 			},
@@ -74,7 +80,6 @@
 				type: Boolean,
 				default: false
 			}
-
 		},
 
 		data() {
@@ -84,15 +89,11 @@
 				areaPrice: '',
 				linePart: '',
 				areaPart: '',
-				selector: '',
-				areaSelector: '',
-				lastHoverIndex: 0,
 				verticalLinePosition: {},
 				markerSecondPosition: {},
 				markerFirstPosition: {},
-				graphWidth: 100,
-				graphHeight: 100,
-
+				graphWidth: 300,
+				graphHeight: 300,
 			}
 		},
 
@@ -130,7 +131,6 @@
 			viewBox() {
 				return `0 ${ -this.graphHeight * 0 } ${ this.graphWidth } ${ this.graphHeight * 1 }`
 			},
-
 			graphRange() {
 				let firstMax = Math.max( ...this.points.map(el => el.part ) )
 				let firstMin = Math.min( ...this.points.map(el => el.part ) )
@@ -227,9 +227,7 @@
 				rightAxisSvg.selectAll("line").attr("stroke", "none")
 				rightAxisSvg.selectAll("path").attr("stroke", "none")
 				rightAxisSvg.selectAll(".tick text").attr("y", "10").attr("fill", "#fff").attr("transform", "rotate(-90)")
-
 			},
-
 			getScales() {
 
 				let date = d3.scaleTime().range([0, this.graphWidth])
@@ -250,7 +248,6 @@
 
 				return { date, first, second }
 			},
-
 			initPoints() {
 				let lineData = this.getGraph()
 				this.points = []
@@ -263,7 +260,6 @@
 						})
 				}
 			},
-
 			initLines() {
 
 				let scales = this.getScales()
@@ -290,7 +286,6 @@
 
 				this.linePrice = pathSecond( this.points )
 				this.areaPrice = areaSecond( this.points )
-
 			},
 
 			mouseover({ offsetX, offsetY }) {
@@ -330,18 +325,48 @@
 						price: closestPoint.price,
 						part: closestPoint.part,
 						offsetX: this.markerFirstPosition.x,
-						offsetY: (this.markerFirstPosition.y + this.markerFirstPosition.y) / 2,
+						offsetY: (this.markerFirstPosition.y + this.markerSecondPosition.y) / 2,
 					}
 
 					this.$emit('testtest', this.verticalLinePosition )
 				}
 			},
-
 			mouseleave() {
 				this.$emit('hide-tooltip' )
 			},
 
-			verticalLine() {
+			bindFirstLine() {
+				return {
+					'transform': this.translateFirst,
+					'stroke': this.first.color,
+					'd': this.linePart,
+				}
+			},
+			bindFirstArea() {
+				return {
+					'transform': this.translateFirst,
+					'stroke': this.first.color,
+					'd': this.areaPart,
+					'fill': `url(#${this.first.gradient})`
+				}
+			},
+			bindSecondLine() {
+				return {
+					'transform': this.translateSecond,
+					'stroke': this.second.color,
+					'd': this.linePrice,
+				}
+			},
+			bindSecondArea() {
+				return {
+					'transform': this.translateSecond,
+					'stroke': this.second.color,
+					'd': this.areaPrice,
+					'fill': `url(#${this.second.gradient})`
+
+				}
+			},
+			bindVerticalLine() {
 				return {
 					'x1': this.verticalLinePosition.x,
 					'x2': this.verticalLinePosition.x,
@@ -350,27 +375,27 @@
 					'stroke': this.primaryColor,
 				}
 			},
-
-			circlePoint() {
-				return {
-					'cx': this.verticalLinePosition.x,
-					'cy': this.verticalLinePosition.y,
-					'r': 0.4,
-
-				}
-			},
-
-			legend() {
+			bindLegend() {
 				return {
 					'x': 24,
-					'y': this.isDevice ? 0 : -this.graphHeight / 30,
-					'viewBox': `0 0 ${this.graphWidth} 24`,
+					'y': this.isDevice ? 0 : -24,
+					'width': this.graphWidth,
+					'height': '100%',
+					'viewBox': `0 0 ${this.graphWidth} 12`,
 					'preserveAspectRatio': "xMinYMax meet",
-
 				}
 			},
-
-			markerPrice () {
+			bindMarkerFirst() {
+				return {
+					'cx': this.markerFirstPosition.x,
+					'cy': this.markerFirstPosition.y,
+					'r': 3,
+					'stroke': 'none',
+					'fill': this.first.color,
+					'fill-opacity': 1,
+				}
+			},
+			bindMarkerSecond() {
 				return {
 					'cx': this.markerSecondPosition.x,
 					'cy': this.markerSecondPosition.y,
@@ -380,66 +405,43 @@
 					'fill-opacity': 0.5,
 				}
 			},
-
-			markerPart () {
+			bindFirstLegendMarker() {
 				return {
-					'cx': this.markerFirstPosition.x,
-					'cy': this.markerFirstPosition.y,
-					'r': 3,
-					'stroke': 'none',
 					'fill': this.first.color,
-					'fill-opacity': 1,
-
-
-				}
-			},
-
-			partLegendMarker() {
-				return {
+					'r': 6,
 					'cx': 10,
 					'cy': 6,
 				}
 			},
-			partLegendLabel() {
+			bindFirstLegendLabel() {
 				return {
+					'fill': '#000',
 					'x': 24,
 					'y': 11,
 					'font-size': 12,
 				}
-
 			},
-			priceLegendMarker() {
+			bindSecondLegendMarker() {
 				return {
+					'fill': this.second.color,
+
+					'r': 6,
 					'cx': 200,
 					'cy': 6,
+					'fill-opacity': '0.5'
 
 				}
-
 			},
-			priceLegendLabel() {
+			bindSecondLegendLabel() {
 				return {
+					'fill': '#000',
 					'x': 214,
 					'y': 11,
 					'font-size': 12,
 				}
-
 			},
 
-			formatDateTime( dateString ) {
-				let date 	= new Date(dateString)
-				let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-				let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-				let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-				let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-				return `${day}.${month} ${hour}:${min}`
-			},
-
-			formatPrice( value ) {
-				let val = (value/1).toFixed(2)
-				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-			},
-
-			findYatX(x, linePath) {
+			findYatX( x, linePath ) {
 				let beginning = 0,
 					pos,
 					end = linePath.getTotalLength(),
@@ -460,9 +462,7 @@
 						return pos
 					} 
 				}
-
 			},
-
 			convertCoords( x, y, matrix ) {
 				let offset = this.$refs.graph.getBoundingClientRect()
 				return {
@@ -470,7 +470,6 @@
 					y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
 				}
 			},
-
 			getGraph() {
 				if( this.type == TYPE_AVG_PORTFOLIO ) {
 					return this.$store.state.graphs[ this.symbol ]
