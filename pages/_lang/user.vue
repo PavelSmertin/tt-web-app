@@ -39,11 +39,11 @@
 					</label>
 					<div class="top_detail">{{ formatPrice(account.efficiency * 100) }}%</div>
 				</div>
-
+<!-- 
 				<div class="coin_detail">
 					<label>{{ $t('profile.rating') }}</label>
 					<div class="top_detail">#{{ account.rating }}</div>
-				</div>
+				</div> -->
 			</div>
 
 			<svg class="portfolio_graph" ref="graphBox">

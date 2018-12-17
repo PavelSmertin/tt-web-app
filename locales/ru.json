@@ -79,7 +79,8 @@
     "lowest_capital": "Максимальная просадка",
     "change_price": "Рост рынка",
     "change_price_short": "Рынок",
-    "efficiency": "Эффективность торговли",
+    "efficiency": "Эффективность",
+    "efficiency_info": "Эффективность торговли",
     "rating": "Рейтинг трейдера",
     "updated_at": "updated"
   },

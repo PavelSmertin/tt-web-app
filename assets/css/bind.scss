@@ -1112,7 +1112,7 @@ fieldset {
 		.coin_detail {
 			flex-shrink: 0;
 			flex-grow: 1;
-			flex-basis: 10px;
+			flex-basis: 0;
 			margin-top: 8px;
 			display: flex;
 			flex-direction: column;
@@ -1159,6 +1159,21 @@ fieldset {
 				font-size: $esho-odin-size;
 				margin-top: 4px;
 				color: $primary-color;
+			}
+		}
+	}
+}
+@media (max-width: 769px) {
+	.portfolio_page {
+		display: unset;
+		width: unset;
+		.portfolio_graph_wrap {
+			height: unset;
+		}
+
+		.coin_details {
+			.coin_detail {
+				flex-basis: auto;
 			}
 		}
 	}

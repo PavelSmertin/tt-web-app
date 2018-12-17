@@ -176,7 +176,7 @@
 
 		methods: {
 			openNav() {
-				this.$refs["tt_sidenav"].style.width = "340px"
+				this.$refs["tt_sidenav"].style.width = "320px"
 				this.sidenavActive = true
 			},
 
