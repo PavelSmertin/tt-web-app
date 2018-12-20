@@ -27,7 +27,6 @@ export const mutations = {
 	},	
 
 	SET_GRAPHS_UNIQ: function (state, graphs) {
-
 		state.graphsUniq = graphs
 	},
 
@@ -39,6 +38,8 @@ export const mutations = {
 		if( Object.keys(state.graphs).length <= 0 ) {
 			state.graphs = {}
 		}
+		// reassign for watchers
+		state.graphs = Object.assign({}, state.graphs)
 		state.graphs[graph.symbol] = graph.data
 	},
 

@@ -1,4 +1,4 @@
-export default async function ({ app, store, redirect }) {
+export default async function ({ app, store, redirect, isDev }) {
 	if( store.state.profile.updatedAt ) {
 		return
 	}
@@ -9,6 +9,8 @@ export default async function ({ app, store, redirect }) {
 		profile = await app.$axios.get(`/api/portfolios/profile`)
 		store.commit('SET_PROFILE', profile.data)
 	} catch (e) {
-		console.error(e)
+		if( isDev ) {
+			console.error(e)
+		}
 	}
 }

@@ -235,8 +235,10 @@
 						let data = await this.$axios.get( requestPortfolio( this.$store.state.filters) )
 						this.account = data.data.data
 						this.$store.commit( 'SET_GRAPH_DINAMIC', data.data.graph )
-					} catch (e) {
-						console.log(e)
+					} catch( e ) {
+						if( process.env.NODE_ENV == 'development' ) {
+							console.error(e)
+						}
 						if (e.response && e.response.status == 401) {
 							redirect({ name: `account-signin` })
 						}

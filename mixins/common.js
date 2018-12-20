@@ -2,20 +2,20 @@ export const Common = {
 	methods: {
 
 		formatPrice( value ) {
-			let fixed = 0
 			if( value < 100) {
-				fixed = 2
+				return (value/1).toFixed(2)
 			}
 			if( value < 1) {
-				fixed = 3
+				return (value/1).toFixed(3)
 			}
 			if( value < 0.1) {
-				fixed = 5
+				return (value/1).toFixed(5)
+
 			}
 			if( value < 0.01) {
-				fixed = 8
+				return (value/1).toFixed(8)
 			}
-			let val = (value/1).toFixed(fixed)
+			let val = (value/1).toFixed(0)
 			return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 		},
 

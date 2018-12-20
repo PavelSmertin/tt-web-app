@@ -169,7 +169,7 @@
 
 		},
 
-		async asyncData ({ app, params, store }) {
+		async asyncData ({ app, params, store, isDev }) {
 			let coin = null
 			let upSymbol = symbolToUppercase(params.symbol)
 
@@ -191,7 +191,9 @@
 				}
 
 			} catch (e) {
-				console.log(e)
+				if( isDev ) {
+					console.error(e)
+				}
 			}
 
 			return {
@@ -243,7 +245,10 @@
 							},
 						})
 					}
-					console.error(e)
+
+					if( process.env.NODE_ENV == 'development'  ) {
+						console.error(e)
+					}
 				}
 			},
 
@@ -254,8 +259,10 @@
 				try {
 					const data = await this.$axios.get(requestGraph( this.upSymbol, this.$store.state.filters ))
 					this.$store.commit( 'SET_GRAPH', {symbol: this.upSymbol, data: data.data[this.upSymbol]} )
-				} catch(error) {
-					console.error(error)
+				} catch( e ) {
+					if( process.env.NODE_ENV == 'development' ) {
+						console.error(e)
+					}
 				}
 			},
 
@@ -326,12 +333,6 @@
 				}, 100 ),
 				deep: true
 			},
-			// '$store.state.filters.period': {
-			// 	handler: _.debounce( function ( newValue ) {
-			// 		this.retrieveGraph()
-			// 	}, 100 ),
-			// 	deep: true
-			// }
 		},
 
 	}

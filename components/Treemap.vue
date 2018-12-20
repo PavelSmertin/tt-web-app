@@ -326,7 +326,9 @@
 							},
 		    			})
 					}
-					console.error(e)
+					if( process.env.NODE_ENV == 'development' ) {
+						console.error(e)
+					}
 				}
 
 			},
@@ -524,8 +526,10 @@
 						.round(true)
 						.padding(0)( root )
 
-				} catch(error) {
-					console.error(error)
+				} catch(e) {
+					if( process.env.NODE_ENV == 'development' ) {
+						console.error(e)
+					}
 				}
 			},
 
@@ -541,7 +545,7 @@
 			},
 
 			onend() {
-				return "console.log('event1')"
+				return '' //"console.log('event1')"
 			},
 
 			downSymbol( value ) {

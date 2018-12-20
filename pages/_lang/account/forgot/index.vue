@@ -46,7 +46,9 @@
             this.$router.push({ name: `account-forgot-follow` })
           })
           .catch(e => {
-            console.log(e)
+            if( process.env.NODE_ENV == 'development'  ) {
+              console.error(e)
+            }
 
             this.busy = false
             this.errors = e.response.data.errors.map((el) => { return el.title})
