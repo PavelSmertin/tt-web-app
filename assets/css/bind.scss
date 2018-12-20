@@ -23,14 +23,12 @@ $link-color-bg: #D9D9D9;
 $border-bold-color: #979797;
 $border-thin-color: #E6E6E6;
 
-
 $header-size: 16px;
 $primary-size: 14px;
 $second_size: 14px;
 $label-size: 12px;
 $item-size: 16px;
 $esho-odin-size: 24px;
-
 
 $up-value-color: #8FCC14;
 $down-value-color: #FF6666;
@@ -165,7 +163,7 @@ fieldset {
 		line-height: 16px;
 	}
 
-	input[type="text"], input[type="password"], input[type="email"]  {
+	input[type="text"], input[type="password"], input[type="email"] {
 		height: 48px;
 		border: 1px solid $border-bold-color;
 		padding: 0 16px;
@@ -173,8 +171,11 @@ fieldset {
 		font-size: $header-size;
 		font-family: $font-stack-headers;
 		text-transform: uppercase;
-
 	}
+	input[type="password"] {
+		text-transform: unset;
+	}
+
 
 	input::placeholder { 
 		color: $link-color; 
@@ -862,6 +863,14 @@ fieldset {
 		}
 	}
 }
+@media (max-width: 769px) { 
+	.tt_exchanges {
+		flex-wrap: wrap;
+		.right_pane, .left_pane {
+			width: 100%;
+		}
+	}
+}
 
 /* about page */
 .tt_about {
@@ -1169,6 +1178,8 @@ fieldset {
 		width: unset;
 		.portfolio_graph_wrap {
 			height: unset;
+			display: flex;
+			flex-direction: column;
 		}
 
 		.coin_details {
@@ -1176,6 +1187,9 @@ fieldset {
 				flex-basis: auto;
 			}
 		}
+	}
+	.selector_point {
+		display: none;
 	}
 }
 

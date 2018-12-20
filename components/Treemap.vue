@@ -181,9 +181,6 @@
 					/>
 				</tspan>
 			</text>
-
-
-
 		</svg>
 
 		<use id="useRect" ref="useRect" :xlink:href="'#_rect'" />

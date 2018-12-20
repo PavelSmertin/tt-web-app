@@ -221,7 +221,6 @@
 				}
 				this.debounceTimer(this, option)
 			},
-
 			clearInfo() {
 				this.debounceTimer.cancel()
 				this.showInfo.efficiency = false

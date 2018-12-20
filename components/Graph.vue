@@ -2,22 +2,25 @@
 <template>
 
 	<svg>
+		
 		<svg ref="graph" :viewBox="viewBox" preserveAspectRatio="none" @mousemove="mouseover" @mouseleave="mouseleave">
 			<rect :width="graphWidth" :height="graphHeight" fill-opacity="0" stroke-opacity="0" />
-			<path v-bind="bindSecondLine()" class="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
-			<path v-bind="bindSecondArea()" class="areaPrice" vector-effect="non-scaling-stroke" />
-			<path v-bind="bindFirstLine()" class="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
-			<path v-bind="bindFirstArea()" class="areaPart" vector-effect="non-scaling-stroke" />
-
+			<svg y="10%">
+				<g transform="scale(1, 0.85)">
+					<path v-bind="bindSecondLine()" class="linePrice" ref="linePrice" vector-effect="non-scaling-stroke" />
+					<path v-bind="bindSecondArea()" class="areaPrice" vector-effect="non-scaling-stroke" />
+					<path v-bind="bindFirstLine()" class="linePart" ref="linePart" vector-effect="non-scaling-stroke" />
+					<path v-bind="bindFirstArea()" class="areaPart" vector-effect="non-scaling-stroke" />
+				</g>
+			</svg>
 			<g v-if="interactive">
 				<line v-bind="bindVerticalLine()" class="selector" vector-effect="non-scaling-stroke" />
-				<circle v-bind="bindMarkerSecond()" />
-				<circle v-bind="bindMarkerFirst()" />
+				<circle v-bind="bindMarkerSecond()" class="selector_point" />
+				<circle v-bind="bindMarkerFirst()" class="selector_point" />
 			</g>
-
 		</svg>
 
-		<svg v-if=" (interactive || mainCoin) && points && points.length > 0" v-bind="bindLegend()">
+		<svg v-if="(interactive || mainCoin) && points && points.length > 0" v-bind="bindLegend()">
 			<circle v-bind="bindFirstLegendMarker()" vector-effect="non-scaling-stroke"/>
 			<text v-bind="bindFirstLegendLabel()" class="tooltip_label">
 				{{ first.label }}
@@ -27,6 +30,32 @@
 				{{ second.label }}
 			</text>
 		</svg>
+
+
+		<svg v-if="mainCoin && points && points.length > 0" viewBox="0 0 200 100" v-bind="tooltip">
+			<g>
+				<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
+				<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
+				<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
+
+				<text class="tooltip_date" x="12" y="26" fill="#000">
+					{{ formatDateTime( posPoint.date ) }}
+				</text>
+				<text class="tooltip_label" x="12" y="60" fill="#000">
+					{{ $t('coin.part_short') }}
+				</text>
+				<text class="tooltip_value" x="12" y="85" fill="#000">
+					{{ formatPrice( posPoint.firstValue * 100 )  }}%
+				</text>
+				<text class="tooltip_label" x="113" y="60" fill="#000">
+					{{ $t('coin.price') }}
+				</text>
+				<text class="tooltip_value" x="113" y="85" fill="#000">
+					${{ formatPrice( posPoint.secondValue ) }}
+				</text>
+			</g>
+		</svg>
+
 	</svg>
 
 </template>
@@ -40,6 +69,9 @@
 	const TYPE_DINAMIC_PORTFOLIO 	= 'dinamic_portfolio'
 	const TYPE_UNIQ_PORTFOLIO 		= 'uniq_portfolio'
 	const TYPE_AVG_PORTFOLIO 		= 'avg_portfolio'
+
+	const tooltipWidth = 201
+	const tooltipHeight = 104
 
 	const HEIGHT_COEF = 1.6
 
@@ -94,6 +126,8 @@
 				markerFirstPosition: {},
 				graphWidth: 300,
 				graphHeight: 300,
+				lastPoint: {x: 0, y: 0},
+				posPoint: {x: 0, y: 0},
 			}
 		},
 
@@ -155,6 +189,27 @@
 				let secondScale = this.scaledRelative ? this.graphHeight * ( this.graphRange.secondOffsetY ? this.graphRange.secondOffsetY : 0 ) : 0
 				return `translate(0, ${ secondScale })`
 			},
+
+			tooltip() {
+				let pt = this.$refs.graph.createSVGPoint()
+				pt.x = this.posPoint.x
+				pt.y = this.posPoint.y
+				const svgPoint = pt.matrixTransform(this.$refs.graph.getScreenCTM())
+
+				let yAverage = svgPoint.y + tooltipHeight > this.graphHeight ?  svgPoint.y - tooltipHeight : svgPoint.y
+
+				return { 
+					'x': svgPoint.x - tooltipWidth - 4,
+					'y': yAverage,
+					'class': 'ttt',
+					'width': tooltipWidth,
+					'height': tooltipHeight,
+					'fill': '#f2f2f2',
+					'visibility': 'visibile',
+				}
+
+			},
+
 		},
 
 		methods: {
@@ -286,6 +341,20 @@
 
 				this.linePrice = pathSecond( this.points )
 				this.areaPrice = areaSecond( this.points )
+
+				if(this.mainCoin) {
+					let xRight = scales.date(this.points[ this.points.length-1 ].date)
+					let yAverage 
+						= (scales.first(this.points[ this.points.length-1 ].part) + scales.second(this.points[ this.points.length-1 ].price)) / 2
+
+					this.posPoint = { 
+						x: xRight, 
+						y: yAverage,
+						date: this.points[ this.points.length-1 ].date,
+						firstValue: this.points[ this.points.length-1 ].part,
+						secondValue: this.points[ this.points.length-1 ].price,
+					}
+				}
 			},
 
 			mouseover({ offsetX, offsetY }) {
@@ -293,7 +362,7 @@
 				const scales = this.getScales()
 				const svg = this.$refs.graph
 
-				if( svg == undefined) {
+				if( svg == undefined ) {
 					return
 				}
 
@@ -332,7 +401,7 @@
 				}
 			},
 			mouseleave() {
-				this.$emit('hide-tooltip' )
+				this.$emit( 'hide-tooltip' )
 			},
 
 			bindFirstLine() {
@@ -378,7 +447,7 @@
 			bindLegend() {
 				return {
 					'x': 24,
-					'y': this.isDevice ? 0 : -24,
+					'y': this.isDevice ? -12 : -24,
 					'width': this.graphWidth,
 					'height': '100%',
 					'viewBox': `0 0 ${this.graphWidth} 12`,
@@ -447,7 +516,7 @@
 					end = linePath.getTotalLength(),
 					target = null
 
-				while (true){
+				while (true) {
 					target = Math.floor((beginning + end) / 2)
 					pos = linePath.getPointAtLength(target)
 
@@ -496,7 +565,7 @@
 					this.init()
 				},
 				deep: true
-			}
+			},
 		},
 	}
 

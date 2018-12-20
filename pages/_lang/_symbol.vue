@@ -105,16 +105,16 @@
 					{{ formatDateTime( tooltipPoint.date) }}
 				</text>
 				<text class="tooltip_label" x="12" y="60" fill="#000">
-					{{ $t('coin.price') }}
-				</text>
-				<text class="tooltip_value" x="12" y="85" fill="#000">
-					${{ formatPrice( tooltipPoint.price) }}
-				</text>
-				<text class="tooltip_label" x="113" y="60" fill="#000">
 					{{ $t('coin.part_short') }}
 				</text>
-				<text class="tooltip_value" x="113" y="85" fill="#000">
+				<text class="tooltip_value" x="12" y="85" fill="#000">
 					{{ formatPrice( tooltipPoint.part * 100) }}%
+				</text>
+				<text class="tooltip_label" x="113" y="60" fill="#000">
+					{{ $t('coin.price') }}
+				</text>
+				<text class="tooltip_value" x="113" y="85" fill="#000">
+					${{ formatPrice( tooltipPoint.price) }}
 				</text>
 			</svg>
 		</svg>
