@@ -65,7 +65,7 @@
 				begin="click"
 			/>
 			<animate 
-				:xlink:href="'#'+node.data.name+'_rect'"
+				:href="'#'+node.data.name+'_rect'"
 				attributeName="fill-opacity"
 				:dur="animationDurable" 
 				to="1"
@@ -130,7 +130,7 @@
 				/>
 			</text>
 			<text class="part" v-bind="coinTextThird( node )">
-				{{ formatPrice( node.data.part * 100) }}%
+				{{ formatPercent( node.data.part ) }}%
 				<animate 
 					attributeName="font-size"
 					:dur="animationDurable" 
@@ -170,7 +170,7 @@
 					/>
 				</tspan>
 				<tspan class="delta" v-bind="coinTextDelta( node )">
-					{{ formatPrice( node.data.delta * 100 ) }}
+					{{ formatPercent( node.data.delta ) }}
 					<animate 
 						attributeName="font-size"
 						:dur="animationDurable"
@@ -183,8 +183,11 @@
 			</text>
 		</svg>
 
-		<use id="useRect" ref="useRect" :xlink:href="'#_rect'" />
-		<use id="useText" ref="useText" :xlink:href="'#_text'" />
+		<use id="useRect" ref="useRect" :href="'#_rect'" />
+		<use id="useText" ref="useText" :href="'#_text'" />
+		<use :href="'#' + mainCoinSymbol + '_tooltip'" />
+
+	
 
 <!-- 		<svg width="100%" height="64" y="12" viewBox="0 0 64 64" preserveAspectRatio="xMaxYMin meet">
 			<circle cx="24" cy="24" r="18" fill="#FFFFFF" fill-rule="evenodd"></circle>
@@ -201,6 +204,7 @@
 	import Jsona from 'jsona'
 	import _ from 'lodash'
 	import Graph from '~/components/Graph.vue'
+	import { Common } from '~/mixins/common.js'
 
 	const dataFormatter = new Jsona()
 
@@ -213,8 +217,11 @@
 				nodes: [],
 				graphs: [],
 				hasData: true,
+				mainCoinSymbol: '',
 			}
 		},
+
+		mixins: [ Common ],
 
 		mounted() {
 			this.portrait = document.getElementById('content').offsetWidth < document.getElementById('content').offsetHeight
@@ -283,6 +290,9 @@
 					})
 
 					this.nodes = nodes
+					if( nodes.length > 1 ) {
+						this.mainCoinSymbol = nodes[1].data.name
+					}
 					this.hasData = true
 				} else {
 					this.nodes = []
@@ -492,13 +502,6 @@
 				return node.data.delta > 0 ? '&#9650;' : (node.data.delta < 0 ? '&#9660;' : '')
 			},
 
-			formatPrice( value ) {
-				let val = (value/1).toFixed(2)
-				return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-			},
-
-
-
 
 			async calculateTree() {
 				try {
@@ -528,8 +531,8 @@
 
 			onNodeClick: function(event, node ) {
 
-				document.getElementById('useRect').setAttribute("xlink:href", "#" + node.data.name + "_svg")
-				document.getElementById('useText').setAttribute("xlink:href", "#" + node.data.name + "_text")
+				document.getElementById('useRect').setAttribute("href", "#" + node.data.name + "_svg")
+				document.getElementById('useText').setAttribute("href", "#" + node.data.name + "_text")
 
 				//event.path[0].firstChild.beginElement()
 

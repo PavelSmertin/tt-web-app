@@ -13,12 +13,12 @@
 			<div class="coin_detail">
 				<label>{{ coin.coin_name }}</label>
 				<div class="top_detail symbol">{{ coin.symbol }}</div>
-				<div v-if="coin.part" class="bottom_detail">{{ formatPrice(coin.part * 100) }}%</div>
+				<div v-if="coin.part" class="bottom_detail">{{ formatPercent(coin.part ) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label>{{ $t('coin.price') }}</label>
 				<div class="top_detail">${{ formatPrice(coin.coin_price) }}</div>
-				<div class="bottom_detail">{{ formatPrice(coin.price_percent_change * 100) }}%</div>
+				<div class="bottom_detail">{{ formatPercent(coin.price_percent_change ) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label @mousemove="mouseover('volume')"  @mouseleave="clearInfo">
@@ -36,8 +36,8 @@
 						{{ $t('coin_info.volume') }}
 					</div>
 				</label>
-				<div v-if="coin.amount_total" class="top_detail">{{ formatPrice(coin.amount_total) }}{{ coin.symbol }}</div>
-				<div v-if="coin.amount_total_usdt" class="bottom_detail">${{ formatPrice(coin.amount_total_usdt) }}</div>
+				<div v-if="coin.amount_total" class="top_detail">{{ collapseSum(coin.amount_total) }} {{ coin.symbol }}</div>
+				<div v-if="coin.amount_total_usdt" class="bottom_detail">${{ collapseSum(coin.amount_total_usdt) }}</div>
 			</div>
 			<div class="coin_detail">
 				<label @mousemove="mouseover('part')"  @mouseleave="clearInfo">
@@ -55,8 +55,8 @@
 						{{ $t('coin_info.part') }}
 					</div>
 				</label>
-				<div v-if="coin.part" class="top_detail">{{ formatPrice(coin.part * 100) }}%</div>
-				<div v-if="coin.part_change" class="bottom_detail">{{ formatPrice(coin.part_change * 100) }}%</div>
+				<div v-if="coin.part" class="top_detail">{{ formatPercent(coin.part ) }}%</div>
+				<div v-if="coin.part_change" class="bottom_detail">{{ formatPercent(coin.part_change ) }}%</div>
 			</div>
 			<div class="coin_detail">
 				<label @mousemove="mouseover('actuality')" @mouseleave="clearInfo">
@@ -97,9 +97,9 @@
 			<Graph :symbol="upSymbol" :interactive="true" v-on:testtest="onSelect" v-on:hide-tooltip="onHideTooltip" />
 
 			<svg viewBox="0 0 200 100" v-bind="tooltip()">
-				<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
-				<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
-				<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
+				<rect class="tooltip" width="203" y="-3" x=-2 height="105" fill="#f2f2f2" />
+				<rect class="tooltip" x="0" y="40" width="99" height="60" fill="#fff" />
+				<rect class="tooltip" x="103" y="40" width="96" height="60" fill="#fff" />
 
 				<text class="tooltip_date" x="12" y="26" fill="#000">
 					{{ formatDateTime( tooltipPoint.date) }}
@@ -108,7 +108,7 @@
 					{{ $t('coin.part_short') }}
 				</text>
 				<text class="tooltip_value" x="12" y="85" fill="#000">
-					{{ formatPrice( tooltipPoint.part * 100) }}%
+					{{ formatPercent( tooltipPoint.part ) }}%
 				</text>
 				<text class="tooltip_label" x="113" y="60" fill="#000">
 					{{ $t('coin.price') }}

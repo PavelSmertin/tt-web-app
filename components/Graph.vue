@@ -32,11 +32,11 @@
 		</svg>
 
 
-		<svg v-if="mainCoin && points && points.length > 0" viewBox="0 0 200 100" v-bind="tooltip">
+		<svg v-if="mainCoin && points && points.length > 0" :id="symbol + '_tooltip'" viewBox="0 0 200 100" v-bind="tooltip">
 			<g>
-				<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
-				<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
-				<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
+				<rect class="tooltip" width="203" y="-3" x=-2 height="105" fill="#f2f2f2" />
+				<rect class="tooltip" x="0" y="40" width="99" height="60" fill="#fff" />
+				<rect class="tooltip" x="103" y="40" width="96" height="60" fill="#fff" />
 
 				<text class="tooltip_date" x="12" y="26" fill="#000">
 					{{ formatDateTime( posPoint.date ) }}
@@ -45,7 +45,7 @@
 					{{ $t('coin.part_short') }}
 				</text>
 				<text class="tooltip_value" x="12" y="85" fill="#000">
-					{{ formatPrice( posPoint.firstValue * 100 )  }}%
+					{{ formatPercent( posPoint.firstValue )  }}%
 				</text>
 				<text class="tooltip_label" x="113" y="60" fill="#000">
 					{{ $t('coin.price') }}
@@ -194,18 +194,16 @@
 				let pt = this.$refs.graph.createSVGPoint()
 				pt.x = this.posPoint.x
 				pt.y = this.posPoint.y
-				const svgPoint = pt.matrixTransform(this.$refs.graph.getScreenCTM())
+				const svgPoint = pt.matrixTransform(this.$refs.graph.getCTM())
 
-				let yAverage = svgPoint.y + tooltipHeight > this.graphHeight ?  svgPoint.y - tooltipHeight : svgPoint.y
+				let yAverage = svgPoint.y + tooltipHeight > this.graphHeight ? svgPoint.y - tooltipHeight : svgPoint.y
 
 				return { 
 					'x': svgPoint.x - tooltipWidth - 4,
 					'y': yAverage,
-					'class': 'ttt',
 					'width': tooltipWidth,
 					'height': tooltipHeight,
 					'fill': '#f2f2f2',
-					'visibility': 'visibile',
 				}
 
 			},
@@ -228,7 +226,7 @@
 
 				let dateAxis = d3.axisBottom(date).tickFormat(d => this.formatDateTime(d)).ticks(3)
 				let priceAxis = d3.axisRight(price).tickFormat(d => "$" + this.formatPrice(d, 0)).ticks(5)
-				let partAxis = d3.axisRight(part).tickFormat(d => this.formatPrice(d * 100)+"%").ticks(5)
+				let partAxis = d3.axisRight(part).tickFormat(d => this.formatPercent(d)+"%").ticks(5)
 
 				date.domain(d3.extent(this.points, el => el.date))
 				price.domain(d3.extent(this.points, el => el.price))

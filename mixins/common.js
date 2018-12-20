@@ -2,24 +2,44 @@ export const Common = {
 	methods: {
 
 		formatPrice( value ) {
-			let val = (value/1).toFixed(2)
+			let fixed = 0
+			if( value < 100) {
+				fixed = 2
+			}
+			if( value < 1) {
+				fixed = 3
+			}
+			if( value < 0.1) {
+				fixed = 5
+			}
+			if( value < 0.01) {
+				fixed = 8
+			}
+			let val = (value/1).toFixed(fixed)
+			return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+		},
+
+		formatPercent( value ) {
+			let val = (value * 100 / 1).toFixed(2)
 			return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 		},
 
 		formatDate( dateString ) {
 			let date 	= new Date(dateString)
+			let year 	= date.getFullYear()
 			let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
 			let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
-			return `${day}.${month}`
+			return `${day}.${month}.${year}`
 		},
 
 		formatDateTime( dateString ) {
 			let date 	= new Date(dateString)
+			let year 	= date.getFullYear()
 			let day 	= date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
 			let month 	= date.getMonth() <= 8 ? `0${date.getMonth()+1}` : date.getMonth()+1
 			let hour 	= date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
 			let min 	= date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-			return `${day}.${month} ${hour}:${min}`
+			return `${day}.${month}.${year} ${hour}:${min}`
 		},
 
 		collapseSum(num, digits) {

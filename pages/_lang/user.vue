@@ -11,15 +11,15 @@
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.change_capital') }}</label>
-					<div class="top_detail">{{ formatPrice(account.cap_change * 100) }}%</div>
+					<div class="top_detail">{{ formatPercent(account.cap_change) }}%</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.lowest_capital') }}</label>
-					<div class="top_detail">{{ formatPrice(account.max_down * 100) }}%</div>
+					<div class="top_detail">{{ formatPercent(account.max_down) }}%</div>
 				</div>
 				<div class="coin_detail">
 					<label>{{ $t('profile.change_price') }}</label>
-					<div class="top_detail">{{ formatPrice(account.total_cap_change * 100) }}%</div>
+					<div class="top_detail">{{ formatPercent(account.total_cap_change) }}%</div>
 				</div>
 				<div class="coin_detail">
 					<label @mousemove="mouseover('efficiency')" @mouseleave="clearInfo">
@@ -37,7 +37,7 @@
 							{{ $t('profile.efficiency_info') }}
 						</div>
 					</label>
-					<div class="top_detail">{{ formatPrice(account.efficiency * 100) }}%</div>
+					<div class="top_detail">{{ formatPercent(account.efficiency) }}%</div>
 				</div>
 <!-- 
 				<div class="coin_detail">
@@ -69,9 +69,9 @@
 						/>
 
 				<svg viewBox="0 0 200 100" v-bind="tooltip()">
-					<rect class="tooltip" width="201" height="100" fill="#f2f2f2" />
-					<rect class="tooltip" x="0" y="40" width="100" height="60" fill="#fff" />
-					<rect class="tooltip" x="101" y="40" width="100" height="60" fill="#fff" />
+					<rect class="tooltip" width="203" y="-3" x=-2 height="105" fill="#f2f2f2" />
+					<rect class="tooltip" x="0" y="40" width="99" height="60" fill="#fff" />
+					<rect class="tooltip" x="103" y="40" width="96" height="60" fill="#fff" />
 
 					<text class="tooltip_date" x="12" y="26" fill="#000">
 						{{ formatDateTime( tooltipPoint.date) }}
@@ -80,13 +80,13 @@
 						{{ $t('profile.change_capital_short') }}
 					</text>
 					<text class="tooltip_value" x="12" y="85" fill="#000">
-						{{ formatPrice( tooltipPoint.part * 100) }}%
+						{{ formatPercent( tooltipPoint.part) }}%
 					</text>
 					<text class="tooltip_label" x="113" y="60" fill="#000">
 						{{ $t('profile.change_price_short') }}
 					</text>
 					<text class="tooltip_value" x="113" y="85" fill="#000">
-						{{ formatPrice( tooltipPoint.price * 100) }}%
+						{{ formatPercent( tooltipPoint.price) }}%
 					</text>
 				</svg>
 			</svg>
