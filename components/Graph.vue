@@ -318,12 +318,12 @@
 				let scales = this.getScales()
 
 				const pathFirst = d3.line()
-										.curve(d3.curveBasis)
+										.curve(d3.curveStepAfter)
 										.x(d => scales.date(d.date))
 										.y(d => scales.first(d.part))
 
 				const areaFirst = d3.area()
-										.curve(d3.curveBasis)
+										.curve(d3.curveStepAfter)
 										.x(d => scales.date(d.date))
 										.y0(d => this.graphHeight * HEIGHT_COEF )
 										.y1(d => scales.first(d.part))
@@ -332,8 +332,10 @@
 				this.areaPart = areaFirst(this.points)
 
 				const pathSecond = pathFirst
+										.curve(d3.curveBasis)
 										.y(d => scales.second(d.price))
 				const areaSecond = areaFirst
+										.curve(d3.curveBasis)
 										.y0(d => this.graphHeight * HEIGHT_COEF )
 										.y1(d => scales.second(d.price))
 
