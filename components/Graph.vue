@@ -2,7 +2,6 @@
 <template>
 
 	<svg>
-		
 		<svg ref="graph" :viewBox="viewBox" preserveAspectRatio="none" @mousemove="mouseover" @mouseleave="mouseleave">
 			<rect :width="graphWidth" :height="graphHeight" fill-opacity="0" stroke-opacity="0" />
 			<svg y="10%">

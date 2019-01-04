@@ -8,6 +8,7 @@
 		</text>
 
 		<svg 
+			@mouseover="mouseover(node)" @mouseleave="mouseleave(node)"
 			v-for="(node, index) in nodes"
 			v-if="node.children == undefined"
 			v-bind="rectPosition( node ) "
@@ -26,7 +27,7 @@
 				</linearGradient>
 			</defs>
 
-			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node ) "></rect>
+			<rect :id="node.data.name+'_rect'" v-bind="rectStyle( node )"></rect>
 			
 			<Graph :type="type" :mainCoin="index == 1" :symbol="node.data.name" />
 
@@ -552,9 +553,16 @@
 				if( value ) {
 					return value.toLowerCase()
 				}
-			}
+			},
 
 
+			mouseover( node ) {
+				document.getElementById( node.data.name + "_rect" ).setAttribute("class", "hover_graph")
+			},
+
+			mouseleave( node ) {
+				document.getElementById( node.data.name + "_rect" ).setAttribute("class", null)
+			},
 		},
 
 
