@@ -317,12 +317,12 @@
 				let scales = this.getScales()
 
 				const pathFirst = d3.line()
-										.curve(d3.curveStepAfter)
+										.curve(this.type == TYPE_DINAMIC_PORTFOLIO ? d3.curveBasis : d3.curveStepAfter )
 										.x(d => scales.date(d.date))
 										.y(d => scales.first(d.part))
 
 				const areaFirst = d3.area()
-										.curve(d3.curveStepAfter)
+										.curve(this.type == TYPE_DINAMIC_PORTFOLIO ? d3.curveBasis : d3.curveStepAfter )
 										.x(d => scales.date(d.date))
 										.y0(d => this.graphHeight * HEIGHT_COEF )
 										.y1(d => scales.first(d.part))
