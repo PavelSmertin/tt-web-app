@@ -9,7 +9,11 @@
 
 					<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/exchanges' }" v-on:click.native="closeNav()">{{ $t('nav.account') }}</nuxt-link>
 					<nuxt-link v-else :to="{ path: '/account/signup' }" v-on:click.native="closeNav()" >{{ $t('account.signup') }}</nuxt-link>
-					<nuxt-link v-if="$auth.loggedIn" :to="{ path: '/user' }" v-on:click.native="closeNav()">{{ $t('nav.portfolio') }}</nuxt-link>
+
+					<div v-if="$auth.loggedIn">
+						<nuxt-link :to="{ path: '/user' }" v-on:click.native="closeNav()">{{ $t('nav.portfolio') }}</nuxt-link>
+					</div>
+					<div v-else></div><!--it is hack!-->
 
 					<nuxt-link :to="{ path: '/about' }" v-on:click.native="closeNav()">{{ $t('nav.about') }}</nuxt-link>
 

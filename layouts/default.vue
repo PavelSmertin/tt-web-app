@@ -20,7 +20,7 @@
 					<div v-if="$auth.loggedIn">
 						<nuxt-link :to="{ path: '/user' }" v-on:click.native="closeNav()">{{ $t('nav.portfolio') }}</nuxt-link>
 					</div>
-					<div v-else></div>
+					<div v-else></div><!--it is hack!-->
 
 					<nuxt-link :to="{ path: '/about' }" v-on:click.native="closeNav">{{ $t('nav.about') }}</nuxt-link>
 
