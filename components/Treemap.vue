@@ -188,15 +188,12 @@
 		<use id="useText" ref="useText" :href="'#_text'" />
 		<use :href="'#' + mainCoinSymbol + '_tooltip'" />
 
-	
-
 <!-- 		<svg width="100%" height="64" y="12" viewBox="0 0 64 64" preserveAspectRatio="xMaxYMin meet">
 			<circle cx="24" cy="24" r="18" fill="#FFFFFF" fill-rule="evenodd"></circle>
 			<polygon points="19 19.8 23.2 24.0000063 19 28.2 19.8 29 24 24.8 28.2 29 29 28.2 24.8 24.0000063 29 19.8 28.2 19 24 23.2 19.8 19" />
 		</svg> -->
 
 	</svg>
-
 
 </template>
 
